@@ -1,0 +1,21 @@
+cellarr package
+===============
+
+Submodules
+----------
+
+cellarr.skeleton module
+-----------------------
+
+.. automodule:: cellarr.skeleton
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: cellarr
+   :members:
+   :undoc-members:
+   :show-inheritance:
