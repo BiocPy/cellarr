@@ -10,7 +10,7 @@ __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
-def create_tiledb(
+def create_tiledb_array(
     tiledb_uri_path: str,
     num_cells: int,
     num_genes: int,
@@ -30,7 +30,7 @@ def create_tiledb(
 
     Args:
         tiledb_uri_path:
-            Path to create the file.
+            Path to create the array tiledb file.
 
         num_cells:
             Number of cells (x/fastest-changing dimension).
@@ -93,7 +93,7 @@ def write_csr_matrix_to_tiledb(
     tiledb_array_uri: tiledb.SparseArray,
     matrix: csr_matrix,
     value_dtype: np.dtype = np.int32,
-    row_start: int = 0,
+    row_offset: int = 0,
     batch_size: int = 25000,
 ):
     """Append and save a :py:class:`~scipy.sparse.csr_matrix` to tiledb.
@@ -110,8 +110,8 @@ def write_csr_matrix_to_tiledb(
             NumPy dtype to reformat the matrix values.
             Defaults to ``uint32``.
 
-        row_start:
-            Prefix row.
+        row_offset:
+            Offset row number to append to matrix.
             Defaults to 0.
 
         batch_size:
@@ -143,7 +143,7 @@ def write_csr_matrix_to_tiledb(
         val_slice = data[slice(indptr, stop)].astype(value_dtype)
         ind_slice = indices[slice(indptr, stop)]
 
-        x.extend([row_start + i] * len(ind_slice))
+        x.extend([row_offset + i] * len(ind_slice))
         y.extend(ind_slice)
         vals.extend(val_slice)
 
