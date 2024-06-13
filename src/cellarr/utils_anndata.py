@@ -115,7 +115,8 @@ def scan_for_genes(
     var_gene_column: str = "index",
     num_threads: int = 1,
 ) -> List[str]:
-    """Extract and generate the list of unique genes across files.
+    """Extract and generate the list of unique genes 
+    identifiers across files.
 
     Args:
         h5ad_or_adata:
