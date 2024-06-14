@@ -115,7 +115,7 @@ def scan_for_genes(
     var_gene_column: str = "index",
     num_threads: int = 1,
 ) -> List[str]:
-    """Extract and generate the list of unique genes 
+    """Extract and generate the list of unique genes
     identifiers across files.
 
     Args:
@@ -137,3 +137,37 @@ def scan_for_genes(
         _args = [(file_info, var_gene_column) for file_info in h5ad_or_adata]
         all_symbols = p.map(_wrapper_get_genes, _args)
         return list(set(itertools.chain.from_iterable(all_symbols)))
+
+
+def _get_cellcounts(h5ad_or_adata: Union[str, anndata.AnnData]) -> int:
+    if isinstance(h5ad_or_adata, str):
+        adata = anndata.read_h5ad(h5ad_or_adata, backed=True)
+    else:
+        if not isinstance(h5ad_or_adata, anndata.AnnData):
+            raise TypeError("Input is not an 'AnnData' object.")
+
+        adata = h5ad_or_adata
+
+    return adata.shape[0]
+
+
+def scan_for_cellcounts(
+    h5ad_or_adata: List[Union[str, anndata.AnnData]],
+    num_threads: int = 1,
+) -> List[int]:
+    """Extract cell counts across files.
+
+    Args:
+        h5ad_or_adata:
+            List of anndata objects or path to h5ad files.
+
+        num_threads:
+            Number of threads to use.
+            Defaults to 1.
+
+    Returns:
+        List of cell counts across files.
+    """
+    with Pool(num_threads) as p:
+        all_counts = p.map(_get_cellcounts, h5ad_or_adata)
+        return all_counts

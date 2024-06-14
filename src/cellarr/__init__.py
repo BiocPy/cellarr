@@ -14,3 +14,6 @@ except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 finally:
     del version, PackageNotFoundError
+
+from .build_from_anndata import generate_tiledb
+from .CellArrDataset import CellArrDataset

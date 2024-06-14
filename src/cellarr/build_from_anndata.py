@@ -1,7 +1,9 @@
 import os
+import warnings
 from typing import List, Union
 
 import anndata
+import numpy as np
 import pandas as pd
 
 from . import utils_anndata as uad
@@ -14,10 +16,10 @@ __license__ = "MIT"
 
 
 def generate_tiledb(
-    output_path: str,
-    num_cells: int,
-    num_genes: int,
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
+    output_path: str,
+    num_cells: int = None,
+    num_genes: int = None,
     cell_metadata: Union[pd.DataFrame, str] = None,
     gene_metadata: Union[List[str], dict, str, pd.DataFrame] = None,
     var_gene_column: str = "index",
@@ -25,6 +27,10 @@ def generate_tiledb(
     skip_gene_tiledb: bool = False,
     skip_cell_tiledb: bool = False,
     skip_matrix_tiledb: bool = False,
+    cell_dim_dtype: np.dtype = np.uint32,
+    gene_dim_dtype: np.dtype = np.uint32,
+    matrix_dim_dtype: np.dtype = np.uint32,
+    optimize_tiledb: bool = True,
     num_threads: int = 1,
 ):
     """Generate the tiledb file for a list of ``AnnData`` or H5AD objects.
@@ -35,22 +41,28 @@ def generate_tiledb(
     - A matrix tiledb file named the same as ``layer_matrix_name`` parameter.
 
     Args:
+        h5ad_or_adata:
+            List of file paths to `H5AD` or ``AnnData`` objects.
+            Each object in this list must contain
+            - gene symbols as index or the column specified by
+            ``var_gene_column``.
+            - Must contain a layers with a matrix named as
+            ``layer_matrix_name``.
+
         output_path:
             Path to where the output tiledb files should be stored.
 
         num_cells:
             Number of cells across all files.
 
+            Defualts to None, in which case, automatically inferred by
+            scanning all objects in ``h5ad_or_adata``.
+
         num_genes:
             Number of genes across all cells.
 
-        h5ad_or_adata:
-            List of H5ad or AnnData objects.
-            Each object in this list must contain
-            - gene symbols as index or the column specified by
-            ``var_gene_column``.
-            - Must contain a layers with a matrix named as
-            ``layer_matrix_name``.
+            Defualts to None, in which case, automatically inferred by
+            scanning all objects in ``h5ad_or_adata``.
 
         cell_metadata:
             Path to the file containing a concatenated cell metadata across
@@ -110,6 +122,27 @@ def generate_tiledb(
 
             Defaults to False.
 
+        cell_dim_dtype:
+            NumPy dtype for the cell dimension.
+            Defaults to np.uint32.
+
+            Note: make sure the number of cells fit
+            within the range limits of unsigned-int32.
+
+        gene_dim_dtype:
+            NumPy dtype for the gene dimension.
+            Defaults to np.uint32.
+
+            Note: make sure the number of genes fit
+            within the range limits of unsigned-int32.
+
+        matrix_dim_dtype:
+            NumPy dtype for the values in the matrix.
+            Defaults to np.uint32.
+
+            Note: make sure the matrix values fit
+            within the range limits of unsigned-int32.
+
         num_threads:
             Number of threads.
 
@@ -119,21 +152,23 @@ def generate_tiledb(
         raise ValueError("'output_path' must be a directory.")
 
     if gene_metadata is None:
+        warnings.warn(
+            "Scanning all files for gene symbols, this may take long", UserWarning
+        )
         gene_set = uad.scan_for_genes(
             h5ad_or_adata, var_gene_column=var_gene_column, num_threads=num_threads
         )
 
+        gene_set = sorted(gene_set)
+
         gene_metadata = pd.DataFrame({"genes": gene_set}, index=gene_set)
-
-    if isinstance(gene_metadata, list):
-        _gene_list = list(set(gene_metadata))
+    elif isinstance(gene_metadata, list):
+        _gene_list = sorted(list(set(gene_metadata)))
         gene_metadata = pd.DataFrame({"genes": _gene_list}, index=_gene_list)
-
-    if isinstance(gene_metadata, dict):
-        _gene_list = list(gene_metadata.keys())
+    elif isinstance(gene_metadata, dict):
+        _gene_list = sorted(list(gene_metadata.keys()))
         gene_metadata = pd.DataFrame({"genes": _gene_list}, index=_gene_list)
-
-    if isinstance(gene_metadata, str):
+    elif isinstance(gene_metadata, str):
         gene_metadata = pd.read_csv(gene_metadata, index=True, header=True)
 
     gene_metadata["genes_index"] = gene_metadata.index.tolist()
@@ -142,7 +177,10 @@ def generate_tiledb(
         raise TypeError("'gene_metadata' must be a pandas dataframe.")
 
     if len(gene_metadata.index.unique()) != len(gene_metadata.index.tolist()):
-        raise ValueError("'gene_metadata' must contain a unique index")
+        raise ValueError("'gene_metadata' must contain a unique index.")
+
+    if num_genes is None:
+        num_genes = len(gene_metadata)
 
     # Create the gene metadata tiledb
     if not skip_gene_tiledb:
@@ -150,16 +188,49 @@ def generate_tiledb(
         for col in gene_metadata.columns:
             _col_types[col] = "ascii"
 
+        _gene_output_uri = f"{output_path}/gene_metadata"
         generate_metadata_tiledb_frame(
-            f"{output_path}/gene_metadata", gene_metadata, column_types=_col_types
+            _gene_output_uri, gene_metadata, column_types=_col_types
+        )
+
+        if optimize_tiledb:
+            uta.optimize_tiledb_array(_gene_output_uri)
+
+    if cell_metadata is None:
+        if num_cells is None:
+            warnings.warn(
+                "Scanning all files to compute cell counts, this may take long",
+                UserWarning,
+            )
+            cell_counts = uad.scan_for_cellcounts(
+                h5ad_or_adata, num_threads=num_threads
+            )
+            num_cells = sum(cell_counts)
+
+        cell_metadata = pd.DataFrame({"cell_index": [x for x in range(num_cells)]})
+
+    if isinstance(cell_metadata, str):
+        warnings.warn(
+            "Scanning 'cell_metadata' to count number of cells, this may take long",
+            UserWarning,
+        )
+        with open(cell_metadata) as fp:
+            count = 0
+            for _ in fp:
+                count += 1
+
+        num_cells = count - 1  # removing 1 for the header line
+    elif isinstance(cell_metadata, pd.DataFrame):
+        num_cells = len(cell_metadata)
+
+    if num_cells is None:
+        raise ValueError(
+            "Cannot determine 'num_cells', we recommend setting this parameter."
         )
 
     # Create the cell metadata tiledb
     if not skip_cell_tiledb:
         _cell_output_uri = f"{output_path}/cell_metadata"
-
-        if cell_metadata is None:
-            cell_metadata = pd.DataFrame({"cell_index": [x for x in range(num_cells)]})
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
@@ -174,8 +245,11 @@ def generate_tiledb(
             _to_write = gene_metadata.astype(str)
 
             generate_metadata_tiledb_frame(
-                f"{output_path}/gene_metadata", _to_write, column_types=_col_types
+                _cell_output_uri, _to_write, column_types=_col_types
             )
+
+        if optimize_tiledb:
+            uta.optimize_tiledb_array(_cell_output_uri)
 
     # create the counts metadata
     if not skip_matrix_tiledb:
@@ -190,9 +264,12 @@ def generate_tiledb(
             num_cells=num_cells,
             num_genes=num_genes,
             matrix_attr_name=layer_matrix_name,
+            x_dim_dtype=cell_dim_dtype,
+            y_dim_dtype=gene_dim_dtype,
+            matrix_dim_dtype=matrix_dim_dtype,
         )
-        offset = 0
 
+        offset = 0
         for fd in h5ad_or_adata:
             mat = uad.remap_anndata(
                 fd,
@@ -200,8 +277,13 @@ def generate_tiledb(
                 var_gene_column=var_gene_column,
                 layer_matrix_name=layer_matrix_name,
             )
-            uta.write_csr_matrix_to_tiledb(_counts_uri, matrix=mat, row_offset=offset)
+            uta.write_csr_matrix_to_tiledb(
+                _counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype
+            )
             offset += int(mat.shape[0])
+
+        if optimize_tiledb:
+            uta.optimize_tiledb_array(_counts_uri)
 
 
 def generate_metadata_tiledb_frame(
