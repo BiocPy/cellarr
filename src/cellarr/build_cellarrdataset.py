@@ -1,11 +1,29 @@
 """Build the `CellArrDatset`
 
-See Also:
-    :py:func:`~gypsum_client.upload_api_operations.start_upload`,
-    to actually start the upload.
+The `CellArrDataset` method is designed to store single-cell RNA-seq 
+datasets but can be generalized to store any 2-dimensional experimental data.
 
-    :py:func:`~gypsum_client.clone_operations.clone_version`,
-    to prepare the symlinks.
+This method creates three TileDB files in the directory specified by `output_path`:
+- `gene_metadata`: A TileDB file containing gene metadata.
+- `cell_metadata`: A TileDB file containing cell metadata.
+- A matrix TileDB file named as specified by the `layer_matrix_name` parameter.
+
+The TileDB matrix file is stored in a cell X gene orientation. This orientation 
+is chosen because the fastest-changing dimension as new files are added to the 
+collection is usually the cells rather than genes.
+
+## Process
+
+1. **Scan the Collection**: Scan the entire collection of files to create 
+a unique set of gene symbols. Store this gene set as the 
+`gene_metadata` TileDB file.
+2. **Store Cell Metadata**: Store cell metadata as the 
+`cell_metadata` TileDB file.
+3. **Remap and Orient Data**: For each dataset in the collection, 
+remap and orient the gene dimension using the gene set from Step 1. 
+This step ensures consistency in gene measurement and order, even if 
+some genes are unmeasured or ordered differently in the original experiments.
+
 
 Example:
 
@@ -27,6 +45,7 @@ Example:
             output_path=tempdir,
             h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
         )
+
 """
 
 import os
@@ -48,7 +67,7 @@ __license__ = "MIT"
 
 
 def build_cellarrdataset(
-    h5ad_or_adata: List[Union[str, anndata.AnnData]],
+    files: List[Union[str, anndata.AnnData]],
     output_path: str,
     num_cells: int = None,
     num_genes: int = None,
@@ -65,15 +84,23 @@ def build_cellarrdataset(
     optimize_tiledb: bool = True,
     num_threads: int = 1,
 ):
-    """Generate the tiledb file for a list of ``AnnData`` or H5AD objects.
+    """Generate the `CellArrDataset`.
 
-    Creates 3 tiledb files in the directory specified by ``output_path``:
-    - `gene_metadata`: Gene metadata tiledb file.
-    - `cell_metadata`: Cell metadata tiledb file.
-    - A matrix tiledb file named the same as ``layer_matrix_name`` parameter.
+    All files are expected to be consistent and any modifications
+    to make them consistent is outside the scope of this function
+    and package.
+
+    There's a few assumptions this process makes:
+    - If object in ``files`` is an AnnData or H5AD object, these must
+    contain an assay matrix in layer names as ``layer_matrix_name``
+    parameter.
+    - Feature information must contain a column defined by 
+    ``var_gene_column`` that contains gene symbols or a common entity 
+    across all files.
+    - 
 
     Args:
-        h5ad_or_adata:
+        files:
             List of file paths to `H5AD` or ``AnnData`` objects.
             Each object in this list must contain
             - gene symbols as index or the column specified by
@@ -184,12 +211,8 @@ def build_cellarrdataset(
         raise ValueError("'output_path' must be a directory.")
 
     if gene_metadata is None:
-        warnings.warn(
-            "Scanning all files for gene symbols, this may take long", UserWarning
-        )
-        gene_set = uad.scan_for_genes(
-            h5ad_or_adata, var_gene_column=var_gene_column, num_threads=num_threads
-        )
+        warnings.warn("Scanning all files for gene symbols, this may take long", UserWarning)
+        gene_set = uad.scan_for_genes(files, var_gene_column=var_gene_column, num_threads=num_threads)
 
         gene_set = sorted(gene_set)
 
@@ -221,9 +244,7 @@ def build_cellarrdataset(
             _col_types[col] = "ascii"
 
         _gene_output_uri = f"{output_path}/gene_metadata"
-        generate_metadata_tiledb_frame(
-            _gene_output_uri, gene_metadata, column_types=_col_types
-        )
+        generate_metadata_tiledb_frame(_gene_output_uri, gene_metadata, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_gene_output_uri)
@@ -234,9 +255,7 @@ def build_cellarrdataset(
                 "Scanning all files to compute cell counts, this may take long",
                 UserWarning,
             )
-            cell_counts = uad.scan_for_cellcounts(
-                h5ad_or_adata, num_threads=num_threads
-            )
+            cell_counts = uad.scan_for_cellcounts(files, num_threads=num_threads)
             num_cells = sum(cell_counts)
 
         cell_metadata = pd.DataFrame({"cell_index": [x for x in range(num_cells)]})
@@ -256,9 +275,7 @@ def build_cellarrdataset(
         num_cells = len(cell_metadata)
 
     if num_cells is None:
-        raise ValueError(
-            "Cannot determine 'num_cells', we recommend setting this parameter."
-        )
+        raise ValueError("Cannot determine 'num_cells', we recommend setting this parameter.")
 
     # Create the cell metadata tiledb
     if not skip_cell_tiledb:
@@ -266,9 +283,7 @@ def build_cellarrdataset(
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
-            generate_metadata_tiledb_csv(
-                _cell_output_uri, cell_metadata, _cell_metaframe.columns
-            )
+            generate_metadata_tiledb_csv(_cell_output_uri, cell_metadata, _cell_metaframe.columns)
         elif isinstance(cell_metadata, pd.DataFrame):
             _col_types = {}
             for col in gene_metadata.columns:
@@ -276,9 +291,7 @@ def build_cellarrdataset(
 
             _to_write = gene_metadata.astype(str)
 
-            generate_metadata_tiledb_frame(
-                _cell_output_uri, _to_write, column_types=_col_types
-            )
+            generate_metadata_tiledb_frame(_cell_output_uri, _to_write, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_cell_output_uri)
@@ -302,16 +315,14 @@ def build_cellarrdataset(
         )
 
         offset = 0
-        for fd in h5ad_or_adata:
+        for fd in files:
             mat = uad.remap_anndata(
                 fd,
                 gene_set,
                 var_gene_column=var_gene_column,
                 layer_matrix_name=layer_matrix_name,
             )
-            uta.write_csr_matrix_to_tiledb(
-                _counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype
-            )
+            uta.write_csr_matrix_to_tiledb(_counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype)
             offset += int(mat.shape[0])
 
         if optimize_tiledb:
@@ -320,9 +331,7 @@ def build_cellarrdataset(
     return CellArrDataset(dataset_path=output_path, counts_tdb_uri=layer_matrix_name)
 
 
-def generate_metadata_tiledb_frame(
-    output_uri: str, input: pd.DataFrame, column_types: dict = None
-):
+def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):
     """Generate metadata tiledb from a :pu:class:`~pandas.DataFrame`.
 
     Args:
@@ -339,9 +348,7 @@ def generate_metadata_tiledb_frame(
             Defaults to None.
     """
     _to_write = input.astype(str)
-    utf.create_tiledb_frame_from_dataframe(
-        output_uri, _to_write, column_types=column_types
-    )
+    utf.create_tiledb_frame_from_dataframe(output_uri, _to_write, column_types=column_types)
 
 
 def generate_metadata_tiledb_csv(
@@ -377,9 +384,7 @@ def generate_metadata_tiledb_csv(
 
     for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
         if initfile:
-            utf.create_tiledb_frame_from_column_names(
-                output_uri, chunk.columns, column_dtype
-            )
+            utf.create_tiledb_frame_from_column_names(output_uri, chunk.columns, column_dtype)
             initfile = False
 
         _to_write = chunk.astype(str)
