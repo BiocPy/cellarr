@@ -31,19 +31,22 @@ Example:
 
         import anndata
         import numpy as np
-        import pandas as pd
-        import pytest
-        import tiledb
-        from cellarr import build_cellarrdataset
+        import tempfile
+        from cellarr import build_cellarrdataset, CellArrDataset
 
+        # Create a temporary directory
         tempdir = tempfile.mkdtemp()
 
-        adata1 = anndata.read_h5ad("path/to/object.h5ad")
+        # Read AnnData objects
+        adata1 = anndata.read_h5ad("path/to/object1.h5ad")
+        # or just provide the path
         adata2 = "path/to/object2.h5ad"
 
+        # Build CellArrDataset
         dataset = build_cellarrdataset(
             output_path=tempdir,
-            h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
+            h5ad_or_adata=[adata1, adata2],
+            matrix_dim_dtype=np.float32
         )
 
 """
