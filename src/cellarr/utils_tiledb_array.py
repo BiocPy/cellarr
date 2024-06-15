@@ -23,8 +23,7 @@ def create_tiledb_array(
     matrix_dim_dtype: np.dtype = np.uint32,
     is_sparse: bool = True,
 ):
-    """Create a tiledb file with the provided attributes
-    to persistent storage.
+    """Create a tiledb file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
     related schema files.
@@ -156,7 +155,7 @@ def write_csr_matrix_to_tiledb(
 
 
 def optimize_tiledb_array(tiledb_array_uri: str, verbose: bool = True):
-    """Consolidate tiledb fragments"""
+    """Consolidate tiledb fragments."""
     if verbose:
         print(f"Optimizing {tiledb_array_uri}")
 

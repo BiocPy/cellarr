@@ -1,7 +1,5 @@
 """Build the `CellArrDatset`
 
-
-
 See Also:
     :py:func:`~gypsum_client.upload_api_operations.start_upload`,
     to actually start the upload.
@@ -26,7 +24,7 @@ Example:
         adata2 = "path/to/object2.h5ad"
 
         dataset = build_cellarrdataset(
-            output_path=tempdir, 
+            output_path=tempdir,
             h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
         )
 """

@@ -17,8 +17,7 @@ def remap_anndata(
     var_gene_column: str = "index",
     layer_matrix_name: str = "counts",
 ) -> csr_matrix:
-    """Extract and remap the count matrix to the provided gene set order
-    from the :py:class:`~anndata.AnnData` object.
+    """Extract and remap the count matrix to the provided gene set order from the :py:class:`~anndata.AnnData` object.
 
     Args:
         adata:
@@ -115,8 +114,7 @@ def scan_for_genes(
     var_gene_column: str = "index",
     num_threads: int = 1,
 ) -> List[str]:
-    """Extract and generate the list of unique genes
-    identifiers across files.
+    """Extract and generate the list of unique genes identifiers across files.
 
     Args:
         h5ad_or_adata:

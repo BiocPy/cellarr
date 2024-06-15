@@ -1,5 +1,4 @@
 import tiledb
-from torch.utils.data import Dataset
 
 __author__ = "Tony Kuo"
 __copyright__ = "Jayaram Kancherla"
