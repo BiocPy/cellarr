@@ -35,7 +35,7 @@ def test_build_tiledb():
     adata2 = generate_adata(100, 1000, 100)
 
     dataset = build_cellarrdataset(
-        output_path=tempdir, h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
+        output_path=tempdir, files=[adata1, adata2], matrix_dim_dtype=np.float32
     )
 
     assert dataset is not None
