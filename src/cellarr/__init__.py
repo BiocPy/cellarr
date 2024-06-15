@@ -14,3 +14,6 @@ except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 finally:
     del version, PackageNotFoundError
+
+from .build_cellarrdataset import build_cellarrdataset
+from .CellArrDataset import CellArrDataset
