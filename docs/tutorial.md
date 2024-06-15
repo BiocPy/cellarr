@@ -39,7 +39,7 @@ adata2 = "path/to/object2.h5ad"
 # Build CellArrDataset
 dataset = build_cellarrdataset(
      output_path=tempdir,
-     h5ad_or_adata=[adata1, adata2],
+     files=[adata1, adata2],
      matrix_dim_dtype=np.float32
 )
 ```
