@@ -2,10 +2,12 @@
 <html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="cellarr" href="index.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 --><title>Index - cellarr 0.0.2 documentation</title>
-<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+        <title>Cell Arrays - cellarr 0.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -190,7 +192,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -210,8 +212,8 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Overview</a></li>
+  <ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
@@ -239,7 +241,13 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/tutorial.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
@@ -248,225 +256,89 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          
-<section class="genindex-section">
-  <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#W"><strong>W</strong></a></div>
+          <section class="tex2jax_ignore mathjax_ignore" id="cell-arrays">
+<h1>Cell Arrays<a class="headerlink" href="#cell-arrays" title="Link to this heading">¶</a></h1>
+<p>Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="create-the-cellarrdataset">
+<h3>Create the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#create-the-cellarrdataset" title="Link to this heading">¶</a></h3>
+<p>Creating a CellArrDataset generates three TileDB files in the specified output directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gene_metadata</span></code>: Contains feature annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: Contains cell or sample metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code>: A TileDB-backed sparse array containing expression vectors.</p></li>
+</ul>
+<p><em><strong>Note: Currently only supports either paths to H5AD or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects</strong></em></p>
+<p>To build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> from a collection of <code class="docutils literal notranslate"><span class="pre">H5AD</span></code> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">anndata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span>
+
+<span class="c1"># Create a temporary directory</span>
+<span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+<span class="c1"># Read AnnData objects</span>
+<span class="n">adata1</span> <span class="o">=</span> <span class="n">anndata</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">&quot;path/to/object1.h5ad&quot;</span><span class="p">)</span>
+<span class="c1"># or just provide the path</span>
+<span class="n">adata2</span> <span class="o">=</span> <span class="s2">&quot;path/to/object2.h5ad&quot;</span>
+
+<span class="c1"># Build CellArrDataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
+     <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+     <span class="n">h5ad_or_adata</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+     <span class="n">matrix_dim_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<section id="todo-this-following-section-does-not-work-yet">
+<h4>TODO: This following section does not work yet.<a class="headerlink" href="#todo-this-following-section-does-not-work-yet" title="Link to this heading">¶</a></h4>
+<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializng it to the path where the files were created.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
+
+<span class="c1"># Query data from the dataset</span>
+<span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gene1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene10&quot;</span><span class="p">,</span> <span class="s2">&quot;gene500&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
 </section>
-<section id="_" class="genindex-section">
-  <h2>_</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__del__">__del__() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__init__">__init__() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-    </ul></td>
-  </tr></table>
 </section>
-
-<section id="A" class="genindex-section">
-  <h2>A</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_frame.append_to_tiledb_frame">append_to_tiledb_frame() (in module cellarr.utils_tiledb_frame)</a>
-</li>
-    </ul></td>
-  </tr></table>
 </section>
-
-<section id="B" class="genindex-section">
-  <h2>B</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.build_cellarrdataset.build_cellarrdataset">build_cellarrdataset() (in module cellarr.build_cellarrdataset)</a>
-</li>
-    </ul></td>
-  </tr></table>
 </section>
-
-<section id="C" class="genindex-section">
-  <h2>C</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li>
-    cellarr
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr">module</a>
-</li>
-        </ul></li>
-        <li>
-    cellarr.build_cellarrdataset
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.build_cellarrdataset">module</a>
-</li>
-        </ul></li>
-        <li>
-    cellarr.CellArrDataset
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.CellArrDataset">module</a>
-</li>
-        </ul></li>
-        <li>
-    cellarr.dataloader
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.dataloader">module</a>
-</li>
-        </ul></li>
-        <li>
-    cellarr.utils_anndata
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.utils_anndata">module</a>
-</li>
-        </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li>
-    cellarr.utils_tiledb_array
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.utils_tiledb_array">module</a>
-</li>
-        </ul></li>
-        <li>
-    cellarr.utils_tiledb_frame
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr.utils_tiledb_frame">module</a>
-</li>
-        </ul></li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset">CellArrDataset (class in cellarr.CellArrDataset)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_array.create_tiledb_array">create_tiledb_array() (in module cellarr.utils_tiledb_array)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_column_names">create_tiledb_frame_from_column_names() (in module cellarr.utils_tiledb_frame)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_dataframe">create_tiledb_frame_from_dataframe() (in module cellarr.utils_tiledb_frame)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="G" class="genindex-section">
-  <h2>G</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.build_cellarrdataset.generate_metadata_tiledb_csv">generate_metadata_tiledb_csv() (in module cellarr.build_cellarrdataset)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.build_cellarrdataset.generate_metadata_tiledb_frame">generate_metadata_tiledb_frame() (in module cellarr.build_cellarrdataset)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_metadata_column">get_cell_metadata_column() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_metadata_columns">get_cell_metadata_columns() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_subset">get_cell_subset() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_metadata_column">get_gene_metadata_column() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_metadata_columns">get_gene_metadata_columns() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_subset">get_gene_subset() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-        <li><a href="api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_slice">get_slice() (cellarr.CellArrDataset.CellArrDataset method)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="M" class="genindex-section">
-  <h2>M</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li>
-    module
-
-        <ul>
-          <li><a href="api/cellarr.html#module-cellarr">cellarr</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.build_cellarrdataset">cellarr.build_cellarrdataset</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.CellArrDataset">cellarr.CellArrDataset</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.dataloader">cellarr.dataloader</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.utils_anndata">cellarr.utils_anndata</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.utils_tiledb_array">cellarr.utils_tiledb_array</a>
-</li>
-          <li><a href="api/cellarr.html#module-cellarr.utils_tiledb_frame">cellarr.utils_tiledb_frame</a>
-</li>
-        </ul></li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="O" class="genindex-section">
-  <h2>O</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_array.optimize_tiledb_array">optimize_tiledb_array() (in module cellarr.utils_tiledb_array)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="R" class="genindex-section">
-  <h2>R</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_anndata.remap_anndata">remap_anndata() (in module cellarr.utils_anndata)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="S" class="genindex-section">
-  <h2>S</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_anndata.scan_for_cellcounts">scan_for_cellcounts() (in module cellarr.utils_anndata)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_anndata.scan_for_genes">scan_for_genes() (in module cellarr.utils_anndata)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
-<section id="W" class="genindex-section">
-  <h2>W</h2>
-  <table style="width: 100%" class="indextable genindextable"><tr>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/cellarr.html#cellarr.utils_tiledb_array.write_csr_matrix_to_tiledb">write_csr_matrix_to_tiledb() (in module cellarr.utils_tiledb_array)</a>
-</li>
-    </ul></td>
-  </tr></table>
-</section>
-
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="contributing.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Contributing</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -485,8 +357,33 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Cell Arrays</a><ul>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#create-the-cellarrdataset">Create the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
+<li><a class="reference internal" href="#todo-this-following-section-does-not-work-yet">TODO: This following section does not work yet.</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

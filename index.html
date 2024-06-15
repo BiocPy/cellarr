@@ -3,12 +3,13 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="cellarr" href="readme.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Cell Arrays" href="tutorial.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr 0.0.1 documentation</title>
+        <title>cellarr 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
     
     
@@ -179,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">cellarr 0.0.1 documentation</div></a>
+      <a href="#"><div class="brand">cellarr 0.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,7 +213,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
@@ -263,24 +264,20 @@
         <article role="main" id="furo-main-content">
           <section class="tex2jax_ignore mathjax_ignore" id="cellarr">
 <h1>cellarr<a class="headerlink" href="#cellarr" title="Link to this heading">¶</a></h1>
-<p>Add a short description here!</p>
-<section id="note">
-<h2>Note<a class="headerlink" href="#note" title="Link to this heading">¶</a></h2>
-<blockquote>
-<div><p>This is the main page of your project’s <a class="reference external" href="http://www.sphinx-doc.org/">Sphinx</a> documentation. It is
-formatted in <a class="reference external" href="https://daringfireball.net/projects/markdown/">Markdown</a>. Add additional pages by creating md-files in
-<code class="docutils literal notranslate"><span class="pre">docs</span></code> or rst-files (formatted in <a class="reference external" href="http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html">reStructuredText</a>) and adding links to
-them in the <code class="docutils literal notranslate"><span class="pre">Contents</span></code> section below.</p>
-<p>Please check <a class="reference external" href="http://www.sphinx-doc.org/">Sphinx</a> and <a class="reference external" href="https://myst-parser.readthedocs.io/en/latest/">MyST</a> for more information
-about how to document your project and how to configure your preferences.</p>
-</div></blockquote>
+<p>Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.</p>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h2>
+<p>To get started, install the package from <a class="reference external" href="https://pypi.org/project/cellarr/">PyPI</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cellarr
+</pre></div>
+</div>
 </section>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Overview</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="readme.html#note">Note</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a><ul>
@@ -318,12 +315,12 @@ about how to document your project and how to configure your preferences.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="readme.html">
+          <a class="next-page" href="tutorial.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">cellarr</div>
+                <div class="title">Cell Arrays</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -359,7 +356,7 @@ about how to document your project and how to configure your preferences.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">cellarr</a><ul>
-<li><a class="reference internal" href="#note">Note</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
@@ -373,7 +370,7 @@ about how to document your project and how to configure your preferences.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d45e8c67"></script>
+</div><script src="_static/documentation_options.js?v=e3a6060d"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

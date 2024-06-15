@@ -5,9 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.skeleton - cellarr 0.0.1 documentation</title>
+        <title>cellarr.utils_tiledb_frame - cellarr 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
     
     
@@ -178,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -202,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -211,7 +212,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
@@ -254,171 +255,104 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for cellarr.skeleton</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This is a skeleton file that can serve as a starting point for a Python</span>
-<span class="sd">console script. To run this script uncomment the following lines in the</span>
-<span class="sd">``[options.entry_points]`` section in ``setup.cfg``::</span>
+          <h1>Source code for cellarr.utils_tiledb_frame</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
-<span class="sd">    console_scripts =</span>
-<span class="sd">         fibonacci = cellarr.skeleton:run</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tiledb</span>
 
-<span class="sd">Then run ``pip install .`` (or ``pip install -e .`` for editable mode)</span>
-<span class="sd">which will install the command ``fibonacci`` inside your current environment.</span>
-
-<span class="sd">Besides console scripts, the header (i.e. until ``_logger``...) of this file can</span>
-<span class="sd">also be used as template for Python modules.</span>
-
-<span class="sd">Note:</span>
-<span class="sd">    This file can be renamed depending on your needs or safely removed if not needed.</span>
-
-<span class="sd">References:</span>
-<span class="sd">    - https://setuptools.pypa.io/en/latest/userguide/entry_point.html</span>
-<span class="sd">    - https://pip.pypa.io/en/stable/reference/pip_install</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">__version__</span>
-
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla, Tony Kuo&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
-<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<div class="viewcode-block" id="create_tiledb_frame_from_column_names">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_column_names">[docs]</a>
+<span class="k">def</span> <span class="nf">create_tiledb_frame_from_column_names</span><span class="p">(</span>
+    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">column_dtype</span><span class="o">=</span><span class="nb">str</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
 
-<span class="c1"># ---- Python API ----</span>
-<span class="c1"># The functions defined in this section can be imported by users in their</span>
-<span class="c1"># Python scripts/interactive interpreter, e.g. via</span>
-<span class="c1"># `from cellarr.skeleton import fib`,</span>
-<span class="c1"># when using this Python module as a library.</span>
-
-
-<div class="viewcode-block" id="fib">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.skeleton.fib">[docs]</a>
-<span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fibonacci example function</span>
+<span class="sd">    This will materialize the array directory and all</span>
+<span class="sd">    related schema files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      n (int): integer</span>
+<span class="sd">        tiledb_uri_path:</span>
+<span class="sd">            Path to create the metadata tiledb file.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">      int: n-th Fibonacci number</span>
+<span class="sd">        column_names:</span>
+<span class="sd">            Column names of the data frame.</span>
+
+<span class="sd">        column_dtype:</span>
+<span class="sd">            Type for the columns, usually str.</span>
+<span class="sd">            Defaults to string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
-    <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-    <span class="k">return</span> <span class="n">a</span></div>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">column_names</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+
+    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;schema_only&quot;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 
-<span class="c1"># ---- CLI ----</span>
-<span class="c1"># The functions defined in this section are wrappers around the main Python</span>
-<span class="c1"># API allowing them to be called directly from the terminal as a CLI</span>
-<span class="c1"># executable/script.</span>
+<div class="viewcode-block" id="create_tiledb_frame_from_dataframe">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_dataframe">[docs]</a>
+<span class="k">def</span> <span class="nf">create_tiledb_frame_from_dataframe</span><span class="p">(</span>
+    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">column_types</span><span class="o">=</span><span class="nb">dict</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
 
-
-<div class="viewcode-block" id="parse_args">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.skeleton.parse_args">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse command line parameters</span>
+<span class="sd">    This will materialize the array directory and all</span>
+<span class="sd">    related schema files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      args (List[str]): command line parameters as list of strings</span>
-<span class="sd">          (for example  ``[&quot;--help&quot;]``).</span>
+<span class="sd">        tiledb_uri_path:</span>
+<span class="sd">            Path to create the metadata tiledb file.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">      :obj:`argparse.Namespace`: command line parameters namespace</span>
+<span class="sd">        column_names:</span>
+<span class="sd">            Column names of the data frame.</span>
+
+<span class="sd">        column_types:</span>
+<span class="sd">            Dictionary specifying the column types for each</span>
+<span class="sd">            column in the frame.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Just a Fibonacci demonstration&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-        <span class="n">version</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;cellarr </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;n-th Fibonacci number&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;loglevel&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;set loglevel to INFO&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
-        <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-vv&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--very-verbose&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;loglevel&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;set loglevel to DEBUG&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
-        <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">)</span>
+
+    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">column_types</span><span class="o">=</span><span class="n">column_types</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="setup_logging">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.skeleton.setup_logging">[docs]</a>
-<span class="k">def</span> <span class="nf">setup_logging</span><span class="p">(</span><span class="n">loglevel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup basic logging</span>
+<div class="viewcode-block" id="append_to_tiledb_frame">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.append_to_tiledb_frame">[docs]</a>
+<span class="k">def</span> <span class="nf">append_to_tiledb_frame</span><span class="p">(</span>
+    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">row_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
+
+<span class="sd">    This will materialize the array directory and all</span>
+<span class="sd">    related schema files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      loglevel (int): minimum loglevel for emitting messages</span>
+<span class="sd">        tiledb_uri_path:</span>
+<span class="sd">            Path to create the metadata tiledb file.</span>
+
+<span class="sd">        frame:</span>
+<span class="sd">            Pandas Dataframe to append to tiledb.</span>
+
+<span class="sd">        row_offset:</span>
+<span class="sd">            Row offset to append new rows to.</span>
+<span class="sd">            Defaults to 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logformat</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">%(asctime)s</span><span class="s2">] </span><span class="si">%(levelname)s</span><span class="s2">:</span><span class="si">%(name)s</span><span class="s2">:</span><span class="si">%(message)s</span><span class="s2">&quot;</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
-        <span class="n">level</span><span class="o">=</span><span class="n">loglevel</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">logformat</span><span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span>
+        <span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span> <span class="n">row_start_idx</span><span class="o">=</span><span class="n">row_offset</span>
     <span class="p">)</span></div>
 
-
-
-<div class="viewcode-block" id="main">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.skeleton.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion</span>
-
-<span class="sd">    Instead of returning the value from :func:`fib`, it prints the result to the</span>
-<span class="sd">    ``stdout`` in a nicely formatted message.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      args (List[str]): command line parameters as list of strings</span>
-<span class="sd">          (for example  ``[&quot;--verbose&quot;, &quot;42&quot;]``).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">setup_logging</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">loglevel</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting crazy calculations...&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">-th Fibonacci number is </span><span class="si">{</span><span class="n">fib</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Script ends here&quot;</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="run">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.skeleton.run">[docs]</a>
-<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls :func:`main` passing the CLI arguments extracted from :obj:`sys.argv`</span>
-
-<span class="sd">    This function can be used as entry point to create console scripts with setuptools.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span></div>
-
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="c1"># ^  This is a guard statement that will prevent the following code from</span>
-    <span class="c1">#    being executed in the case someone imports this file instead of</span>
-    <span class="c1">#    executing it as a script.</span>
-    <span class="c1">#    https://docs.python.org/3/library/__main__.html</span>
-
-    <span class="c1"># After installing your project with pip, users can also run your Python</span>
-    <span class="c1"># modules as scripts via the ``-m`` flag, as defined in PEP 338::</span>
-    <span class="c1">#</span>
-    <span class="c1">#     python -m cellarr.skeleton 42</span>
-    <span class="c1">#</span>
-    <span class="n">run</span><span class="p">()</span>
 </pre></div>
         </article>
       </div>
@@ -451,7 +385,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+</div><script src="../../_static/documentation_options.js?v=e3a6060d"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>

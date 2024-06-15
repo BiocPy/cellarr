@@ -1,25 +1,21 @@
 # cellarr
 
-Add a short description here!
+Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.
 
+## Install
 
-## Note
+To get started, install the package from [PyPI](https://pypi.org/project/cellarr/)
 
-> This is the main page of your project's [Sphinx] documentation. It is
-> formatted in [Markdown]. Add additional pages by creating md-files in
-> `docs` or rst-files (formatted in [reStructuredText]) and adding links to
-> them in the `Contents` section below.
->
-> Please check [Sphinx] and [MyST] for more information
-> about how to document your project and how to configure your preferences.
-
+```bash
+pip install cellarr
+```
 
 ## Contents
 
 ```{toctree}
 :maxdepth: 2
 
-Overview <readme>
+Overview <tutorial>
 Contributions & Help <contributing>
 License <license>
 Authors <authors>
