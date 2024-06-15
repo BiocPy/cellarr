@@ -1,3 +1,36 @@
+"""Build the `CellArrDatset`
+
+
+
+See Also:
+    :py:func:`~gypsum_client.upload_api_operations.start_upload`,
+    to actually start the upload.
+
+    :py:func:`~gypsum_client.clone_operations.clone_version`,
+    to prepare the symlinks.
+
+Example:
+
+    .. code-block:: python
+
+        import anndata
+        import numpy as np
+        import pandas as pd
+        import pytest
+        import tiledb
+        from cellarr import build_cellarrdataset
+
+        tempdir = tempfile.mkdtemp()
+
+        adata1 = anndata.read_h5ad("path/to/object.h5ad")
+        adata2 = "path/to/object2.h5ad"
+
+        dataset = build_cellarrdataset(
+            output_path=tempdir, 
+            h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
+        )
+"""
+
 import os
 import warnings
 from typing import List, Union
@@ -9,13 +42,14 @@ import pandas as pd
 from . import utils_anndata as uad
 from . import utils_tiledb_array as uta
 from . import utils_tiledb_frame as utf
+from .CellArrDataset import CellArrDataset
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
-def generate_tiledb(
+def build_cellarrdataset(
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
     output_path: str,
     num_cells: int = None,
@@ -284,6 +318,8 @@ def generate_tiledb(
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_counts_uri)
+
+    return CellArrDataset(dataset_path=output_path, counts_tdb_uri=layer_matrix_name)
 
 
 def generate_metadata_tiledb_frame(

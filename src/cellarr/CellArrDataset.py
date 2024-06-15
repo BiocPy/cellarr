@@ -1,3 +1,4 @@
+import os
 from typing import Union
 
 import tiledb
@@ -12,9 +13,10 @@ class CellArrDataset:
 
     def __init__(
         self,
-        counts_tdb_uri: str,
-        gene_metadata_uri: str,
-        cell_metadata_uri: str,
+        dataset_path: str,
+        counts_tdb_uri: str = "counts",
+        gene_metadata_uri: str = "gene_metadata",
+        cell_metadata_uri: str = "cell_metadata",
     ):
         """Initialize a ``CellArr`` dataset.
 
@@ -28,10 +30,19 @@ class CellArrDataset:
             cell_metadata_uri:
                 Path to cell metadata TileDB.
         """
+
+        if not os.path.isdir(dataset_path):
+            raise ValueError("'dataset_path' is not a directory.")
+
+        self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
-        self._counts_tdb_tdb = tiledb.open(counts_tdb_uri, "r")
-        self._gene_metadata_tdb = tiledb.open(gene_metadata_uri, "r")
-        self._cell_metadata_tdb = tiledb.open(cell_metadata_uri, "r")
+        self._counts_tdb_tdb = tiledb.open(f"{dataset_path}/{counts_tdb_uri}", "r")
+        self._gene_metadata_tdb = tiledb.open(
+            f"{dataset_path}/{gene_metadata_uri}", "r"
+        )
+        self._cell_metadata_tdb = tiledb.open(
+            f"{dataset_path}/{cell_metadata_uri}", "r"
+        )
 
     def __del__(self):
         self._counts_tdb_tdb.close()

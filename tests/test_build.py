@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import tiledb
-from cellarr import generate_tiledb
+from cellarr import build_cellarrdataset
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -34,7 +34,7 @@ def test_build_tiledb():
     adata1 = generate_adata(1000, 100, 10)
     adata2 = generate_adata(100, 1000, 100)
 
-    generate_tiledb(
+    build_cellarrdataset(
         output_path=tempdir, h5ad_or_adata=[adata1, adata2], matrix_dim_dtype=np.float32
     )
 
