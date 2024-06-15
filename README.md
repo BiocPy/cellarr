@@ -17,7 +17,7 @@
 
 Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.
 
-The `CellArrDataset` is designed to store single-cell RNA-seq 
+The `CellArrDataset` is designed to store single-cell RNA-seq
 datasets but can be generalized to store any 2-dimensional experimental data.
 
 ## Install
@@ -38,8 +38,8 @@ Creating a `CellArrDataset` generates three TileDB files in the specified output
 - `cell_metadata`: Contains cell or sample metadata.
 - `matrix`: A TileDB-backed sparse array containing expression vectors.
 
-The TileDB matrix file is stored in a cell X gene orientation. This orientation 
-is chosen because the fastest-changing dimension as new files are added to the 
+The TileDB matrix file is stored in a cell X gene orientation. This orientation
+is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.
 
 ***Note: Currently only supports either paths to H5AD or `AnnData` objects***
