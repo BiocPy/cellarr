@@ -28,7 +28,7 @@ def generate_adata(n, d, k):
     return adata
 
 
-def test_build_tiledb():
+def test_build_cellarrdataset():
     tempdir = tempfile.mkdtemp()
 
     adata1 = generate_adata(1000, 100, 10)
