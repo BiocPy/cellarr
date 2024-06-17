@@ -68,7 +68,7 @@ dataset = build_cellarrdataset(
 )
 ```
 
-***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension. 
+***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension.
 if these are `AnnData` or `H5AD`objects, all objects must contain an index (in the `var` slot) specifying the gene symbols.***
 
 Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
