@@ -30,9 +30,9 @@ pip install cellarr
 
 ## Usage
 
-### Create a `CellArrDataset`
+### Build a `CellArrDataset`
 
-Creating a `CellArrDataset` generates three TileDB files in the specified output directory:
+Building a `CellArrDataset` generates three TileDB files in the specified output directory:
 
 - `gene_metadata`: Contains feature annotations.
 - `cell_metadata`: Contains cell or sample metadata.
@@ -67,6 +67,12 @@ dataset = build_cellarrdataset(
      matrix_dim_dtype=np.float32
 )
 ```
+
+***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension. 
+if these are `AnnData` or `H5AD`objects, all objects must contain an index (in the `var` slot) specifying the gene symbols.***
+
+Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
+
 ----
 
 #### TODO: This following section does not work yet.
