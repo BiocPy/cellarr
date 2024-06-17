@@ -1,9 +1,10 @@
-"""Build the `CellArrDatset`
+"""Build the `CellArrDatset`.
 
 The `CellArrDataset` method is designed to store single-cell RNA-seq
 datasets but can be generalized to store any 2-dimensional experimental data.
 
 This method creates three TileDB files in the directory specified by `output_path`:
+
 - `gene_metadata`: A TileDB file containing gene metadata.
 - `cell_metadata`: A TileDB file containing cell metadata.
 - A matrix TileDB file named as specified by the `layer_matrix_name` parameter.
@@ -12,13 +13,15 @@ The TileDB matrix file is stored in a cell X gene orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.
 
-## Process
+Process:
 
 1. **Scan the Collection**: Scan the entire collection of files to create
 a unique set of gene symbols. Store this gene set as the
 `gene_metadata` TileDB file.
+
 2. **Store Cell Metadata**: Store cell metadata as the
 `cell_metadata` TileDB file.
+
 3. **Remap and Orient Data**: For each dataset in the collection,
 remap and orient the gene dimension using the gene set from Step 1.
 This step ensures consistency in gene measurement and order, even if

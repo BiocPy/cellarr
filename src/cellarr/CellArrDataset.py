@@ -18,9 +18,14 @@ class CellArrDataset:
         gene_metadata_uri: str = "gene_metadata",
         cell_metadata_uri: str = "cell_metadata",
     ):
-        """Initialize a ``CellArr`` dataset.
+        """Initialize a ``CellArrDataset``.
 
         Args:
+            dataset_path:
+                Path to the directory containing the tiledb files.
+                Usually the output_path used in the
+                :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+
             counts_tdb_uri:
                 Path to counts TileDB.
 
@@ -37,12 +42,8 @@ class CellArrDataset:
         self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
         self._counts_tdb_tdb = tiledb.open(f"{dataset_path}/{counts_tdb_uri}", "r")
-        self._gene_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{gene_metadata_uri}", "r"
-        )
-        self._cell_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{cell_metadata_uri}", "r"
-        )
+        self._gene_metadata_tdb = tiledb.open(f"{dataset_path}/{gene_metadata_uri}", "r")
+        self._cell_metadata_tdb = tiledb.open(f"{dataset_path}/{cell_metadata_uri}", "r")
 
     def __del__(self):
         self._counts_tdb_tdb.close()
@@ -65,9 +66,7 @@ class CellArrDataset:
     def get_cell_metadata_column(self, column_name: str):
         return self._cell_metadata_tdb.query(attrs=[column_name]).df[:]
 
-    def get_cell_subset(
-        self, subset: Union[slice, tiledb.QueryCondition], columns=None
-    ):
+    def get_cell_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None):
         if columns is None:
             columns = self.get_cell_metadata_columns()
 
@@ -86,9 +85,7 @@ class CellArrDataset:
     def get_gene_metadata_column(self, column_name: str):
         return self._gene_metadata_tdb.query(attrs=[column_name]).df[:]
 
-    def get_gene_subset(
-        self, subset: Union[slice, tiledb.QueryCondition], columns=None
-    ):
+    def get_gene_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None):
         if columns is None:
             columns = self.get_gene_metadata_columns()
 
