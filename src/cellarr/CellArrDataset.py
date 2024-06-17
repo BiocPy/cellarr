@@ -42,8 +42,12 @@ class CellArrDataset:
         self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
         self._counts_tdb_tdb = tiledb.open(f"{dataset_path}/{counts_tdb_uri}", "r")
-        self._gene_metadata_tdb = tiledb.open(f"{dataset_path}/{gene_metadata_uri}", "r")
-        self._cell_metadata_tdb = tiledb.open(f"{dataset_path}/{cell_metadata_uri}", "r")
+        self._gene_metadata_tdb = tiledb.open(
+            f"{dataset_path}/{gene_metadata_uri}", "r"
+        )
+        self._cell_metadata_tdb = tiledb.open(
+            f"{dataset_path}/{cell_metadata_uri}", "r"
+        )
 
     def __del__(self):
         self._counts_tdb_tdb.close()
@@ -66,7 +70,9 @@ class CellArrDataset:
     def get_cell_metadata_column(self, column_name: str):
         return self._cell_metadata_tdb.query(attrs=[column_name]).df[:]
 
-    def get_cell_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None):
+    def get_cell_subset(
+        self, subset: Union[slice, tiledb.QueryCondition], columns=None
+    ):
         if columns is None:
             columns = self.get_cell_metadata_columns()
 
@@ -85,7 +91,9 @@ class CellArrDataset:
     def get_gene_metadata_column(self, column_name: str):
         return self._gene_metadata_tdb.query(attrs=[column_name]).df[:]
 
-    def get_gene_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None):
+    def get_gene_subset(
+        self, subset: Union[slice, tiledb.QueryCondition], columns=None
+    ):
         if columns is None:
             columns = self.get_gene_metadata_columns()
 
