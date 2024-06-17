@@ -1,15 +1,3 @@
-<!-- These are examples of badges you might want to add to your README:
-     please update the URLs accordingly
-
-[![Built Status](https://api.cirrus-ci.com/github/<USER>/cellarr.svg?branch=main)](https://cirrus-ci.com/github/<USER>/cellarr)
-[![ReadTheDocs](https://readthedocs.org/projects/cellarr/badge/?version=latest)](https://cellarr.readthedocs.io/en/stable/)
-[![Coveralls](https://img.shields.io/coveralls/github/<USER>/cellarr/main.svg)](https://coveralls.io/r/<USER>/cellarr)
-[![PyPI-Server](https://img.shields.io/pypi/v/cellarr.svg)](https://pypi.org/project/cellarr/)
-[![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/cellarr.svg)](https://anaconda.org/conda-forge/cellarr)
-[![Monthly Downloads](https://pepy.tech/badge/cellarr/month)](https://pepy.tech/project/cellarr)
-[![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter)](https://twitter.com/cellarr)
--->
-
 [![PyPI-Server](https://img.shields.io/pypi/v/cellarr.svg)](https://pypi.org/project/cellarr/)
 ![Unit tests](https://github.com/BiocPy/cellarr/actions/workflows/pypi-test.yml/badge.svg)
 
@@ -68,16 +56,28 @@ dataset = build_cellarrdataset(
 )
 ```
 
-***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension. 
+The build process usually involves 3 steps:
+
+1. **Scan the Collection**: Scan the entire collection of files to create
+a unique set of gene symbols. Store this gene set as the
+`gene_metadata` TileDB file.
+2. **Store Cell Metadata**: Store cell metadata as the
+`cell_metadata` TileDB file.
+3. **Remap and Orient Data**: For each dataset in the collection,
+remap and orient the gene dimension using the gene set from Step 1.
+This step ensures consistency in gene measurement and order, even if
+some genes are unmeasured or ordered differently in the original experiments.
+
+***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension.
 if these are `AnnData` or `H5AD`objects, all objects must contain an index (in the `var` slot) specifying the gene symbols.***
 
 Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
 
 ----
 
-#### TODO: This following section does not work yet.
+#### TODO: This following section does not work yet
 
-Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializng it to the path where the files were created.
+Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.
 
 ```python
 # Create a CellArrDataset object from the existing dataset
@@ -92,4 +92,4 @@ expression_data = dataset[10, ["gene1", "gene10", "gene500"]]
 ## Note
 
 This project has been set up using PyScaffold 4.5. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
+information on PyScaffold see <https://pyscaffold.org/>.

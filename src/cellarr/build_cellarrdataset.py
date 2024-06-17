@@ -71,6 +71,7 @@ __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
+# TODO: Accept files as a dictionary with names to each dataset.
 def build_cellarrdataset(
     files: List[Union[str, anndata.AnnData]],
     output_path: str,
@@ -96,13 +97,14 @@ def build_cellarrdataset(
     and package.
 
     There's a few assumptions this process makes:
-    - If object in ``files`` is an AnnData or H5AD object, these must
+    - If object in ``files`` is an :py:class:`~anndata.AnnData` or H5AD object, these must
     contain an assay matrix in layer names as ``layer_matrix_name``
     parameter.
     - Feature information must contain a column defined by
     ``var_gene_column`` that contains gene symbols or a common entity
     across all files.
-    -
+    - If no ``cell_metadata`` is provided, we scan to count the number of cells
+    and create a simple range index.
 
     Args:
         files:
@@ -137,10 +139,15 @@ def build_cellarrdataset(
             metadata across all objects.
 
             Regardless of the input type, the number of rows in the file or
-            DataFrame must match the ``num_cells`` argument.
+            DataFrame must match the ``num_cells`` argument. Additionally,
+            the order of cells is expected to be in the same order as the input
+            list of ``files``. In this scenario, the file is already expected to
+            contain mappings between cells and datasets already.
 
-            Defaults to None, then a simple range index is created using the
-            ``num_cells`` argument.
+            Defaults to None, We scan all files to count the number of cells,
+            then create a simple cell metadata DataFrame containing mappings from
+            cells to their associated datasets. Each dataset is named as
+            ``dataset_{}`` with the index from the list of ``files``.
 
         gene_metadata:
             Path to the file containing a concatenated gene annotations across
@@ -260,20 +267,32 @@ def build_cellarrdataset(
         if optimize_tiledb:
             uta.optimize_tiledb_array(_gene_output_uri)
 
+    warnings.warn(
+        "Scanning all files to compute cell counts, this may take long",
+        UserWarning,
+    )
+    cell_counts = uad.scan_for_cellcounts(files, num_threads=num_threads)
+    _cellindex_in_dataset = []
+    _dataset = []
+    for idx, cci in enumerate(cell_counts):
+        _cellindex_in_dataset.extend([x for x in range(cci)])
+        _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
+
+    _pseudo_cell_metadata = pd.DataFrame(
+        {"_cell_counts": _cellindex_in_dataset, "_cell_dataset_index": _dataset}
+    )
+
+    if num_cells is None:
+        num_cells = sum(cell_counts)
+    else:
+        if num_cells != sum(cell_counts):
+            raise ValueError("'num_cells' does not match the number of cells.")
+
     if cell_metadata is None:
-        if num_cells is None:
-            warnings.warn(
-                "Scanning all files to compute cell counts, this may take long",
-                UserWarning,
-            )
-            cell_counts = uad.scan_for_cellcounts(files, num_threads=num_threads)
-            num_cells = sum(cell_counts)
-
-        cell_metadata = pd.DataFrame({"cell_index": [x for x in range(num_cells)]})
-
-    if isinstance(cell_metadata, str):
+        cell_metadata = _pseudo_cell_metadata
+    elif isinstance(cell_metadata, str):
         warnings.warn(
-            "Scanning 'cell_metadata' to count number of cells, this may take long",
+            "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
             UserWarning,
         )
         with open(cell_metadata) as fp:
@@ -281,14 +300,15 @@ def build_cellarrdataset(
             for _ in fp:
                 count += 1
 
-        num_cells = count - 1  # removing 1 for the header line
+        if num_cells != count - 1:
+            raise ValueError(
+                "Number of rows in the 'cell_metadata' csv does not match the number of cells across files."
+            )
     elif isinstance(cell_metadata, pd.DataFrame):
-        num_cells = len(cell_metadata)
-
-    if num_cells is None:
-        raise ValueError(
-            "Cannot determine 'num_cells', we recommend setting this parameter."
-        )
+        if num_cells != len(cell_metadata):
+            raise ValueError(
+                "Number of rows in 'cell_metadata' does not match the number of cells across files."
+            )
 
     # Create the cell metadata tiledb
     if not skip_cell_tiledb:
