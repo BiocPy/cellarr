@@ -7,7 +7,7 @@ This method creates three TileDB files in the directory specified by `output_pat
 
 - `gene_metadata`: A TileDB file containing gene metadata.
 - `cell_metadata`: A TileDB file containing cell metadata.
-- A matrix TileDB file named as specified by the `layer_matrix_name` parameter.
+- A matrix TileDB file named by the `layer_matrix_name` parameter.
 
 The TileDB matrix file is stored in a cell X gene orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
@@ -62,8 +62,8 @@ import numpy as np
 import pandas as pd
 
 from . import utils_anndata as uad
-from . import utils_tiledb_array as uta
-from . import utils_tiledb_frame as utf
+from . import buildutils_tiledb_array as uta
+from . import buildutils_tiledb_frame as utf
 from .CellArrDataset import CellArrDataset
 
 __author__ = "Jayaram Kancherla"
@@ -232,23 +232,24 @@ def build_cellarrdataset(
 
         gene_set = sorted(gene_set)
 
-        gene_metadata = pd.DataFrame({"genes": gene_set}, index=gene_set)
+        gene_metadata = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_metadata, list):
         _gene_list = sorted(list(set(gene_metadata)))
-        gene_metadata = pd.DataFrame({"genes": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
     elif isinstance(gene_metadata, dict):
         _gene_list = sorted(list(gene_metadata.keys()))
-        gene_metadata = pd.DataFrame({"genes": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
     elif isinstance(gene_metadata, str):
         gene_metadata = pd.read_csv(gene_metadata, index=True, header=True)
-
-    gene_metadata["genes_index"] = gene_metadata.index.tolist()
+        gene_metadata["cellarr_gene_index"] = gene_metadata.index.tolist()
 
     if not isinstance(gene_metadata, pd.DataFrame):
         raise TypeError("'gene_metadata' must be a pandas dataframe.")
 
     if len(gene_metadata.index.unique()) != len(gene_metadata.index.tolist()):
         raise ValueError("'gene_metadata' must contain a unique index.")
+
+    gene_metadata.reset_index(drop=True, inplace=True)
 
     if num_genes is None:
         num_genes = len(gene_metadata)
@@ -367,7 +368,7 @@ def build_cellarrdataset(
         if optimize_tiledb:
             uta.optimize_tiledb_array(_counts_uri)
 
-    return CellArrDataset(dataset_path=output_path, counts_tdb_uri=layer_matrix_name)
+    return CellArrDataset(dataset_path=output_path, matrix_tdb_uri=layer_matrix_name)
 
 
 def generate_metadata_tiledb_frame(

@@ -6,7 +6,7 @@ import anndata
 import numpy as np
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
-__author__ = "Jayaram Kancherla, Tony Kuo"
+__author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 

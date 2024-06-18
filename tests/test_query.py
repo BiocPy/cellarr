@@ -44,17 +44,11 @@ def test_query_cellarrdataset():
     cfp = tiledb.open(f"{tempdir}/counts", "r")
     gfp = tiledb.open(f"{tempdir}/gene_metadata", "r")
 
-    genes = gfp.df[:]
+    cd = CellArrDataset(dataset_path=tempdir)
 
     gene_list = ["gene_1", "gene_95", "gene_50"]
-    gene_indices_tdb = sorted([genes.index.tolist().index(x) for x in gene_list])
+    result1 = cd[0, gene_list]
 
-    adata1_gene_indices = sorted(
-        [adata1.var.index.tolist().index(x) for x in gene_list]
-    )
-    adata2_gene_indices = sorted(
-        [adata2.var.index.tolist().index(x) for x in gene_list]
-    )
 
     assert np.allclose(
         cfp.multi_index[0, gene_indices_tdb]["counts"],
