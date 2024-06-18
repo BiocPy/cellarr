@@ -49,7 +49,6 @@ def test_query_cellarrdataset():
     gene_list = ["gene_1", "gene_95", "gene_50"]
     result1 = cd[0, gene_list]
 
-
     assert np.allclose(
         cfp.multi_index[0, gene_indices_tdb]["counts"],
         adata1.layers["counts"][0, adata1_gene_indices],

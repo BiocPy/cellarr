@@ -12,9 +12,7 @@ __license__ = "MIT"
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata
-    in a TileDB backed store.
-    """
+    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
 
     def __init__(
         self,
@@ -125,8 +123,7 @@ class CellArrDataset:
         return qtd.get_a_column(self._gene_metadata_tdb, column_name=column_name)
 
     def get_gene_metadata_index(self):
-        """Get index of the ``gene_metadata`` store. This typically should store
-        all unique gene symbols.
+        """Get index of the ``gene_metadata`` store. This typically should store all unique gene symbols.
 
         Returns:
             List of unique symbols.

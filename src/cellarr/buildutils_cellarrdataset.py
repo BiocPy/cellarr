@@ -235,10 +235,14 @@ def build_cellarrdataset(
         gene_metadata = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_metadata, list):
         _gene_list = sorted(list(set(gene_metadata)))
-        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame(
+            {"cellarr_gene_index": _gene_list}, index=_gene_list
+        )
     elif isinstance(gene_metadata, dict):
         _gene_list = sorted(list(gene_metadata.keys()))
-        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame(
+            {"cellarr_gene_index": _gene_list}, index=_gene_list
+        )
     elif isinstance(gene_metadata, str):
         gene_metadata = pd.read_csv(gene_metadata, index=True, header=True)
         gene_metadata["cellarr_gene_index"] = gene_metadata.index.tolist()
