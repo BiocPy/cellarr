@@ -12,9 +12,7 @@ __license__ = "MIT"
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata 
-    in a TileDB backed store.
-    """
+    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
 
     def __init__(
         self,
@@ -164,7 +162,9 @@ class CellArrDataset:
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._gene_annotation_tdb, subset=subset, columns=columns
+        )
 
     def get_slice(
         self,

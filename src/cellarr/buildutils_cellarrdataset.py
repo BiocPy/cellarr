@@ -61,7 +61,6 @@ import warnings
 from typing import List, Union
 
 import anndata
-import numpy as np
 import pandas as pd
 
 from . import utils_anndata as uad
@@ -96,12 +95,12 @@ def build_cellarrdataset(
     and package.
 
     There's a few assumptions this process makes:
-    - If object in ``files`` is an :py:class:`~anndata.AnnData` 
-    or H5AD object, these must contain an assay matrix in layer 
+    - If object in ``files`` is an :py:class:`~anndata.AnnData`
+    or H5AD object, these must contain an assay matrix in layer
     names as ``layer_matrix_name`` parameter.
     - Feature information must contain a column defined by
-    ``var_feature_column`` in the 
-    :py:class:`~cellarr.build_options.GeneAnnotationOptions.` that 
+    ``var_feature_column`` in the
+    :py:class:`~cellarr.build_options.GeneAnnotationOptions.` that
     contains feature ids or gene symbols across all files.
     - If no ``cell_metadata`` is provided, we scan to count the number of cells
     and create a simple range index.
@@ -192,18 +191,26 @@ def build_cellarrdataset(
         raise ValueError("'output_path' must be a directory.")
 
     if gene_metadata is None:
-        warnings.warn("Scanning all files for gene symbols, this may take long", UserWarning)
-        gene_set = uad.scan_for_features(files, var_gene_column=var_gene_column, num_threads=num_threads)
+        warnings.warn(
+            "Scanning all files for gene symbols, this may take long", UserWarning
+        )
+        gene_set = uad.scan_for_features(
+            files, var_gene_column=var_gene_column, num_threads=num_threads
+        )
 
         gene_set = sorted(gene_set)
 
         gene_metadata = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_metadata, list):
         _gene_list = sorted(list(set(gene_metadata)))
-        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame(
+            {"cellarr_gene_index": _gene_list}, index=_gene_list
+        )
     elif isinstance(gene_metadata, dict):
         _gene_list = sorted(list(gene_metadata.keys()))
-        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
+        gene_metadata = pd.DataFrame(
+            {"cellarr_gene_index": _gene_list}, index=_gene_list
+        )
     elif isinstance(gene_metadata, str):
         gene_metadata = pd.read_csv(gene_metadata, index=True, header=True)
         gene_metadata["cellarr_gene_index"] = gene_metadata.index.tolist()
@@ -226,7 +233,9 @@ def build_cellarrdataset(
             _col_types[col] = "ascii"
 
         _gene_output_uri = f"{output_path}/gene_metadata"
-        generate_metadata_tiledb_frame(_gene_output_uri, gene_metadata, column_types=_col_types)
+        generate_metadata_tiledb_frame(
+            _gene_output_uri, gene_metadata, column_types=_col_types
+        )
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_gene_output_uri)
@@ -242,7 +251,9 @@ def build_cellarrdataset(
         _cellindex_in_dataset.extend([x for x in range(cci)])
         _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
 
-    _pseudo_cell_metadata = pd.DataFrame({"_cell_counts": _cellindex_in_dataset, "_cell_dataset_index": _dataset})
+    _pseudo_cell_metadata = pd.DataFrame(
+        {"_cell_counts": _cellindex_in_dataset, "_cell_dataset_index": _dataset}
+    )
 
     if num_cells is None:
         num_cells = sum(cell_counts)
@@ -268,7 +279,9 @@ def build_cellarrdataset(
             )
     elif isinstance(cell_metadata, pd.DataFrame):
         if num_cells != len(cell_metadata):
-            raise ValueError("Number of rows in 'cell_metadata' does not match the number of cells across files.")
+            raise ValueError(
+                "Number of rows in 'cell_metadata' does not match the number of cells across files."
+            )
 
     # Create the cell metadata tiledb
     if not skip_cell_tiledb:
@@ -276,7 +289,9 @@ def build_cellarrdataset(
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
-            generate_metadata_tiledb_csv(_cell_output_uri, cell_metadata, _cell_metaframe.columns)
+            generate_metadata_tiledb_csv(
+                _cell_output_uri, cell_metadata, _cell_metaframe.columns
+            )
         elif isinstance(cell_metadata, pd.DataFrame):
             _col_types = {}
             for col in gene_metadata.columns:
@@ -284,7 +299,9 @@ def build_cellarrdataset(
 
             _to_write = gene_metadata.astype(str)
 
-            generate_metadata_tiledb_frame(_cell_output_uri, _to_write, column_types=_col_types)
+            generate_metadata_tiledb_frame(
+                _cell_output_uri, _to_write, column_types=_col_types
+            )
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_cell_output_uri)
@@ -315,7 +332,9 @@ def build_cellarrdataset(
                 var_gene_column=var_gene_column,
                 layer_matrix_name=layer_matrix_name,
             )
-            uta.write_csr_matrix_to_tiledb(_counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype)
+            uta.write_csr_matrix_to_tiledb(
+                _counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype
+            )
             offset += int(mat.shape[0])
 
         if optimize_tiledb:
@@ -324,7 +343,9 @@ def build_cellarrdataset(
     return CellArrDataset(dataset_path=output_path, matrix_tdb_uri=layer_matrix_name)
 
 
-def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):
+def generate_metadata_tiledb_frame(
+    output_uri: str, input: pd.DataFrame, column_types: dict = None
+):
     """Generate metadata tiledb from a :pu:class:`~pandas.DataFrame`.
 
     Args:
@@ -341,7 +362,9 @@ def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_
             Defaults to None.
     """
     _to_write = input.astype(str)
-    utf.create_tiledb_frame_from_dataframe(output_uri, _to_write, column_types=column_types)
+    utf.create_tiledb_frame_from_dataframe(
+        output_uri, _to_write, column_types=column_types
+    )
 
 
 def generate_metadata_tiledb_csv(
@@ -377,7 +400,9 @@ def generate_metadata_tiledb_csv(
 
     for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
         if initfile:
-            utf.create_tiledb_frame_from_column_names(output_uri, chunk.columns, column_dtype)
+            utf.create_tiledb_frame_from_column_names(
+                output_uri, chunk.columns, column_dtype
+            )
             initfile = False
 
         _to_write = chunk.astype(str)
