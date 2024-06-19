@@ -17,8 +17,8 @@ def remap_anndata(
     var_feature_column: str = "index",
     layer_matrix_name: str = "counts",
 ) -> csr_matrix:
-    """Extract and remap the count matrix to the provided feature (gene) set
-    order from the :py:class:`~anndata.AnnData` object.
+    """Extract and remap the count matrix to the provided feature (gene) set order from the :py:class:`~anndata.AnnData`
+    object.
 
     Args:
         adata:

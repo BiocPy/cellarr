@@ -12,9 +12,7 @@ __license__ = "MIT"
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata
-    in a TileDB backed store.
-    """
+    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
 
     def __init__(
         self,
