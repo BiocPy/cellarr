@@ -9,8 +9,8 @@ __license__ = "MIT"
 
 @dataclass
 class CellMetadataOptions:
-    """Optional arguments for the ``cell_metadata`` store
-    for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``cell_metadata`` store for
+    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         skip:
@@ -36,8 +36,8 @@ class CellMetadataOptions:
 
 @dataclass
 class GeneAnnotationOptions:
-    """Optional arguments for the ``gene_annotation`` store
-    for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``gene_annotation`` store for
+    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         feature_column:
@@ -68,8 +68,7 @@ class GeneAnnotationOptions:
 
 @dataclass
 class MatrixOptions:
-    """Optional arguments for the ``matrix`` store
-    for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``matrix`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         matrix_name:
@@ -102,8 +101,7 @@ class MatrixOptions:
 
 @dataclass
 class SampleMetadataOptions:
-    """Optional arguments for the ``sample`` store
-    for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``sample`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         skip:

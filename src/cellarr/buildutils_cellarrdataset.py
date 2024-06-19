@@ -61,7 +61,6 @@ import warnings
 from typing import List, Union
 
 import anndata
-import numpy as np
 import pandas as pd
 
 from . import utils_anndata as uad
