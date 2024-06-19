@@ -5,28 +5,31 @@ datasets but can be generalized to store any 2-dimensional experimental data.
 
 This method creates three TileDB files in the directory specified by `output_path`:
 
-- `gene_metadata`: A TileDB file containing gene metadata.
 - `cell_metadata`: A TileDB file containing cell metadata.
+- `gene_annotation`: A TileDB file containing feature/gene annotations.
 - A matrix TileDB file named by the `layer_matrix_name` parameter.
+- `sample_metadata`: A TileDB file containing sample metadata.
 
-The TileDB matrix file is stored in a cell X gene orientation. This orientation
+The TileDB matrix file is stored in a ``cell X gene`` orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.
 
 Process:
 
 1. **Scan the Collection**: Scan the entire collection of files to create
-a unique set of gene symbols. Store this gene set as the
-`gene_metadata` TileDB file.
+a unique set of feature ids (e.g. gene symbols). Store this set as the
+`gene_annotation` TileDB file.
 
-2. **Store Cell Metadata**: Store cell metadata as the
-`cell_metadata` TileDB file.
+2. **Store Cell Metadata**: Store cell metadata in the `cell_metadata`
+TileDB file.
 
 3. **Remap and Orient Data**: For each dataset in the collection,
-remap and orient the gene dimension using the gene set from Step 1.
+remap and orient the feature dimension using the feature set from Step 1.
 This step ensures consistency in gene measurement and order, even if
 some genes are unmeasured or ordered differently in the original experiments.
 
+4. **Sample Metadata**: Store sample metadata in `sample_metadata`
+TileDB file.
 
 Example:
 
@@ -65,6 +68,7 @@ from . import utils_anndata as uad
 from . import buildutils_tiledb_array as uta
 from . import buildutils_tiledb_frame as utf
 from .CellArrDataset import CellArrDataset
+from . import build_options as bopt
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -75,18 +79,13 @@ __license__ = "MIT"
 def build_cellarrdataset(
     files: List[Union[str, anndata.AnnData]],
     output_path: str,
-    num_cells: int = None,
-    num_genes: int = None,
+    gene_annotation: Union[List[str], dict, str, pd.DataFrame] = None,
+    sample_metadata: Union[pd.DataFrame, str] = None,
     cell_metadata: Union[pd.DataFrame, str] = None,
-    gene_metadata: Union[List[str], dict, str, pd.DataFrame] = None,
-    var_gene_column: str = "index",
-    layer_matrix_name: str = "counts",
-    skip_gene_tiledb: bool = False,
-    skip_cell_tiledb: bool = False,
-    skip_matrix_tiledb: bool = False,
-    cell_dim_dtype: np.dtype = np.uint32,
-    gene_dim_dtype: np.dtype = np.uint32,
-    matrix_dim_dtype: np.dtype = np.uint32,
+    sample_metadata_options: bopt.SampleMetadataOptions = bopt.SampleMetadataOptions(),
+    cell_metadata_options: bopt.CellMetadataOptions = bopt.CellMetadataOptions(),
+    gene_annotation_options: bopt.GeneAnnotationOptions = bopt.GeneAnnotationOptions(),
+    matrix_options: bopt.MatrixOptions = bopt.MatrixOptions(),
     optimize_tiledb: bool = True,
     num_threads: int = 1,
 ):
@@ -97,152 +96,114 @@ def build_cellarrdataset(
     and package.
 
     There's a few assumptions this process makes:
-    - If object in ``files`` is an :py:class:`~anndata.AnnData` or H5AD object, these must
-    contain an assay matrix in layer names as ``layer_matrix_name``
-    parameter.
+    - If object in ``files`` is an :py:class:`~anndata.AnnData` 
+    or H5AD object, these must contain an assay matrix in layer 
+    names as ``layer_matrix_name`` parameter.
     - Feature information must contain a column defined by
-    ``var_gene_column`` that contains gene symbols or a common entity
-    across all files.
+    ``var_feature_column`` in the 
+    :py:class:`~cellarr.build_options.GeneAnnotationOptions.` that 
+    contains feature ids or gene symbols across all files.
     - If no ``cell_metadata`` is provided, we scan to count the number of cells
     and create a simple range index.
 
     Args:
         files:
             List of file paths to `H5AD` or ``AnnData`` objects.
-            Each object in this list must contain
-            - gene symbols as index or the column specified by
-            ``var_gene_column``.
-            - Must contain a layers with a matrix named as
-            ``layer_matrix_name``.
 
         output_path:
             Path to where the output tiledb files should be stored.
 
-        num_cells:
-            Number of cells across all files.
+        gene_metadata:
+            A :py:class:`~pandas.DataFrame` containing the feature/gene
+            annotations across all objects.
 
-            Defaults to None, in which case, automatically inferred by
-            scanning all objects in ``files`` (may take a while).
+            Alternatively, may provide a path to the file containing
+            a concatenated gene annotations across all datasets.
+            In this case, the first row is expected to contain the
+            column names and an index column containing the gene
+            symbols to remap the matrix.
 
-        num_genes:
-            Number of genes across all cells.
+            Alternatively, a list or a dictionary of gene symbols.
 
-            Defaults to None, in which case, automatically inferred by
-            scanning all objects in ``files`` (may take a while).
+            Defaults to None, then a gene set is generated by scanning all
+            objects in ``files``.
+
+        sample_metadata:
+            A :py:class:`~pandas.DataFrame` containing the sample
+            metadata for each file in ``files``. Hences the number of rows
+            in the dataframe must match the number of files.
+
+            Alternatively, may provide path to the file containing a
+            concatenated sample metadata across all cells. In this case,
+            the first row is expected to contain the column names.
+
+            Additionally, the order of rows is expected to be in the same
+            order as the input list of ``files``.
+
+            Irrespective of the input, this object is appended with a
+            ``original_gene_list`` column that contains the original set of
+            feature ids (or gene symbols) from the dataset to differentiate
+            between zero-expressed vs unmeasured genes.
+
+            Defaults to `None`, in which case, we create a simple sample
+            metadata dataframe containing the list of datasets.
+            Each dataset is named as ``dataset_{i}`` where `i` refers to
+            the index position of the dataset in ``files``.
 
         cell_metadata:
-            Path to the file containing a concatenated cell metadata across
-            all cells. In this case, the first row is expected to contain the
-            column names.
+            A :py:class:`~pandas.DataFrame` containing the cell
+            metadata for cells across ``files``. Hences the number of rows
+            in the dataframe must match the number of files.
 
-            Alternatively, may also provide a dataframe containing the cell
-            metadata across all objects.
+            Alternatively, may provide path to the file containing a
+            concatenated cell metadata across all cells. In this case,
+            the first row is expected to contain the column names.
 
-            Regardless of the input type, the number of rows in the file or
-            DataFrame must match the ``num_cells`` argument. Additionally,
-            the order of cells is expected to be in the same order as the input
-            list of ``files``. In this scenario, the file is already expected to
-            contain mappings between cells and datasets already.
+            Additionally, the order of cells is expected to be in the same
+            order as the input list of ``files``. If the input is a path,
+            the file is expected to contain mappings between cells and
+            datasets.
 
             Defaults to None, We scan all files to count the number of cells,
             then create a simple cell metadata DataFrame containing mappings from
             cells to their associated datasets. Each dataset is named as
             ``dataset_{}`` with the index from the list of ``files``.
 
-        gene_metadata:
-            Path to the file containing a concatenated gene annotations across
-            all datasets. In this case, the first row is
-            expected to contain the column names and an index column
-            containing the gene symbols to remap the matrix.
+        sample_metadata_options:
+            Optional parameters when generating ``sample_metadata`` store.
 
-            Alternatively, may also provide a dataframe containing the gene
-            annotations across all objects.
+        cell_metadata_options:
+            Optional parameters when generating ``cell_metadata`` store.
 
-            Alternatively, a list or a dictionary of gene symbols.
+        gene_annotation_options:
+            Optional parameters when generating ``gene_annotation`` store.
 
-            Regardless of the input type, the number of rows in the file or
-            DataFrame must match the ``num_genes`` argument.
+        matrix_options:
+            Optional parameters when generating ``matrix`` store.
 
-            Defaults to None, then a gene set is generated by scanning all
-            objects in ``files``.
-
-        var_gene_column:
-            Column name from ``var`` slot that contains the gene symbols.
-            Must be consistent across all objects in ``files``.
-
-            Defaults to "index".
-
-        layer_matrix_name:
-            Matrix name from ``layers`` slot to add to tiledb.
-            Must be consistent across all objects in ``files``.
-
-            Defaults to "counts".
-
-        skip_gene_tiledb:
-            Whether to skip generating gene metadata tiledb.
-
-            Defaults to False.
-
-        skip_cell_tiledb:
-            Whether to skip generating cell metadata tiledb.
-
-            Defaults to False.
-
-        skip_matrix_tiledb:
-            Whether to skip generating matrix tiledb.
-
-            Defaults to False.
-
-        cell_dim_dtype:
-            NumPy dtype for the cell dimension.
-            Defaults to np.uint32.
-
-            Note: make sure the number of cells fit
-            within the range limits of unsigned-int32.
-
-        gene_dim_dtype:
-            NumPy dtype for the gene dimension.
-            Defaults to np.uint32.
-
-            Note: make sure the number of genes fit
-            within the range limits of unsigned-int32.
-
-        matrix_dim_dtype:
-            NumPy dtype for the values in the matrix.
-            Defaults to np.uint32.
-
-            Note: make sure the matrix values fit
-            within the range limits of unsigned-int32.
+        optimize_tiledb:
+            Whether to run TileDb's vaccum and consolidation (may take long).
 
         num_threads:
             Number of threads.
-
             Defaults to 1.
     """
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
     if gene_metadata is None:
-        warnings.warn(
-            "Scanning all files for gene symbols, this may take long", UserWarning
-        )
-        gene_set = uad.scan_for_genes(
-            files, var_gene_column=var_gene_column, num_threads=num_threads
-        )
+        warnings.warn("Scanning all files for gene symbols, this may take long", UserWarning)
+        gene_set = uad.scan_for_features(files, var_gene_column=var_gene_column, num_threads=num_threads)
 
         gene_set = sorted(gene_set)
 
         gene_metadata = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_metadata, list):
         _gene_list = sorted(list(set(gene_metadata)))
-        gene_metadata = pd.DataFrame(
-            {"cellarr_gene_index": _gene_list}, index=_gene_list
-        )
+        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
     elif isinstance(gene_metadata, dict):
         _gene_list = sorted(list(gene_metadata.keys()))
-        gene_metadata = pd.DataFrame(
-            {"cellarr_gene_index": _gene_list}, index=_gene_list
-        )
+        gene_metadata = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
     elif isinstance(gene_metadata, str):
         gene_metadata = pd.read_csv(gene_metadata, index=True, header=True)
         gene_metadata["cellarr_gene_index"] = gene_metadata.index.tolist()
@@ -265,9 +226,7 @@ def build_cellarrdataset(
             _col_types[col] = "ascii"
 
         _gene_output_uri = f"{output_path}/gene_metadata"
-        generate_metadata_tiledb_frame(
-            _gene_output_uri, gene_metadata, column_types=_col_types
-        )
+        generate_metadata_tiledb_frame(_gene_output_uri, gene_metadata, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_gene_output_uri)
@@ -283,9 +242,7 @@ def build_cellarrdataset(
         _cellindex_in_dataset.extend([x for x in range(cci)])
         _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
 
-    _pseudo_cell_metadata = pd.DataFrame(
-        {"_cell_counts": _cellindex_in_dataset, "_cell_dataset_index": _dataset}
-    )
+    _pseudo_cell_metadata = pd.DataFrame({"_cell_counts": _cellindex_in_dataset, "_cell_dataset_index": _dataset})
 
     if num_cells is None:
         num_cells = sum(cell_counts)
@@ -311,9 +268,7 @@ def build_cellarrdataset(
             )
     elif isinstance(cell_metadata, pd.DataFrame):
         if num_cells != len(cell_metadata):
-            raise ValueError(
-                "Number of rows in 'cell_metadata' does not match the number of cells across files."
-            )
+            raise ValueError("Number of rows in 'cell_metadata' does not match the number of cells across files.")
 
     # Create the cell metadata tiledb
     if not skip_cell_tiledb:
@@ -321,9 +276,7 @@ def build_cellarrdataset(
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
-            generate_metadata_tiledb_csv(
-                _cell_output_uri, cell_metadata, _cell_metaframe.columns
-            )
+            generate_metadata_tiledb_csv(_cell_output_uri, cell_metadata, _cell_metaframe.columns)
         elif isinstance(cell_metadata, pd.DataFrame):
             _col_types = {}
             for col in gene_metadata.columns:
@@ -331,9 +284,7 @@ def build_cellarrdataset(
 
             _to_write = gene_metadata.astype(str)
 
-            generate_metadata_tiledb_frame(
-                _cell_output_uri, _to_write, column_types=_col_types
-            )
+            generate_metadata_tiledb_frame(_cell_output_uri, _to_write, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_cell_output_uri)
@@ -364,9 +315,7 @@ def build_cellarrdataset(
                 var_gene_column=var_gene_column,
                 layer_matrix_name=layer_matrix_name,
             )
-            uta.write_csr_matrix_to_tiledb(
-                _counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype
-            )
+            uta.write_csr_matrix_to_tiledb(_counts_uri, matrix=mat, row_offset=offset, value_dtype=matrix_dim_dtype)
             offset += int(mat.shape[0])
 
         if optimize_tiledb:
@@ -375,9 +324,7 @@ def build_cellarrdataset(
     return CellArrDataset(dataset_path=output_path, matrix_tdb_uri=layer_matrix_name)
 
 
-def generate_metadata_tiledb_frame(
-    output_uri: str, input: pd.DataFrame, column_types: dict = None
-):
+def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):
     """Generate metadata tiledb from a :pu:class:`~pandas.DataFrame`.
 
     Args:
@@ -394,9 +341,7 @@ def generate_metadata_tiledb_frame(
             Defaults to None.
     """
     _to_write = input.astype(str)
-    utf.create_tiledb_frame_from_dataframe(
-        output_uri, _to_write, column_types=column_types
-    )
+    utf.create_tiledb_frame_from_dataframe(output_uri, _to_write, column_types=column_types)
 
 
 def generate_metadata_tiledb_csv(
@@ -432,9 +377,7 @@ def generate_metadata_tiledb_csv(
 
     for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
         if initfile:
-            utf.create_tiledb_frame_from_column_names(
-                output_uri, chunk.columns, column_dtype
-            )
+            utf.create_tiledb_frame_from_column_names(output_uri, chunk.columns, column_dtype)
             initfile = False
 
         _to_write = chunk.astype(str)

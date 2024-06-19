@@ -12,13 +12,15 @@ __license__ = "MIT"
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
+    """A class that represent a collection of cells and their associated metadata 
+    in a TileDB backed store.
+    """
 
     def __init__(
         self,
         dataset_path: str,
         matrix_tdb_uri: str = "counts",
-        gene_metadata_uri: str = "gene_metadata",
+        gene_annotation_uri: str = "gene_annotation",
         cell_metadata_uri: str = "cell_metadata",
     ):
         """Initialize a ``CellArrDataset``.
@@ -32,8 +34,8 @@ class CellArrDataset:
             counts_tdb_uri:
                 Relative path to matrix store.
 
-            gene_metadata_uri:
-                Relative path to gene metadata store.
+            gene_annotation_uri:
+                Relative path to gene annotation store.
 
             cell_metadata_uri:
                 Relative path to cell metadata store.
@@ -45,8 +47,8 @@ class CellArrDataset:
         self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
         self._matrix_tdb_tdb = tiledb.open(f"{dataset_path}/{matrix_tdb_uri}", "r")
-        self._gene_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{gene_metadata_uri}", "r"
+        self._gene_annotation_tdb = tiledb.open(
+            f"{dataset_path}/{gene_annotation_uri}", "r"
         )
         self._cell_metadata_tdb = tiledb.open(
             f"{dataset_path}/{cell_metadata_uri}", "r"
@@ -54,7 +56,7 @@ class CellArrDataset:
 
     def __del__(self):
         self._matrix_tdb_tdb.close()
-        self._gene_metadata_tdb.close()
+        self._gene_annotation_tdb.close()
         self._cell_metadata_tdb.close()
 
     def get_cell_metadata_columns(self) -> List[str]:
@@ -107,7 +109,7 @@ class CellArrDataset:
         Returns:
             List of available annotations.
         """
-        return qtd.get_schema_names_frame(self._gene_metadata_tdb)
+        return qtd.get_schema_names_frame(self._gene_annotation_tdb)
 
     def get_gene_metadata_column(self, column_name: str):
         """Access a column from the ``gene_metadata`` store.
@@ -120,7 +122,7 @@ class CellArrDataset:
         Returns:
             A list of values for this column.
         """
-        return qtd.get_a_column(self._gene_metadata_tdb, column_name=column_name)
+        return qtd.get_a_column(self._gene_annotation_tdb, column_name=column_name)
 
     def get_gene_metadata_index(self):
         """Get index of the ``gene_metadata`` store. This typically should store all unique gene symbols.
@@ -128,7 +130,7 @@ class CellArrDataset:
         Returns:
             List of unique symbols.
         """
-        return qtd.get_index(self._gene_metadata_tdb)
+        return qtd.get_index(self._gene_annotation_tdb)
 
     def _get_indices_for_gene_list(self, query: list) -> List[int]:
         _gene_index = self.get_gene_metadata_index()
@@ -162,7 +164,7 @@ class CellArrDataset:
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(self._gene_metadata_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns)
 
     def get_slice(
         self,
@@ -181,13 +183,12 @@ class CellArrDataset:
         self,
         args: Union[int, str, Sequence, tuple],
     ):
-        """Subset a ``SummarizedExperiment``.
+        """Subset a ``CellArrDataset``.
 
         Args:
             args:
                 Integer indices, a boolean filter, or (if the current object is
-                named) names specifying the ranges to be extracted, see
-                :py:meth:`~biocutils.normalize_subscript.normalize_subscript`.
+                named) names specifying the ranges to be extracted.
 
                 Alternatively a tuple of length 1. The first entry specifies
                 the rows to retain based on their names or indices.
@@ -199,9 +200,6 @@ class CellArrDataset:
         Raises:
             ValueError:
                 If too many or too few slices provided.
-
-        Returns:
-            Same type as caller with the sliced rows and columns.
         """
         if isinstance(args, (str, int)):
             return self.get_slice(args, slice(None))
