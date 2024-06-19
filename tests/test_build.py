@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import tiledb
-from cellarr import build_cellarrdataset
+from cellarr import build_cellarrdataset, MatrixOptions
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -35,23 +35,36 @@ def test_build_cellarrdataset():
     adata2 = generate_adata(100, 1000, 100)
 
     build_cellarrdataset(
-        output_path=tempdir, files=[adata1, adata2], matrix_dim_dtype=np.float32
+        output_path=tempdir,
+        files=[adata1, adata2],
+        matrix_options=MatrixOptions(dtype=np.float32),
     )
 
     cfp = tiledb.open(f"{tempdir}/counts", "r")
-    gfp = tiledb.open(f"{tempdir}/gene_metadata", "r")
+    gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
 
-    gene_list = ["gene_1", "gene_95", "gene_50"]
-    gene_indices_tdb = sorted([genes.index.tolist().index(x) for x in gene_list])
+    print(genes)
 
+    gene_list = ["gene_1", "gene_95", "gene_50"]
+    _genes_from_tile = genes["cellarr_gene_index"].tolist()
+    # print(_genes_from_tile)
+    gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
+
+    print(gene_indices_tdb)
     adata1_gene_indices = sorted(
         [adata1.var.index.tolist().index(x) for x in gene_list]
     )
+
+    print(adata1_gene_indices)
     adata2_gene_indices = sorted(
         [adata2.var.index.tolist().index(x) for x in gene_list]
     )
+
+    print(adata2_gene_indices)
+
+    print(cfp.multi_index[0, gene_indices_tdb])
 
     assert np.allclose(
         cfp.multi_index[0, gene_indices_tdb]["counts"],

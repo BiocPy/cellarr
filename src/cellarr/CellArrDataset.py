@@ -12,7 +12,7 @@ __license__ = "MIT"
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata 
+    """A class that represent a collection of cells and their associated metadata
     in a TileDB backed store.
     """
 
@@ -22,6 +22,7 @@ class CellArrDataset:
         matrix_tdb_uri: str = "counts",
         gene_annotation_uri: str = "gene_annotation",
         cell_metadata_uri: str = "cell_metadata",
+        sample_metadata_uri: str = "sample_metadata",
     ):
         """Initialize a ``CellArrDataset``.
 
@@ -39,6 +40,9 @@ class CellArrDataset:
 
             cell_metadata_uri:
                 Relative path to cell metadata store.
+
+            sample_metadata_uri:
+                Relative path to sample metadata store.
         """
 
         if not os.path.isdir(dataset_path):
@@ -164,7 +168,9 @@ class CellArrDataset:
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._gene_annotation_tdb, subset=subset, columns=columns
+        )
 
     def get_slice(
         self,

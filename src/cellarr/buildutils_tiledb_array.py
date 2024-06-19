@@ -35,10 +35,14 @@ def create_tiledb_array(
         x_dim_length:
             Number of entries along the x/fastest-changing dimension.
             e.g. Number of cells.
+            Defaults to None, in which case, the max integer value of
+            ``x_dim_dtype`` is used.
 
         y_dim_length:
             Number of entries along the y dimension.
             e.g. Number of genes.
+            Defaults to None, in which case, the max integer value of
+            ``y_dim_dtype`` is used.
 
         x_dim_name:
             Name for the x-dimension.
