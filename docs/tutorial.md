@@ -10,9 +10,9 @@ Cell Arrays is a Python package that provides a TileDB-backed store for large co
 
 ## Usage
 
-### Create the `CellArrDataset`
+### Build the `CellArrDataset`
 
-Creating a CellArrDataset generates three TileDB files in the specified output directory:
+Creating a `CellArrDataset` generates three TileDB files in the specified output directory:
 
 - `gene_metadata`: Contains feature annotations.
 - `cell_metadata`: Contains cell or sample metadata.
@@ -43,11 +43,12 @@ dataset = build_cellarrdataset(
      matrix_dim_dtype=np.float32
 )
 ```
+
 ----
 
 #### TODO: This following section does not work yet.
 
-Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializng it to the path where the files were created.
+Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.
 
 ```python
 # Create a CellArrDataset object from the existing dataset

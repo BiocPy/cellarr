@@ -13,8 +13,8 @@ __license__ = "MIT"
 
 def create_tiledb_array(
     tiledb_uri_path: str,
-    num_cells: int,
-    num_genes: int,
+    x_dim_length: int = None,
+    y_dim_length: int = None,
     x_dim_name: str = "cell_index",
     y_dim_name: str = "gene_index",
     matrix_attr_name: str = "counts",
@@ -32,11 +32,17 @@ def create_tiledb_array(
         tiledb_uri_path:
             Path to create the array tiledb file.
 
-        num_cells:
-            Number of cells (x/fastest-changing dimension).
+        x_dim_length:
+            Number of entries along the x/fastest-changing dimension.
+            e.g. Number of cells.
+            Defaults to None, in which case, the max integer value of
+            ``x_dim_dtype`` is used.
 
-        num_genes:
-            Number fo genes (y dimension).
+        y_dim_length:
+            Number of entries along the y dimension.
+            e.g. Number of genes.
+            Defaults to None, in which case, the max integer value of
+            ``y_dim_dtype`` is used.
 
         x_dim_name:
             Name for the x-dimension.
@@ -67,8 +73,14 @@ def create_tiledb_array(
             Defaults to True.
     """
 
-    xdim = tiledb.Dim(name=x_dim_name, domain=(0, num_cells - 1), dtype=x_dim_dtype)
-    ydim = tiledb.Dim(name=y_dim_name, domain=(0, num_genes - 1), dtype=y_dim_dtype)
+    if x_dim_length is None:
+        x_dim_length = np.iinfo(x_dim_dtype).max
+
+    if y_dim_length is None:
+        y_dim_length = np.iinfo(y_dim_dtype).max
+
+    xdim = tiledb.Dim(name=x_dim_name, domain=(0, x_dim_length - 1), dtype=x_dim_dtype)
+    ydim = tiledb.Dim(name=y_dim_name, domain=(0, y_dim_length - 1), dtype=y_dim_dtype)
 
     dom = tiledb.Domain(xdim, ydim)
 
