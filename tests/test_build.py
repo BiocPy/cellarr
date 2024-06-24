@@ -66,3 +66,7 @@ def test_build_cellarrdataset():
         cfp.multi_index[1000, gene_indices_tdb]["counts"],
         adata2.layers["counts"][0, adata2_gene_indices],
     )
+
+    sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
+    samples = sfp.df[:]
+    assert len(samples) == 2

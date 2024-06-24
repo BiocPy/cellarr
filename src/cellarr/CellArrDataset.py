@@ -247,3 +247,47 @@ class CellArrDataset:
         raise TypeError(
             "args must be a sequence or a scalar integer or string or a tuple of atmost 2 values."
         )
+
+    def get_sample_metadata_columns(self) -> List[str]:
+        """Get column names from ``sample_metadata`` store.
+
+        Returns:
+            List of available metadata columns.
+        """
+        return qtd.get_schema_names_frame(self._sample_metadata_tdb)
+
+    def get_sample_metadata_column(self, column_name: str) -> list:
+        """Access a column from the ``sample_metadata`` store.
+
+        Args:
+            column_name:
+                Name of the column or attribute. Usually one of the column names
+                from of :py:meth:`~get_sample_metadata_columns`.
+
+        Returns:
+            A list of values for this column.
+        """
+        return qtd.get_a_column(self._sample_metadata_tdb, column_name=column_name)
+
+    def get_sample_subset(
+        self, subset: Union[slice, tiledb.QueryCondition], columns=None
+    ) -> pd.DataFrame:
+        """Slice the ``sample_metadata`` store.
+
+        Args:
+            subset:
+                A list of integer indices to subset the ``sample_metadata``
+                store.
+
+                Alternatively, may also provide a
+                :py:class:`tiledb.QueryCondition` to query the store.
+
+            columns:
+                List of specific column names to access.
+
+                Defaults to None, in which case all columns are extracted.
+
+        Returns:
+            A pandas Dataframe of the subset.
+        """
+        return qtd.subset_frame(self._sample_metadata_tdb, subset=subset, columns=columns)

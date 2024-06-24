@@ -203,6 +203,12 @@ def build_cellarrdataset(
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
+    uad.extract_anndata_info(
+        files,
+        var_feature_column=gene_annotation_options.feature_column,
+        num_threads=num_threads,
+    )
+
     ####
     ## Writing gene annotation file
     ####
@@ -211,20 +217,13 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        gene_set = uad.scan_for_features(
-            files,
-            var_feature_column=gene_annotation_options.feature_column,
-            num_threads=num_threads,
-        )
-
+        
+        gene_set = uad.scan_for_features()
         gene_set = sorted(gene_set)
-
         gene_annotation = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_annotation, list):
         _gene_list = sorted(list(set(gene_annotation)))
-        gene_annotation = pd.DataFrame(
-            {"cellarr_gene_index": _gene_list}, index=_gene_list
-        )
+        gene_annotation = pd.DataFrame({"cellarr_gene_index": _gene_list}, index=_gene_list)
     elif isinstance(gene_annotation, str):
         gene_annotation = pd.read_csv(gene_annotation, index=True, header=True)
         warnings.warn(
@@ -239,9 +238,7 @@ def build_cellarrdataset(
         raise TypeError("'gene_annotation' must be a pandas dataframe.")
 
     if len(gene_annotation["cellarr_gene_index"].unique()) != len(gene_annotation["cellarr_gene_index"].tolist()):
-        raise ValueError(
-            "'gene_annotation' must contain unique feature ids or gene symbols."
-        )
+        raise ValueError("'gene_annotation' must contain unique feature ids or gene symbols.")
 
     gene_annotation.reset_index(drop=True, inplace=True)
 
@@ -252,9 +249,7 @@ def build_cellarrdataset(
             _col_types[col] = "ascii"
 
         _gene_output_uri = f"{output_path}/{gene_annotation_options.tiledb_store_name}"
-        generate_metadata_tiledb_frame(
-            _gene_output_uri, gene_annotation, column_types=_col_types
-        )
+        generate_metadata_tiledb_frame(_gene_output_uri, gene_annotation, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_gene_output_uri)
@@ -283,12 +278,7 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        gene_scan_set = uad.scan_for_features(
-            files,
-            var_feature_column=gene_annotation_options.feature_column,
-            num_threads=num_threads,
-            unique=False,
-        )
+        gene_scan_set = uad.scan_for_features(unique=False)
         gene_set_str = [",".join(x) for x in gene_scan_set]
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
@@ -296,12 +286,8 @@ def build_cellarrdataset(
         for col in sample_metadata.columns:
             _col_types[col] = "ascii"
 
-        _sample_output_uri = (
-            f"{output_path}/{sample_metadata_options.tiledb_store_name}"
-        )
-        generate_metadata_tiledb_frame(
-            _sample_output_uri, sample_metadata, column_types=_col_types
-        )
+        _sample_output_uri = f"{output_path}/{sample_metadata_options.tiledb_store_name}"
+        generate_metadata_tiledb_frame(_sample_output_uri, sample_metadata, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_sample_output_uri)
@@ -313,7 +299,7 @@ def build_cellarrdataset(
         "Scanning all files to compute cell counts, this may take long",
         UserWarning,
     )
-    cell_counts = uad.scan_for_cellcounts(files, num_threads=num_threads)
+    cell_counts = uad.scan_for_cellcounts()
     _cellindex_in_dataset = []
     _dataset = []
     for idx, cci in enumerate(cell_counts):
@@ -321,9 +307,7 @@ def build_cellarrdataset(
         _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
 
     if cell_metadata is None:
-        cell_metadata = pd.DataFrame(
-            {"cellarr_cell_counts": _cellindex_in_dataset, "cellarr_sample": _dataset}
-        )
+        cell_metadata = pd.DataFrame({"cellarr_cell_counts": _cellindex_in_dataset, "cellarr_sample": _dataset})
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
@@ -345,9 +329,7 @@ def build_cellarrdataset(
         )
     elif isinstance(cell_metadata, pd.DataFrame):
         if sum(cell_counts) != len(cell_metadata):
-            raise ValueError(
-                "Number of rows in 'cell_metadata' does not match the number of cells across files."
-            )
+            raise ValueError("Number of rows in 'cell_metadata' does not match the number of cells across files.")
 
         cell_metadata["cellarr_sample"] = _dataset
 
@@ -357,9 +339,7 @@ def build_cellarrdataset(
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
-            generate_metadata_tiledb_csv(
-                _cell_output_uri, cell_metadata, _cell_metaframe.columns
-            )
+            generate_metadata_tiledb_csv(_cell_output_uri, cell_metadata, _cell_metaframe.columns)
         elif isinstance(cell_metadata, pd.DataFrame):
             _col_types = {}
             for col in cell_metadata.columns:
@@ -367,9 +347,7 @@ def build_cellarrdataset(
 
             _to_write = cell_metadata.astype(str)
 
-            generate_metadata_tiledb_frame(
-                _cell_output_uri, _to_write, column_types=_col_types
-            )
+            generate_metadata_tiledb_frame(_cell_output_uri, _to_write, column_types=_col_types)
 
         if optimize_tiledb:
             uta.optimize_tiledb_array(_cell_output_uri)
@@ -420,9 +398,7 @@ def build_cellarrdataset(
     )
 
 
-def generate_metadata_tiledb_frame(
-    output_uri: str, input: pd.DataFrame, column_types: dict = None
-):
+def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):
     """Generate metadata tiledb from a :pu:class:`~pandas.DataFrame`.
 
     Args:
@@ -434,14 +410,12 @@ def generate_metadata_tiledb_frame(
 
         column_types:
             You can specify type of each column name to cast into.
-            "ascii" or str works best for most scenarios.
+            "ascii" or `str` works best for most scenarios.
 
             Defaults to None.
     """
     _to_write = input.astype(str)
-    utf.create_tiledb_frame_from_dataframe(
-        output_uri, _to_write, column_types=column_types
-    )
+    utf.create_tiledb_frame_from_dataframe(output_uri, _to_write, column_types=column_types)
 
 
 def generate_metadata_tiledb_csv(
@@ -477,9 +451,7 @@ def generate_metadata_tiledb_csv(
 
     for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
         if initfile:
-            utf.create_tiledb_frame_from_column_names(
-                output_uri, chunk.columns, column_dtype
-            )
+            utf.create_tiledb_frame_from_column_names(output_uri, chunk.columns, column_dtype)
             initfile = False
 
         _to_write = chunk.astype(str)
