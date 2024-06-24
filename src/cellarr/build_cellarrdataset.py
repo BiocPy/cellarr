@@ -217,7 +217,7 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        
+
         gene_set = uad.scan_for_features()
         gene_set = sorted(gene_set)
         gene_annotation = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
