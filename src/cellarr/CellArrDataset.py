@@ -290,4 +290,6 @@ class CellArrDataset:
         Returns:
             A pandas Dataframe of the subset.
         """
-        return qtd.subset_frame(self._sample_metadata_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._sample_metadata_tdb, subset=subset, columns=columns
+        )

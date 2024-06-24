@@ -119,8 +119,7 @@ def extract_anndata_info(
     num_threads: int = 1,
     force: bool = False,
 ):
-    """Extract and generate the list of unique feature identifiers
-    and cell counts across files.
+    """Extract and generate the list of unique feature identifiers and cell counts across files.
 
     Args:
         h5ad_or_adata:

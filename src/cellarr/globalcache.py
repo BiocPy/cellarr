@@ -6,8 +6,6 @@ PACKAGE_SCAN_CACHE = {}
 
 
 def remove_package_cache():
-    """Remove the package cache that contains temporary store for
-    scanned files.
-    """
+    """Remove the package cache that contains temporary store for scanned files."""
     global PACKAGE_SCAN_CACHE
     PACKAGE_SCAN_CACHE = {}
