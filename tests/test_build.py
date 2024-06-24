@@ -45,26 +45,18 @@ def test_build_cellarrdataset():
 
     genes = gfp.df[:]
 
-    print(genes)
-
     gene_list = ["gene_1", "gene_95", "gene_50"]
     _genes_from_tile = genes["cellarr_gene_index"].tolist()
     # print(_genes_from_tile)
     gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
 
-    print(gene_indices_tdb)
     adata1_gene_indices = sorted(
         [adata1.var.index.tolist().index(x) for x in gene_list]
     )
 
-    print(adata1_gene_indices)
     adata2_gene_indices = sorted(
         [adata2.var.index.tolist().index(x) for x in gene_list]
     )
-
-    print(adata2_gene_indices)
-
-    print(cfp.multi_index[0, gene_indices_tdb])
 
     assert np.allclose(
         cfp.multi_index[0, gene_indices_tdb]["counts"],

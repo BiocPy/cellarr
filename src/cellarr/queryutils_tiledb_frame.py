@@ -3,7 +3,9 @@ from typing import List, Union
 from warnings import warn
 
 import pandas as pd
+import numpy as np
 import tiledb
+import re
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -12,6 +14,15 @@ __license__ = "MIT"
 
 @lru_cache
 def get_schema_names_frame(tiledb_obj: tiledb.Array) -> List[str]:
+    """Get Attributes from a TileDB object.
+
+    Args:
+        tiledb_obj:
+            A TileDB object.
+
+    Returns:
+        List of schema attributes.
+    """
     columns = []
     for i in range(tiledb_obj.schema.nattr):
         columns.append(tiledb_obj.schema.attr(i).name)
@@ -24,6 +35,29 @@ def subset_frame(
     subset: Union[slice, tiledb.QueryCondition],
     columns: Union[str, list] = None,
 ) -> pd.DataFrame:
+    """Subset a TileDB object.
+
+    Args:
+        tiledb_obj:
+            TileDB object to subset.
+
+        subset:
+            A :py:class:`slice` to subset.
+
+            Alternatively, may provide a :py:class:`~tiledb.QueryCondition`
+            to subset the object.
+
+        columns:
+            Atrributes from schema to extract.
+
+            Defaults to None, in which case all columns are accessed.
+
+    Raises:
+        ValueError: _description_
+
+    Returns:
+        A slices `DataFrame` or a `matrix` with the subset.
+    """
 
     _avail_columns = get_schema_names_frame(tiledb_obj)
 
@@ -48,11 +82,26 @@ def subset_frame(
         data = query.df[:]
     else:
         data = query.df[subset, columns]
-    result = data.dropna()
+
+    re_null = re.compile(pattern="\x00")  # replace null strings with nan
+    result = data.replace(regex=re_null, value=np.nan)
+    result = result.dropna()
     return result
 
 
 def get_a_column(tiledb_obj: tiledb.Array, column_name: str) -> list:
+    """Get a single column from the TileDB object.
+
+    Args:
+        tiledb_obj:
+            A TileDB object.
+
+        column_name:
+            Name of the column to access.
+
+    Returns:
+        List containing the column values.
+    """
     if column_name not in get_schema_names_frame(tiledb_obj):
         raise ValueError(f"Column '{column_name}' does not exist.")
 
@@ -61,6 +110,15 @@ def get_a_column(tiledb_obj: tiledb.Array, column_name: str) -> list:
 
 @lru_cache
 def get_index(tiledb_obj: tiledb.Array) -> list:
+    """Get the index of the TileDB object.
+
+    Args:
+        tiledb_obj:
+            A TileDB object.
+
+    Returns:
+        A list containing the index values.
+    """
     _index = tiledb_obj.unique_dim_values("__tiledb_rows")
     return [x.decode() for x in _index]
 

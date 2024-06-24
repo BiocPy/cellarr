@@ -55,11 +55,15 @@ class CellArrDataset:
         self._cell_metadata_tdb = tiledb.open(
             f"{dataset_path}/{cell_metadata_uri}", "r"
         )
+        self._sample_metadata_tdb = tiledb.open(
+            f"{dataset_path}/{sample_metadata_uri}", "r"
+        )
 
     def __del__(self):
         self._matrix_tdb_tdb.close()
         self._gene_annotation_tdb.close()
         self._cell_metadata_tdb.close()
+        self._sample_metadata_tdb.close()
 
     def get_cell_metadata_columns(self) -> List[str]:
         """Get column names from ``cell_metadata`` store.
@@ -175,6 +179,20 @@ class CellArrDataset:
         cell_subset: Union[slice, tiledb.QueryCondition],
         gene_subset: Union[slice, List[str], tiledb.QueryCondition],
     ):
+        """Subset a ``CellArrDataset``.
+
+        Args:
+            cell_subset:
+                Integer indices, a boolean filter, or (if the current object is
+                named) names specifying the rows (or cells) to retain.
+
+            cell_subset:
+                Integer indices, a boolean filter, or (if the current object is
+                named) names specifying the columns (or features/genes) to retain.
+
+        Returns:
+            A Matrix of the count data for the given slice ranges.
+        """
         _csubset = self.get_cell_subset(cell_subset)
         _cell_indices = _csubset.index.tolist()
 
@@ -189,21 +207,26 @@ class CellArrDataset:
     ):
         """Subset a ``CellArrDataset``.
 
+        Mostly an alias to :py:meth:`~.get_slice`.
+
         Args:
             args:
                 Integer indices, a boolean filter, or (if the current object is
                 named) names specifying the ranges to be extracted.
 
                 Alternatively a tuple of length 1. The first entry specifies
-                the rows to retain based on their names or indices.
+                the rows (or cells) to retain based on their names or indices.
 
                 Alternatively a tuple of length 2. The first entry specifies
-                the rows to retain, while the second entry specifies the
-                columns to retain, based on their names or indices.
+                the rows (or cells) to retain, while the second entry specifies the
+                columns (or features/genes) to retain, based on their names or indices.
 
         Raises:
             ValueError:
                 If too many or too few slices provided.
+
+        Returns:
+            A Matrix of the count data for the given slice ranges.
         """
         if isinstance(args, (str, int)):
             return self.get_slice(args, slice(None))
