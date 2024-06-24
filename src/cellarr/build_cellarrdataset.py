@@ -238,7 +238,9 @@ def build_cellarrdataset(
     if not isinstance(gene_annotation, pd.DataFrame):
         raise TypeError("'gene_annotation' must be a pandas dataframe.")
 
-    if len(gene_annotation["cellarr_gene_index"].unique()) != len(gene_annotation["cellarr_gene_index"].tolist()):
+    if len(gene_annotation["cellarr_gene_index"].unique()) != len(
+        gene_annotation["cellarr_gene_index"].tolist()
+    ):
         raise ValueError(
             "'gene_annotation' must contain unique feature ids or gene symbols."
         )
