@@ -203,7 +203,7 @@ def build_cellarrdataset(
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
-    uad.extract_anndata_info(
+    files_cache = uad.extract_anndata_info(
         files,
         var_feature_column=gene_annotation_options.feature_column,
         num_threads=num_threads,
@@ -218,7 +218,7 @@ def build_cellarrdataset(
             UserWarning,
         )
 
-        gene_set = uad.scan_for_features()
+        gene_set = uad.scan_for_features(files_cache)
         gene_set = sorted(gene_set)
         gene_annotation = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_annotation, list):
@@ -227,7 +227,13 @@ def build_cellarrdataset(
             {"cellarr_gene_index": _gene_list}, index=_gene_list
         )
     elif isinstance(gene_annotation, str):
-        gene_annotation = pd.read_csv(gene_annotation, index=True, header=True)
+        gene_annotation = pd.read_csv(gene_annotation, index_col=0, header=0)
+        warnings.warn(
+            "Using the index of the DataFrame to collect feature ids or gene symbols...",
+            UserWarning,
+        )
+        gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
+    elif isinstance(gene_annotation, pd.DataFrame):
         warnings.warn(
             "Using the index of the DataFrame to collect feature ids or gene symbols...",
             UserWarning,
@@ -267,7 +273,14 @@ def build_cellarrdataset(
     ####
     _samples = []
     for idx, _ in enumerate(files):
-        _samples.append(f"sample_{idx}")
+        _samples.append(f"sample_{idx + 1}")
+
+    warnings.warn(
+        "Scanning all files to compute cell counts, this may take long",
+        UserWarning,
+    )
+    cell_counts = uad.scan_for_cellcounts(files_cache)
+
     if sample_metadata is None:
         warnings.warn(
             "Sample metadata is not provided, each dataset in 'files' is considered a sample",
@@ -276,7 +289,9 @@ def build_cellarrdataset(
 
         sample_metadata = pd.DataFrame({"cellarr_sample": _samples})
     elif isinstance(sample_metadata, str):
-        sample_metadata = pd.read_csv(sample_metadata, header=True)
+        sample_metadata = pd.read_csv(sample_metadata, header=0)
+        sample_metadata["cellarr_sample"] = _samples
+    elif isinstance(sample_metadata, pd.DataFrame):
         sample_metadata["cellarr_sample"] = _samples
     else:
         raise TypeError("'sample_metadata' is not an expected type.")
@@ -286,9 +301,11 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        gene_scan_set = uad.scan_for_features(unique=False)
+        gene_scan_set = uad.scan_for_features(files_cache, unique=False)
         gene_set_str = [",".join(x) for x in gene_scan_set]
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
+
+        sample_metadata["cellarr_cell_counts"] = cell_counts
 
         _col_types = {}
         for col in sample_metadata.columns:
@@ -311,17 +328,12 @@ def build_cellarrdataset(
         "Scanning all files to compute cell counts, this may take long",
         UserWarning,
     )
-    cell_counts = uad.scan_for_cellcounts()
-    _cellindex_in_dataset = []
-    _dataset = []
+    _sample_per_cell = []
     for idx, cci in enumerate(cell_counts):
-        _cellindex_in_dataset.extend([x for x in range(cci)])
-        _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
+        _sample_per_cell.extend([_samples[idx] for _ in range(cci)])
 
     if cell_metadata is None:
-        cell_metadata = pd.DataFrame(
-            {"cellarr_cell_counts": _cellindex_in_dataset, "cellarr_sample": _dataset}
-        )
+        cell_metadata = pd.DataFrame({"cellarr_sample": _sample_per_cell})
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
@@ -347,14 +359,14 @@ def build_cellarrdataset(
                 "Number of rows in 'cell_metadata' does not match the number of cells across files."
             )
 
-        cell_metadata["cellarr_sample"] = _dataset
+        cell_metadata["cellarr_sample"] = _sample_per_cell
 
     # Create the cell metadata tiledb
     if not cell_metadata_options.skip:
         _cell_output_uri = f"{output_path}/cell_metadata"
 
         if isinstance(cell_metadata, str):
-            _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
+            _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=0)
             generate_metadata_tiledb_csv(
                 _cell_output_uri, cell_metadata, _cell_metaframe.columns
             )
@@ -447,6 +459,7 @@ def generate_metadata_tiledb_csv(
     output_uri: str,
     input: str,
     column_dtype=str,
+    index_col: bool = False,
     chunksize=1000,
 ):
     """Generate a metadata tiledb from csv.
@@ -474,7 +487,7 @@ def generate_metadata_tiledb_csv(
     initfile = True
     offset = 0
 
-    for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
+    for chunk in pd.read_csv(input, chunksize=chunksize, header=0, index_col=index_col):
         if initfile:
             utf.create_tiledb_frame_from_column_names(
                 output_uri, chunk.columns, column_dtype

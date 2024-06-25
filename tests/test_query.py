@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import tiledb
 from cellarr import CellArrDataset, build_cellarrdataset, MatrixOptions
+import cellarr
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -76,3 +77,25 @@ def test_query_cellarrdataset():
         result2.matrix.data,
         adata2.layers["counts"][0, adata2_gene_indices],
     )
+
+    assert cd.shape == (1100, 1000)
+    assert len(cd) == 1100
+
+    assert cd.get_cell_metadata_columns() == ["cellarr_sample"]
+    assert len(cd.get_cell_metadata_column("cellarr_sample")) == 1100
+    assert len(cd.get_cell_subset("cellarr_sample == 'sample_1'")) == 1000
+
+    assert sorted(cd.get_sample_metadata_columns()) == sorted(
+        ["cellarr_sample", "cellarr_original_gene_set", "cellarr_cell_counts"]
+    )
+    assert len(cd.get_sample_metadata_column("cellarr_sample")) == 2
+    assert len(cd.get_sample_subset("cellarr_sample == 'sample_1'")) == 1
+
+    assert cd.get_gene_annotation_columns() == ["cellarr_gene_index"]
+    assert len(cd.get_gene_annotation_column("cellarr_gene_index")) == 1000
+    assert len(cd.get_gene_subset("cellarr_gene_index == 'gene_1'")) == 1
+
+    result1 = cd.get_slice(slice(100), gene_list)
+
+    assert result1 is not None
+    assert result1.matrix.shape[0] == 1100

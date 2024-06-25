@@ -7,8 +7,6 @@ import mopsy
 import numpy as np
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
-from .globalcache import PACKAGE_SCAN_CACHE
-
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
@@ -67,6 +65,12 @@ def remap_anndata(
 
     omat = adata.layers[layer_matrix_name]
 
+    if len(feature_set_order) == 0:
+        return coo_matrix(
+            ([], ([], [])),
+            shape=(adata.shape[0], len(feature_set_order)),
+        ).tocsr()
+
     if var_feature_column == "index":
         osymbols = adata.var.index.tolist()
     else:
@@ -78,11 +82,19 @@ def remap_anndata(
         consolidate_duplicate_gene_func=consolidate_duplicate_gene_func,
     )
 
+    # figure out which indices to keep from the matrix
     indices_to_keep = [i for i, x in enumerate(symbols) if x in feature_set_order]
     symbols_to_keep = [symbols[i] for i in indices_to_keep]
 
     mat = mat[:, indices_to_keep].copy()
 
+    if len(indices_to_keep) == 0:
+        return coo_matrix(
+            ([], ([], [])),
+            shape=(adata.shape[0], len(feature_set_order)),
+        ).tocsr()
+
+    # figure out mapping from the current indices to the original feature order
     indices_to_map = []
     for x in symbols_to_keep:
         indices_to_map.append(feature_set_order[x])
@@ -94,6 +106,7 @@ def remap_anndata(
     else:
         raise TypeError(f"Unknown matrix type: {type(mat)}.")
 
+    # remap gene symbols to the new feature order
     new_col = np.array([indices_to_map[i] for i in mat_coo.col])
 
     return coo_matrix(
@@ -162,7 +175,6 @@ def extract_anndata_info(
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
     var_feature_column: str = "index",
     num_threads: int = 1,
-    force: bool = False,
 ):
     """Extract and generate the list of unique feature identifiers and cell counts across files.
 
@@ -182,45 +194,48 @@ def extract_anndata_info(
             Whether to rescan all the files even though the cache exists.
             Defaults to False.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE or force is True:
-        with Pool(num_threads) as p:
-            _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
-            PACKAGE_SCAN_CACHE["extracted_info"] = p.map(_wrapper_extract_info, _args)
+    with Pool(num_threads) as p:
+        _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
+        return p.map(_wrapper_extract_info, _args)
 
 
-def scan_for_features(unique: bool = True) -> List[str]:
+def scan_for_features(cache, unique: bool = True) -> List[str]:
     """Extract and generate the list of unique feature identifiers across files.
 
     Needs calling :py:func:`~.extract_anndata_info` first.
 
     Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
         unique:
             Compute gene list to a unique list.
 
     Returns:
         List of all unique feature ids across all files.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE:
-        raise RuntimeError("run 'extract_anndata_info' first.")
-
-    _features = [x[0] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+    _features = [x[0] for x in cache]
     if unique:
         return list(set(itertools.chain.from_iterable(_features)))
 
     return _features
 
 
-def scan_for_cellcounts() -> List[int]:
+def scan_for_cellcounts(cache) -> List[int]:
     """Extract cell counts across files.
 
     Needs calling :py:func:`~.extract_anndata_info` first.
 
+    Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
     Returns:
         List of cell counts across files.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE:
-        raise RuntimeError("run 'extract_anndata_info' first.")
 
-    _cellcounts = [x[1] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+    _cellcounts = [x[1] for x in cache]
 
     return _cellcounts
