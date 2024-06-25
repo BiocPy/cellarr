@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.CellArrDataset - cellarr 0.0.3 documentation</title>
+        <title>cellarr.CellArrDataset - cellarr 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,7 +212,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Cell Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#install-the-package">Install the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -256,9 +259,28 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for cellarr.CellArrDataset</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span></span><span class="sd">&quot;&quot;&quot;Query the `CellArrDataset`.</span>
+
+<span class="sd">This class provides methods to access the directory containing the</span>
+<span class="sd">generated TileDB files usually using the</span>
+<span class="sd">:py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
+
+<span class="sd">Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from cellarr import CellArrDataset</span>
+
+<span class="sd">        cd = CellArrDataset(dataset_path=&quot;/path/to/cellar/dir&quot;)</span>
+<span class="sd">        gene_list = [&quot;gene_1&quot;, &quot;gene_95&quot;, &quot;gene_50&quot;]</span>
+<span class="sd">        result1 = cd[0, gene_list]</span>
+
+<span class="sd">        print(result1)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tiledb</span>
@@ -340,7 +362,7 @@
 
 
     <span class="c1">####</span>
-    <span class="c1">## Subset functions for the `cell_metadata` TileDB file.</span>
+    <span class="c1">## Subset methods for the `cell_metadata` TileDB file.</span>
     <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_cell_metadata_columns">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_metadata_columns">[docs]</a>
@@ -413,7 +435,7 @@
 
 
     <span class="c1">####</span>
-    <span class="c1">## Subset functions for the `gene_annotation` TileDB file.</span>
+    <span class="c1">## Subset methods for the `gene_annotation` TileDB file.</span>
     <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_gene_annotation_columns">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_annotation_columns">[docs]</a>
@@ -510,7 +532,7 @@
 
 
     <span class="c1">####</span>
-    <span class="c1">## Subset functions for the `sample_metadata` TileDB file.</span>
+    <span class="c1">## Subset methods for the `sample_metadata` TileDB file.</span>
     <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_sample_metadata_columns">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_sample_metadata_columns">[docs]</a>
@@ -584,7 +606,7 @@
 
 
     <span class="c1">####</span>
-    <span class="c1">## Subset functions for the `matrix` TileDB file.</span>
+    <span class="c1">## Subset methods for the `matrix` TileDB file.</span>
     <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_matrix_subset">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_matrix_subset">[docs]</a>
@@ -624,7 +646,7 @@
 
 
     <span class="c1">####</span>
-    <span class="c1">## Subset functions by cell and gene dimensions.</span>
+    <span class="c1">## Subset methods by cell and gene dimensions.</span>
     <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_slice">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_slice">[docs]</a>
@@ -728,7 +750,39 @@
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__len__">[docs]</a>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-</div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Printing.</span>
+    <span class="c1">####</span>
+
+<div class="viewcode-block" id="CellArrDataset.__repr__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__repr__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A string representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(number_of_rows=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, number_of_columns=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="s2">&quot;, at path=&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_path</span>
+
+        <span class="n">output</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A pretty-printed string containing the contents of this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_rows: (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_columns(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;path columns(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">output</span></div>
 
 </pre></div>
         </article>
@@ -762,7 +816,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=47de8214"></script>
+</div><script src="../../_static/documentation_options.js?v=8c5712d9"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>

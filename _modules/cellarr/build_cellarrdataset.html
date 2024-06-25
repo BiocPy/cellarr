@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.build_cellarrdataset - cellarr 0.0.3 documentation</title>
+        <title>cellarr.build_cellarrdataset - cellarr 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,7 +212,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Cell Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#install-the-package">Install the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -463,7 +466,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;output_path&#39; must be a directory.&quot;</span><span class="p">)</span>
 
-    <span class="n">uad</span><span class="o">.</span><span class="n">extract_anndata_info</span><span class="p">(</span>
+    <span class="n">files_cache</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">extract_anndata_info</span><span class="p">(</span>
         <span class="n">files</span><span class="p">,</span>
         <span class="n">var_feature_column</span><span class="o">=</span><span class="n">gene_annotation_options</span><span class="o">.</span><span class="n">feature_column</span><span class="p">,</span>
         <span class="n">num_threads</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span>
@@ -478,7 +481,7 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">gene_set</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_features</span><span class="p">()</span>
+        <span class="n">gene_set</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_features</span><span class="p">(</span><span class="n">files_cache</span><span class="p">)</span>
         <span class="n">gene_set</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)</span>
         <span class="n">gene_annotation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;cellarr_gene_index&quot;</span><span class="p">:</span> <span class="n">gene_set</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">gene_set</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gene_annotation</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -487,7 +490,13 @@
             <span class="p">{</span><span class="s2">&quot;cellarr_gene_index&quot;</span><span class="p">:</span> <span class="n">_gene_list</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">_gene_list</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gene_annotation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">gene_annotation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gene_annotation</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">gene_annotation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gene_annotation</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Using the index of the DataFrame to collect feature ids or gene symbols...&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gene_annotation</span><span class="p">[</span><span class="s2">&quot;cellarr_gene_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_annotation</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gene_annotation</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;Using the index of the DataFrame to collect feature ids or gene symbols...&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
@@ -527,7 +536,14 @@
     <span class="c1">####</span>
     <span class="n">_samples</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
-        <span class="n">_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sample_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sample_</span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;Scanning all files to compute cell counts, this may take long&quot;</span><span class="p">,</span>
+        <span class="ne">UserWarning</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cell_counts</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_cellcounts</span><span class="p">(</span><span class="n">files_cache</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">sample_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;Sample metadata is not provided, each dataset in &#39;files&#39; is considered a sample&quot;</span><span class="p">,</span>
@@ -536,7 +552,9 @@
 
         <span class="n">sample_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">:</span> <span class="n">_samples</span><span class="p">})</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample_metadata</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">sample_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sample_metadata</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sample_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">sample_metadata</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sample_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_samples</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample_metadata</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">sample_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_samples</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;sample_metadata&#39; is not an expected type.&quot;</span><span class="p">)</span>
@@ -546,9 +564,11 @@
             <span class="s2">&quot;Scanning all files for feature ids (e.g. gene symbols), this may take long&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">gene_scan_set</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_features</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">gene_scan_set</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_features</span><span class="p">(</span><span class="n">files_cache</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">gene_set_str</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gene_scan_set</span><span class="p">]</span>
         <span class="n">sample_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_original_gene_set&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gene_set_str</span>
+
+        <span class="n">sample_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_cell_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_counts</span>
 
         <span class="n">_col_types</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">sample_metadata</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -571,17 +591,12 @@
         <span class="s2">&quot;Scanning all files to compute cell counts, this may take long&quot;</span><span class="p">,</span>
         <span class="ne">UserWarning</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">cell_counts</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_cellcounts</span><span class="p">()</span>
-    <span class="n">_cellindex_in_dataset</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">_dataset</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_sample_per_cell</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">cci</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cell_counts</span><span class="p">):</span>
-        <span class="n">_cellindex_in_dataset</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cci</span><span class="p">)])</span>
-        <span class="n">_dataset</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;dataset_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cci</span><span class="p">)])</span>
+        <span class="n">_sample_per_cell</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">_samples</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cci</span><span class="p">)])</span>
 
     <span class="k">if</span> <span class="n">cell_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cell_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;cellarr_cell_counts&quot;</span><span class="p">:</span> <span class="n">_cellindex_in_dataset</span><span class="p">,</span> <span class="s2">&quot;cellarr_sample&quot;</span><span class="p">:</span> <span class="n">_dataset</span><span class="p">}</span>
-        <span class="p">)</span>
+        <span class="n">cell_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">:</span> <span class="n">_sample_per_cell</span><span class="p">})</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_metadata</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;Scanning &#39;cell_metadata&#39; csv file to count number of cells, this may take long&quot;</span><span class="p">,</span>
@@ -607,14 +622,14 @@
                 <span class="s2">&quot;Number of rows in &#39;cell_metadata&#39; does not match the number of cells across files.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">cell_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_dataset</span>
+        <span class="n">cell_metadata</span><span class="p">[</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_per_cell</span>
 
     <span class="c1"># Create the cell metadata tiledb</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cell_metadata_options</span><span class="o">.</span><span class="n">skip</span><span class="p">:</span>
         <span class="n">_cell_output_uri</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">/cell_metadata&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_metadata</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">_cell_metaframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">cell_metadata</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">_cell_metaframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">cell_metadata</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">generate_metadata_tiledb_csv</span><span class="p">(</span>
                 <span class="n">_cell_output_uri</span><span class="p">,</span> <span class="n">cell_metadata</span><span class="p">,</span> <span class="n">_cell_metaframe</span><span class="o">.</span><span class="n">columns</span>
             <span class="p">)</span>
@@ -657,6 +672,7 @@
                 <span class="n">gene_set</span><span class="p">,</span>
                 <span class="n">var_feature_column</span><span class="o">=</span><span class="n">gene_annotation_options</span><span class="o">.</span><span class="n">feature_column</span><span class="p">,</span>
                 <span class="n">layer_matrix_name</span><span class="o">=</span><span class="n">matrix_options</span><span class="o">.</span><span class="n">matrix_name</span><span class="p">,</span>
+                <span class="n">consolidate_duplicate_gene_func</span><span class="o">=</span><span class="n">matrix_options</span><span class="o">.</span><span class="n">consolidate_duplicate_gene_func</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">uta</span><span class="o">.</span><span class="n">write_csr_matrix_to_tiledb</span><span class="p">(</span>
                 <span class="n">_counts_uri</span><span class="p">,</span>
@@ -712,6 +728,7 @@
     <span class="n">output_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">column_dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">index_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a metadata tiledb from csv.</span>
@@ -739,7 +756,7 @@
     <span class="n">initfile</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="n">index_col</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">initfile</span><span class="p">:</span>
             <span class="n">utf</span><span class="o">.</span><span class="n">create_tiledb_frame_from_column_names</span><span class="p">(</span>
                 <span class="n">output_uri</span><span class="p">,</span> <span class="n">chunk</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">column_dtype</span>
@@ -782,7 +799,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=47de8214"></script>
+</div><script src="../../_static/documentation_options.js?v=8c5712d9"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="cellarr" href="api/modules.html" /><link rel="prev" title="cellarr" href="index.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.0.3 documentation</title>
+        <title>Cell Arrays - cellarr 0.0.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.0.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -213,7 +213,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Cell Arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#install-the-package">Install the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -256,7 +259,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -264,54 +267,228 @@
         <article role="main" id="furo-main-content">
           <section class="tex2jax_ignore mathjax_ignore" id="cell-arrays">
 <h1>Cell Arrays<a class="headerlink" href="#cell-arrays" title="Link to this heading">¶</a></h1>
-<p>Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.</p>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<section id="build-the-cellarrdataset">
-<h3>Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#build-the-cellarrdataset" title="Link to this heading">¶</a></h3>
-<p>Creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates three TileDB files in the specified output directory:</p>
+<p>Cell Arrays is a Python package that provides a TileDB-backed store for large collections of
+genomic experimental data, such as millions of cells across multiple single-cell experiment objects.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="install-the-package">
+<h1>Install the package<a class="headerlink" href="#install-the-package" title="Link to this heading">¶</a></h1>
+<p>To get started, install the package from <a class="reference external" href="https://pypi.org/project/cellarr/">PyPI</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cellarr
+</pre></div>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="build-the-cellarrdataset">
+<h1>Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#build-the-cellarrdataset" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> method is designed to store single-cell RNA-seq
+datasets but can be generalized to store any 2-dimensional experimental data.</p>
+<p>This method creates four TileDB files in the directory specified by <code class="docutils literal notranslate"><span class="pre">output_path</span></code>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">gene_metadata</span></code>: Contains feature annotations.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: Contains cell or sample metadata.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code>: A TileDB-backed sparse array containing expression vectors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gene_annotation</span></code>: A TileDB file containing feature/gene annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>: A TileDB file containing sample metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: A TileDB file containing cell metadata including mapping to the samples
+they are tagged with in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>.</p></li>
+<li><p>A matrix TileDB file named by the <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter. This allows the package
+to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample
+metadata attributes.</p></li>
 </ul>
-<p><em><strong>Note: Currently only supports either paths to H5AD or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects</strong></em></p>
+<p>The TileDB matrix file is stored in a <code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">X</span> <span class="pre">gene</span></code> orientation. This orientation
+is chosen because the fastest-changing dimension as new files are added to the
+collection is usually the cells rather than genes.</p>
+<p>Process:</p>
+<ol class="arabic simple">
+<li><p><strong>Scan the Collection</strong>: Scan the entire collection of files to create
+a unique set of feature ids (e.g. gene symbols). Store this set as the
+<code class="docutils literal notranslate"><span class="pre">gene_annotation</span></code> TileDB file.</p></li>
+<li><p><strong>Sample Metadata</strong>: Store sample metadata in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>
+TileDB file. Each file is typically considered a sample, and an automatic
+mapping is created between files and samples.</p></li>
+<li><p><strong>Store Cell Metadata</strong>: Store cell metadata in the <code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>
+TileDB file.</p></li>
+<li><p><strong>Remap and Orient Data</strong>: For each dataset in the collection,
+remap and orient the feature dimension using the feature set from Step 1.
+This step ensures consistency in gene measurement and order, even if
+some genes are unmeasured or ordered differently in the original experiments.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/api/cellarr#module-cellarr.build_cellarrdataset">reference</a> documentation for modifying the parameters for any of these steps.</p>
+</div>
+<p>First lets mock a few <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">anndata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">generate_adata</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+    <span class="n">gene_index</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;gene_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+    <span class="n">var_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;names&quot;</span><span class="p">:</span> <span class="n">gene_index</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">gene_index</span><span class="p">)</span>
+    <span class="n">obs_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;cells&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;cell1_</span><span class="si">{</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]})</span>
+
+    <span class="n">adata</span> <span class="o">=</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span><span class="n">layers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">},</span> <span class="n">var</span><span class="o">=</span><span class="n">var_df</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="n">obs_df</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">adata</span>
+
+<span class="n">adata1</span> <span class="o">=</span> <span class="n">generate_adata</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">adata2</span> <span class="o">=</span> <span class="n">generate_adata</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;datasets&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>datasets
+AnnData object with n_obs × n_vars = 1000 × 100
+    obs: &#39;cells&#39;
+    var: &#39;names&#39;
+    layers: &#39;counts&#39; AnnData object with n_obs × n_vars = 100 × 1000
+    obs: &#39;cells&#39;
+    var: &#39;names&#39;
+    layers: &#39;counts&#39;
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
+</pre></div>
+</div>
+</div>
+</div>
 <p>To build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> from a collection of <code class="docutils literal notranslate"><span class="pre">H5AD</span></code> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">anndata</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">anndata</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span>
+<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span><span class="p">,</span> <span class="n">MatrixOptions</span>
 
 <span class="c1"># Create a temporary directory</span>
 <span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
 
-<span class="c1"># Read AnnData objects</span>
-<span class="n">adata1</span> <span class="o">=</span> <span class="n">anndata</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">&quot;path/to/object1.h5ad&quot;</span><span class="p">)</span>
-<span class="c1"># or just provide the path</span>
-<span class="n">adata2</span> <span class="o">=</span> <span class="s2">&quot;path/to/object2.h5ad&quot;</span>
+<span class="c1"># # Read AnnData objects</span>
+<span class="c1"># adata1 = anndata.read_h5ad(&quot;path/to/object1.h5ad&quot;)</span>
+<span class="c1"># # or just provide the path</span>
+<span class="c1"># adata2 = &quot;path/to/object2.h5ad&quot;</span>
 
 <span class="c1"># Build CellArrDataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
-     <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
-     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
-     <span class="n">matrix_dim_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
 <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </pre></div>
 </div>
-<hr class="docutils" />
-<section id="todo-this-following-section-does-not-work-yet">
-<h4>TODO: This following section does not work yet.<a class="headerlink" href="#todo-this-following-section-does-not-work-yet" title="Link to this heading">¶</a></h4>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:216: UserWarning: Scanning all files for feature ids (e.g. gene symbols), this may take long
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:278: UserWarning: Scanning all files to compute cell counts, this may take long
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:285: UserWarning: Sample metadata is not provided, each dataset in &#39;files&#39; is considered a sample
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:300: UserWarning: Scanning all files for feature ids (e.g. gene symbols), this may take long
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:327: UserWarning: Scanning all files to compute cell counts, this may take long
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpmwspzuw_/gene_annotation
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+Optimizing /tmp/tmpmwspzuw_/sample_metadata
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+Optimizing /tmp/tmpmwspzuw_/cell_metadata
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpmwspzuw_/counts
+Fragments before consolidation: 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fragments after consolidation: 1
+class: CellArrDataset
+number_of_rows: (1100)
+number_of_columns(1000
+path columns(/tmp/tmpmwspzuw_
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>All files are expected to be consistent and any modifications
+to make them consistent is outside the scope of this function
+and package.</p>
+<p>There’s a few assumptions this process makes:</p>
+<ul class="simple">
+<li><p>If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an :py:class:<code class="docutils literal notranslate"><span class="pre">~anndata.AnnData</span></code>
+or H5AD object, these must contain an assay matrix in the
+layers slot of the object named as <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter.</p></li>
+<li><p>Feature information must contain a column defined by the parameter
+<code class="docutils literal notranslate"><span class="pre">feature_column</span></code> in the
+:py:class:<code class="docutils literal notranslate"><span class="pre">~cellarr.build_options.GeneAnnotationOptions.</span></code> that
+contains feature ids or gene symbols across all files.</p></li>
+<li><p>If no <code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code> is provided, we scan to count the number of cells
+and create a simple range index.</p></li>
+<li><p>Each file is considered a sample and a mapping between cells and samples
+is automatically created. Hence the sample information provided must match
+the number of input files.</p></li>
+</ul>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="query-a-cellarrdataset">
+<h1>Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#query-a-cellarrdataset" title="Link to this heading">¶</a></h1>
 <p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializing it to the path where the files were created.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
 
 <span class="c1"># Query data from the dataset</span>
-<span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gene1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene10&quot;</span><span class="p">,</span> <span class="s2">&quot;gene500&quot;</span><span class="p">]]</span>
+<span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gene_1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_10&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_500&quot;</span><span class="p">]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matrix slice:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;gene_annotation slice:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">gene_annotation</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cell_metadata slice:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">cell_metadata</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-</section>
-</section>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>matrix slice:
+  (10, 0)	12.436595916748047
+  (10, 1)	22.075590133666992
+gene_annotation slice:
+    cellarr_gene_index
+0               gene_1
+1              gene_10
+447           gene_500
+cell_metadata slice:
+   cellarr_sample
+10       sample_1
+</pre></div>
+</div>
+</div>
+</div>
+<p>This returns a <code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object that contains the matrix and metadata <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>’s along the cell and gene axes.</p>
+<hr class="docutils" />
+<p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/api/modules.html">documentation</a> for more details.</p>
 </section>
 
         </article>
@@ -357,38 +534,13 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Cell Arrays</a><ul>
-<li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
-<li><a class="reference internal" href="#todo-this-following-section-does-not-work-yet">TODO: This following section does not work yet.</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=47de8214"></script>
+</div><script src="_static/documentation_options.js?v=8c5712d9"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

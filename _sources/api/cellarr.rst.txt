@@ -52,14 +52,6 @@ cellarr.dataloader module
    :undoc-members:
    :show-inheritance:
 
-cellarr.globalcache module
---------------------------
-
-.. automodule:: cellarr.globalcache
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 cellarr.queryutils\_tiledb\_frame module
 ----------------------------------------
 
