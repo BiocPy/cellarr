@@ -1,5 +1,5 @@
 import os
-from typing import List, Union, Sequence, Tuple
+from typing import List, Union, Sequence
 from collections import namedtuple
 
 import pandas as pd
@@ -15,7 +15,7 @@ CellArrDatasetSlice = namedtuple(
     "CellArrDatasetSlice", ["cell_metadata", "gene_annotation", "matrix"]
 )
 CellArrDatasetSlice.__doc__ = """
-Class that represents a realized subset of the `CellArrDataset`. 
+Class that represents a realized subset of the `CellArrDataset`.
 """
 
 
