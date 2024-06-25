@@ -196,7 +196,6 @@ def extract_anndata_info(
     """
     with Pool(num_threads) as p:
         _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
-        print("_args", _args)
         return p.map(_wrapper_extract_info, _args)
 
 
