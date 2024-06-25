@@ -464,8 +464,8 @@ class CellArrDataset:
         """
         output = f"class: {type(self).__name__}\n"
 
-        output += f"number_of_rows: ({self.shape[0]})\n"
-        output += f"number_of_columns({self.shape[1]}\n"
-        output += f"path columns({self._dataset_path}\n"
+        output += f"number_of_rows: {self.shape[0]}\n"
+        output += f"number_of_columns: {self.shape[1]}\n"
+        output += f"path: '{self._dataset_path}'\n"
 
         return output
