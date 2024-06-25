@@ -106,7 +106,7 @@ class MatrixOptions:
     skip: bool = False
     consolidate_duplicate_gene_func: callable = sum
     matrix_name: str = "counts"
-    matrix_attr_name:str = "data"
+    matrix_attr_name: str = "data"
     dtype: np.dtype = np.uint16
     tiledb_store_name: str = "counts"
 
