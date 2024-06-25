@@ -68,8 +68,7 @@ class GeneAnnotationOptions:
 
 @dataclass
 class MatrixOptions:
-    """Optional arguments for the ``matrix`` store for
-    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``matrix`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         matrix_name:

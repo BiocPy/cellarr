@@ -25,4 +25,4 @@ def test_consolidate_symbols():
 
     assert len(groups) == 10
     assert cmat.shape[1] == 10
-    assert cmat[:,1].sum() == 10
+    assert cmat[:, 1].sum() == 10
