@@ -67,15 +67,17 @@ def remap_anndata(
 
         adata = h5ad_or_adata
 
-    mat = adata.layers[layer_matrix_name]
+    omat = adata.layers[layer_matrix_name]
 
     if var_feature_column == "index":
-        symbols = adata.var.index.tolist()
+        osymbols = adata.var.index.tolist()
     else:
-        symbols = adata.var[var_feature_column].tolist()
+        osymbols = adata.var[var_feature_column].tolist()
 
-    adata = consolidate_duplicate_symbols(
-        adata, consolidate_duplicate_gene_func=consolidate_duplicate_gene_func
+    mat, symbols = consolidate_duplicate_symbols(
+        omat,
+        feature_ids=osymbols,
+        consolidate_duplicate_gene_func=consolidate_duplicate_gene_func,
     )
 
     indices_to_keep = [i for i, x in enumerate(symbols) if x in feature_set_order]
