@@ -67,6 +67,12 @@ def remap_anndata(
 
     omat = adata.layers[layer_matrix_name]
 
+    if len(feature_set_order) == 0:
+        return coo_matrix(
+            ([], ([], [])),
+            shape=(adata.shape[0], len(feature_set_order)),
+        ).tocsr()
+
     if var_feature_column == "index":
         osymbols = adata.var.index.tolist()
     else:
@@ -78,11 +84,19 @@ def remap_anndata(
         consolidate_duplicate_gene_func=consolidate_duplicate_gene_func,
     )
 
+    # figure out which indices to keep from the matrix
     indices_to_keep = [i for i, x in enumerate(symbols) if x in feature_set_order]
     symbols_to_keep = [symbols[i] for i in indices_to_keep]
 
     mat = mat[:, indices_to_keep].copy()
 
+    if len(indices_to_keep) == 0:
+        return coo_matrix(
+            ([], ([], [])),
+            shape=(adata.shape[0], len(feature_set_order)),
+        ).tocsr()
+
+    # figure out mapping from the current indices to the original feature order
     indices_to_map = []
     for x in symbols_to_keep:
         indices_to_map.append(feature_set_order[x])
@@ -94,6 +108,7 @@ def remap_anndata(
     else:
         raise TypeError(f"Unknown matrix type: {type(mat)}.")
 
+    # remap gene symbols to the new feature order
     new_col = np.array([indices_to_map[i] for i in mat_coo.col])
 
     return coo_matrix(
