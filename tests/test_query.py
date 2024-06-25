@@ -52,7 +52,6 @@ def test_query_cellarrdataset():
 
     genes = gfp.df[:]
     _genes_from_tile = genes["cellarr_gene_index"].tolist()
-    gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
 
     adata1_gene_indices = sorted(
         [adata1.var.index.tolist().index(x) for x in gene_list]
@@ -65,6 +64,7 @@ def test_query_cellarrdataset():
     result1 = cd[0, gene_list]
 
     assert result1 is not None
+    assert result1.matrix.shape == (1, len(adata1_gene_indices))
 
     assert np.allclose(
         result1.matrix.data,
@@ -72,6 +72,7 @@ def test_query_cellarrdataset():
     )
 
     result2 = cd[1000, gene_list]
+    assert result2.matrix.shape == (1, len(adata2_gene_indices))
 
     assert np.allclose(
         result2.matrix.data,
@@ -95,7 +96,7 @@ def test_query_cellarrdataset():
     assert len(cd.get_gene_annotation_column("cellarr_gene_index")) == 1000
     assert len(cd.get_gene_subset("cellarr_gene_index == 'gene_1'")) == 1
 
-    result1 = cd.get_slice(slice(100), gene_list)
+    result1 = cd.get_slice(slice(0, 100), gene_list)
 
     assert result1 is not None
-    assert result1.matrix.shape[0] == 1100
+    assert result1.matrix.shape == (101, len(gene_list))

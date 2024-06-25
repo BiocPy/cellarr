@@ -13,14 +13,14 @@ __license__ = "MIT"
 def create_tiledb_frame_from_column_names(
     tiledb_uri_path: str, column_names: List[str], column_dtype=str
 ):
-    """Create a tiledb file with the provided attributes to persistent storage.
+    """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
     related schema files.
 
     Args:
         tiledb_uri_path:
-            Path to create the metadata tiledb file.
+            Path to create the metadata TileDB file.
 
         column_names:
             Column names of the data frame.
@@ -42,14 +42,14 @@ def create_tiledb_frame_from_column_names(
 def create_tiledb_frame_from_dataframe(
     tiledb_uri_path: str, frame: List[str], column_types=dict
 ):
-    """Create a tiledb file with the provided attributes to persistent storage.
+    """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
     related schema files.
 
     Args:
         tiledb_uri_path:
-            Path to create the metadata tiledb file.
+            Path to create the metadata TileDB file.
 
         column_names:
             Column names of the data frame.
@@ -67,17 +67,17 @@ def create_tiledb_frame_from_dataframe(
 def append_to_tiledb_frame(
     tiledb_uri_path: str, frame: pd.DataFrame, row_offset: int = 0
 ):
-    """Create a tiledb file with the provided attributes to persistent storage.
+    """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
     related schema files.
 
     Args:
         tiledb_uri_path:
-            Path to create the metadata tiledb file.
+            Path to create the metadata TileDB file.
 
         frame:
-            Pandas Dataframe to append to tiledb.
+            Pandas Dataframe to append to TileDB.
 
         row_offset:
             Row offset to append new rows to.

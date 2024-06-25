@@ -72,6 +72,20 @@ def subset_frame(
     return result
 
 
+def _remap_index(indices: List[int]) -> List[int]:
+    _map = {}
+    _new_indices = []
+    count = 0
+    for r in list(indices):
+        if r not in _map:
+            _map[r] = count
+            count += 1
+
+        _new_indices.append(_map[r])
+
+    return _new_indices, len(_map)
+
+
 def subset_array(
     tiledb_obj: tiledb.Array,
     row_subset: Union[slice, list, tuple],
@@ -100,10 +114,15 @@ def subset_array(
     """
     data = tiledb_obj.multi_index[row_subset, column_subset]
 
-    # TODO: should we reset the index?
-    return sp.coo_matrix(
-        (data["data"], (data["cell_index"], data["gene_index"])), shape=shape
+    _cell_rows, num_row_shape = _remap_index(data["cell_index"])
+    _gene_cols, num_col_shape = _remap_index(data["gene_index"])
+
+    mat = sp.coo_matrix(
+        (data["data"], (_cell_rows, _gene_cols)),
+        shape=(num_row_shape, num_col_shape),
     )
+
+    return mat
 
 
 def get_a_column(tiledb_obj: tiledb.Array, column_name: str) -> list:

@@ -53,7 +53,7 @@ class CellArrDataset:
 
         Args:
             dataset_path:
-                Path to the directory containing the tiledb stores.
+                Path to the directory containing the TileDB stores.
                 Usually the ``output_path`` from the
                 :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
