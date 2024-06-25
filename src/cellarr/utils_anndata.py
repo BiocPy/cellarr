@@ -1,10 +1,12 @@
 import itertools
 from multiprocessing import Pool
-from typing import List, Union
+from typing import List, Union, Tuple
 
 import anndata
 import numpy as np
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
+
+from .globalcache import PACKAGE_SCAN_CACHE
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -86,10 +88,10 @@ def remap_anndata(
     ).tocsr()
 
 
-def _get_feature_index(
+def _extract_info(
     h5ad_or_adata: Union[str, anndata.AnnData],
     var_feature_column: str = "index",
-) -> List[str]:
+) -> Tuple[List[str], int]:
     if isinstance(h5ad_or_adata, str):
         adata = anndata.read_h5ad(h5ad_or_adata, backed=True)
     else:
@@ -103,21 +105,21 @@ def _get_feature_index(
     else:
         symbols = adata.var[var_feature_column].tolist()
 
-    return symbols
+    return symbols, adata.shape[0]
 
 
-def _wrapper_get_feature_ids(args):
+def _wrapper_extract_info(args):
     file, gcol = args
-    return _get_feature_index(file, gcol)
+    return _extract_info(file, gcol)
 
 
-def scan_for_features(
+def extract_anndata_info(
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
     var_feature_column: str = "index",
     num_threads: int = 1,
-    unique: bool = True,
-) -> List[str]:
-    """Extract and generate the list of unique feature identifiers across files.
+    force: bool = False,
+):
+    """Extract and generate the list of unique feature identifiers and cell counts across files.
 
     Args:
         h5ad_or_adata:
@@ -131,47 +133,49 @@ def scan_for_features(
             Number of threads to use.
             Defaults to 1.
 
+        force:
+            Whether to rescan all the files even though the cache exists.
+            Defaults to False.
+    """
+    if "extracted_info" not in PACKAGE_SCAN_CACHE or force is True:
+        with Pool(num_threads) as p:
+            _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
+            PACKAGE_SCAN_CACHE["extracted_info"] = p.map(_wrapper_extract_info, _args)
+
+
+def scan_for_features(unique: bool = True) -> List[str]:
+    """Extract and generate the list of unique feature identifiers across files.
+
+    Needs calling :py:func:`~.extract_anndata_info` first.
+
+    Args:
+        unique:
+            Compute gene list to a unique list.
+
     Returns:
         List of all unique feature ids across all files.
     """
-    with Pool(num_threads) as p:
-        _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
-        all_symbols = p.map(_wrapper_get_feature_ids, _args)
-        if unique:
-            return list(set(itertools.chain.from_iterable(all_symbols)))
+    if "extracted_info" not in PACKAGE_SCAN_CACHE:
+        raise RuntimeError("run 'extract_anndata_info' first.")
 
-        return all_symbols
+    _features = [x[0] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+    if unique:
+        return list(set(itertools.chain.from_iterable(_features)))
 
-
-def _get_cellcounts(h5ad_or_adata: Union[str, anndata.AnnData]) -> int:
-    if isinstance(h5ad_or_adata, str):
-        adata = anndata.read_h5ad(h5ad_or_adata, backed=True)
-    else:
-        if not isinstance(h5ad_or_adata, anndata.AnnData):
-            raise TypeError("Input is not an 'AnnData' object.")
-
-        adata = h5ad_or_adata
-
-    return adata.shape[0]
+    return _features
 
 
-def scan_for_cellcounts(
-    h5ad_or_adata: List[Union[str, anndata.AnnData]],
-    num_threads: int = 1,
-) -> List[int]:
+def scan_for_cellcounts() -> List[int]:
     """Extract cell counts across files.
 
-    Args:
-        h5ad_or_adata:
-            List of anndata objects or path to h5ad files.
-
-        num_threads:
-            Number of threads to use.
-            Defaults to 1.
+    Needs calling :py:func:`~.extract_anndata_info` first.
 
     Returns:
         List of cell counts across files.
     """
-    with Pool(num_threads) as p:
-        all_counts = p.map(_get_cellcounts, h5ad_or_adata)
-        return all_counts
+    if "extracted_info" not in PACKAGE_SCAN_CACHE:
+        raise RuntimeError("run 'extract_anndata_info' first.")
+
+    _cellcounts = [x[1] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+
+    return _cellcounts

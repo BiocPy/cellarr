@@ -45,32 +45,33 @@ def test_build_cellarrdataset():
 
     genes = gfp.df[:]
 
-    print(genes)
+    assert len(genes) == 1000
 
     gene_list = ["gene_1", "gene_95", "gene_50"]
     _genes_from_tile = genes["cellarr_gene_index"].tolist()
-    # print(_genes_from_tile)
     gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
 
-    print(gene_indices_tdb)
     adata1_gene_indices = sorted(
         [adata1.var.index.tolist().index(x) for x in gene_list]
     )
 
-    print(adata1_gene_indices)
     adata2_gene_indices = sorted(
         [adata2.var.index.tolist().index(x) for x in gene_list]
     )
 
-    print(adata2_gene_indices)
-
-    print(cfp.multi_index[0, gene_indices_tdb])
-
     assert np.allclose(
-        cfp.multi_index[0, gene_indices_tdb]["counts"],
+        cfp.multi_index[0, gene_indices_tdb]["data"],
         adata1.layers["counts"][0, adata1_gene_indices],
     )
     assert np.allclose(
-        cfp.multi_index[1000, gene_indices_tdb]["counts"],
+        cfp.multi_index[1000, gene_indices_tdb]["data"],
         adata2.layers["counts"][0, adata2_gene_indices],
     )
+
+    sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
+    samples = sfp.df[:]
+    assert len(samples) == 2
+
+    cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
+    cell_df = cellfp.df[:]
+    assert len(cell_df) == 1100

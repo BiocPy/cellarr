@@ -86,7 +86,7 @@ def create_tiledb_array(
 
     # expecting counts
     tdb_attr = tiledb.Attr(
-        name=matrix_attr_name,
+        name="data",
         dtype=matrix_dim_dtype,
         filters=tiledb.FilterList([tiledb.GzipFilter()]),
     )
