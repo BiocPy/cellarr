@@ -274,6 +274,13 @@ def build_cellarrdataset(
     _samples = []
     for idx, _ in enumerate(files):
         _samples.append(f"sample_{idx}")
+
+    warnings.warn(
+        "Scanning all files to compute cell counts, this may take long",
+        UserWarning,
+    )
+    cell_counts = uad.scan_for_cellcounts(files_cache)
+
     if sample_metadata is None:
         warnings.warn(
             "Sample metadata is not provided, each dataset in 'files' is considered a sample",
@@ -298,6 +305,8 @@ def build_cellarrdataset(
         gene_set_str = [",".join(x) for x in gene_scan_set]
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
+        sample_metadata["cellarr_cel_counts"] = cell_counts
+
         _col_types = {}
         for col in sample_metadata.columns:
             _col_types[col] = "ascii"
@@ -319,17 +328,12 @@ def build_cellarrdataset(
         "Scanning all files to compute cell counts, this may take long",
         UserWarning,
     )
-    cell_counts = uad.scan_for_cellcounts(files_cache)
-    _cellindex_in_dataset = []
-    _dataset = []
+    _sample_per_cell = []
     for idx, cci in enumerate(cell_counts):
-        _cellindex_in_dataset.extend([x for x in range(cci)])
-        _dataset.extend([f"dataset_{idx}" for _ in range(cci)])
+        _sample_per_cell.extend([f"sample_{idx}" for _ in range(cci)])
 
     if cell_metadata is None:
-        cell_metadata = pd.DataFrame(
-            {"cellarr_cell_counts": _cellindex_in_dataset, "cellarr_sample": _dataset}
-        )
+        cell_metadata = pd.DataFrame({"cellarr_sample": _sample_per_cell})
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
@@ -355,7 +359,7 @@ def build_cellarrdataset(
                 "Number of rows in 'cell_metadata' does not match the number of cells across files."
             )
 
-        cell_metadata["cellarr_sample"] = _dataset
+        cell_metadata["cellarr_sample"] = _sample_per_cell
 
     # Create the cell metadata tiledb
     if not cell_metadata_options.skip:
