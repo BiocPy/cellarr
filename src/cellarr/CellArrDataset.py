@@ -74,7 +74,7 @@ class CellArrDataset:
         self._sample_metadata_tdb.close()
 
     ####
-    ## Subset functions for the `cell_metadata` TileDB file.
+    ## Subset methods for the `cell_metadata` TileDB file.
     ####
     def get_cell_metadata_columns(self) -> List[str]:
         """Get column names from ``cell_metadata`` store.
@@ -138,7 +138,7 @@ class CellArrDataset:
         return qtd.subset_frame(self._cell_metadata_tdb, subset=subset, columns=columns)
 
     ####
-    ## Subset functions for the `gene_annotation` TileDB file.
+    ## Subset methods for the `gene_annotation` TileDB file.
     ####
     def get_gene_annotation_columns(self) -> List[str]:
         """Get annotation column names from ``gene_annotation`` store.
@@ -223,7 +223,7 @@ class CellArrDataset:
         )
 
     ####
-    ## Subset functions for the `sample_metadata` TileDB file.
+    ## Subset methods for the `sample_metadata` TileDB file.
     ####
     def get_sample_metadata_columns(self) -> List[str]:
         """Get column names from ``sample_metadata`` store.
@@ -288,7 +288,7 @@ class CellArrDataset:
         )
 
     ####
-    ## Subset functions for the `matrix` TileDB file.
+    ## Subset methods for the `matrix` TileDB file.
     ####
     def get_matrix_subset(self, subset: Union[int, Sequence, tuple]) -> pd.DataFrame:
         """Slice the ``sample_metadata`` store.
@@ -325,7 +325,7 @@ class CellArrDataset:
                 )
 
     ####
-    ## Subset functions by cell and gene dimensions.
+    ## Subset methods by cell and gene dimensions.
     ####
     def get_slice(
         self,

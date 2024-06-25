@@ -68,7 +68,8 @@ class GeneAnnotationOptions:
 
 @dataclass
 class MatrixOptions:
-    """Optional arguments for the ``matrix`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
+    """Optional arguments for the ``matrix`` store for
+    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
     Attributes:
         matrix_name:
@@ -76,6 +77,12 @@ class MatrixOptions:
             Must be consistent across all objects in ``files``.
 
             Defaults to "counts".
+
+        consolidate_duplicate_gene_func:
+            Function to consolidate when the AnnData object contains
+            multiple rows with the same feature id or gene symbol.
+
+            Defaults to :py:func:`sum`.
 
         skip:
             Whether to skip generating matrix tiledb.
@@ -94,6 +101,7 @@ class MatrixOptions:
     """
 
     skip: bool = False
+    consolidate_duplicate_gene_func: callable = sum
     matrix_name: str = "counts"
     dtype: np.dtype = np.uint16
     tiledb_store_name: str = "counts"

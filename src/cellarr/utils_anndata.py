@@ -1,9 +1,12 @@
 import itertools
+from collections import Counter
 from multiprocessing import Pool
-from typing import List, Union, Tuple
+from typing import Any, List, Tuple, Union
 
 import anndata
+import mopsy
 import numpy as np
+import pandas as pd
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
 from .globalcache import PACKAGE_SCAN_CACHE
@@ -18,6 +21,7 @@ def remap_anndata(
     feature_set_order: dict,
     var_feature_column: str = "index",
     layer_matrix_name: str = "counts",
+    consolidate_duplicate_gene_func=sum,
 ) -> csr_matrix:
     """Extract and remap the count matrix to the provided feature (gene) set order from the :py:class:`~anndata.AnnData`
     object.
@@ -45,6 +49,12 @@ def remap_anndata(
             Layer containing the matrix to add to tiledb.
             Defaults to "counts".
 
+        consolidate_duplicate_gene_func:
+            Function to consolidate when the AnnData object contains
+            multiple rows with the same feature id or gene symbol.
+
+            Defaults to :py:func:`sum`.
+
     Returns:
         A ``csr_matrix`` representation of the assay matrix.
     """
@@ -63,6 +73,10 @@ def remap_anndata(
         symbols = adata.var.index.tolist()
     else:
         symbols = adata.var[var_feature_column].tolist()
+
+    adata = consolidate_duplicate_symbols(
+        adata, consolidate_duplicate_gene_func=consolidate_duplicate_gene_func
+    )
 
     indices_to_keep = [i for i, x in enumerate(symbols) if x in feature_set_order]
     symbols_to_keep = [symbols[i] for i in indices_to_keep]
@@ -86,6 +100,37 @@ def remap_anndata(
         (mat_coo.data, (mat_coo.row, new_col)),
         shape=(adata.shape[0], len(feature_set_order)),
     ).tocsr()
+
+
+def consolidate_duplicate_symbols(
+    matrix: Any, feature_ids: List[str], consolidate_duplicate_gene_func: callable
+) -> anndata.AnnData:
+    """Consolidate duplicate gene symbols.
+
+    Args:
+        matrix:
+            data matrix with rows
+            for cells and columns for genes.
+
+        feature_ids:
+            List of feature ids along the column axis of the matrix.
+
+        consolidate_duplicate_gene_func:
+            Function to consolidate when the AnnData object contains
+            multiple rows with the same feature id or gene symbol.
+
+            Defaults to :py:func:`sum`.
+
+    Returns:
+        AnnData object with duplicate gene symbols consolidated.
+    """
+
+    if len(set(feature_ids)) == len(feature_ids):
+        return matrix, feature_ids
+
+    return mopsy.apply(
+        consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1
+    )
 
 
 def _extract_info(

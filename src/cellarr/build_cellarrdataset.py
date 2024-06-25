@@ -397,6 +397,7 @@ def build_cellarrdataset(
                 gene_set,
                 var_feature_column=gene_annotation_options.feature_column,
                 layer_matrix_name=matrix_options.matrix_name,
+                consolidate_duplicate_gene_func = matrix_options.consolidate_duplicate_gene_func
             )
             uta.write_csr_matrix_to_tiledb(
                 _counts_uri,
