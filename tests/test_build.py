@@ -49,7 +49,6 @@ def test_build_cellarrdataset():
 
     gene_list = ["gene_1", "gene_95", "gene_50"]
     _genes_from_tile = genes["cellarr_gene_index"].tolist()
-    # print(_genes_from_tile)
     gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
 
     adata1_gene_indices = sorted(
