@@ -457,7 +457,7 @@ def generate_metadata_tiledb_csv(
     output_uri: str,
     input: str,
     column_dtype=str,
-    index_col:bool = False,
+    index_col: bool = False,
     chunksize=1000,
 ):
     """Generate a metadata tiledb from csv.
