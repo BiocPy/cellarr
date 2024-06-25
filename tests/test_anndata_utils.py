@@ -38,7 +38,16 @@ def test_remap_anndata():
     obs_df = pd.DataFrame({"cells": [f"cell1_{j+1}" for j in range(n)]})
     adata = anndata.AnnData(layers={"counts": y}, var=var_df, obs=obs_df)
 
-    cmat = cellarr.utils_anndata.remap_anndata(adata, {"gene_1": 0, "gene_2": 1})
+    cmat = cellarr.utils_anndata.remap_anndata(
+        adata, feature_set_order={"gene_1": 0, "gene_2": 1}, var_feature_column="index"
+    )
+
+    assert cmat.shape == (100, 2)
+    assert len(cmat.data) != 0
+
+    cmat = cellarr.utils_anndata.remap_anndata(
+        adata, feature_set_order={"gene_1": 0, "gene_2": 1}, var_feature_column="names"
+    )
 
     assert cmat.shape == (100, 2)
     assert len(cmat.data) != 0
@@ -57,6 +66,7 @@ def test_remap_anndata():
 
     assert cmat.shape == (100, 0)
     assert len(cmat.data) == 0
+
 
 def test_extract_info():
     np.random.seed(1)
