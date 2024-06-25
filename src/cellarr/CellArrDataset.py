@@ -1,7 +1,7 @@
 """Query the `CellArrDataset`.
 
-This class provides methods to access the directory containing the 
-generated TileDB files usually using the 
+This class provides methods to access the directory containing the
+generated TileDB files usually using the
 :py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.
 
 Example:
