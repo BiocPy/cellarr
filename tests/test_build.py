@@ -45,6 +45,8 @@ def test_build_cellarrdataset():
 
     genes = gfp.df[:]
 
+    assert len(genes) == 1000
+
     gene_list = ["gene_1", "gene_95", "gene_50"]
     _genes_from_tile = genes["cellarr_gene_index"].tolist()
     # print(_genes_from_tile)
@@ -70,3 +72,7 @@ def test_build_cellarrdataset():
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
     samples = sfp.df[:]
     assert len(samples) == 2
+
+    cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
+    cell_df = cellfp.df[:]
+    assert len(cell_df) == 1100
