@@ -229,7 +229,13 @@ def build_cellarrdataset(
             {"cellarr_gene_index": _gene_list}, index=_gene_list
         )
     elif isinstance(gene_annotation, str):
-        gene_annotation = pd.read_csv(gene_annotation, index=True, header=True)
+        gene_annotation = pd.read_csv(gene_annotation, index_col=0, header=0)
+        warnings.warn(
+            "Using the index of the DataFrame to collect feature ids or gene symbols...",
+            UserWarning,
+        )
+        gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
+    elif isinstance(gene_annotation, pd.DataFrame):
         warnings.warn(
             "Using the index of the DataFrame to collect feature ids or gene symbols...",
             UserWarning,
@@ -278,7 +284,9 @@ def build_cellarrdataset(
 
         sample_metadata = pd.DataFrame({"cellarr_sample": _samples})
     elif isinstance(sample_metadata, str):
-        sample_metadata = pd.read_csv(sample_metadata, header=True)
+        sample_metadata = pd.read_csv(sample_metadata, header=0)
+        sample_metadata["cellarr_sample"] = _samples
+    elif isinstance(sample_metadata, pd.DataFrame):
         sample_metadata["cellarr_sample"] = _samples
     else:
         raise TypeError("'sample_metadata' is not an expected type.")
@@ -289,10 +297,7 @@ def build_cellarrdataset(
             UserWarning,
         )
         gene_scan_set = uad.scan_for_features(files_cache, unique=False)
-        print(gene_scan_set)
         gene_set_str = [",".join(x) for x in gene_scan_set]
-        print(gene_set_str)
-        print(sample_metadata)
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
         _col_types = {}
@@ -359,7 +364,7 @@ def build_cellarrdataset(
         _cell_output_uri = f"{output_path}/cell_metadata"
 
         if isinstance(cell_metadata, str):
-            _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=True)
+            _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=0)
             generate_metadata_tiledb_csv(
                 _cell_output_uri, cell_metadata, _cell_metaframe.columns
             )
@@ -452,6 +457,7 @@ def generate_metadata_tiledb_csv(
     output_uri: str,
     input: str,
     column_dtype=str,
+    index_col:bool = False,
     chunksize=1000,
 ):
     """Generate a metadata tiledb from csv.
@@ -479,7 +485,7 @@ def generate_metadata_tiledb_csv(
     initfile = True
     offset = 0
 
-    for chunk in pd.read_csv(input, chunksize=chunksize, header=True):
+    for chunk in pd.read_csv(input, chunksize=chunksize, header=0, index_col=index_col):
         if initfile:
             utf.create_tiledb_frame_from_column_names(
                 output_uri, chunk.columns, column_dtype
