@@ -20,9 +20,7 @@ Class that represents a realized subset of the `CellArrDataset`.
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated
-    metadata in a TileDB backed store.
-    """
+    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
 
     def __init__(
         self,
