@@ -1,12 +1,10 @@
 import itertools
-from collections import Counter
 from multiprocessing import Pool
 from typing import Any, List, Tuple, Union
 
 import anndata
 import mopsy
 import numpy as np
-import pandas as pd
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
 from .globalcache import PACKAGE_SCAN_CACHE
