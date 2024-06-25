@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.utils_tiledb_frame - cellarr 0.0.2 documentation</title>
+        <title>cellarr.build_options - cellarr 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -213,14 +213,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/cellarr.html">cellarr package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -255,103 +255,143 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for cellarr.utils_tiledb_frame</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+          <h1>Source code for cellarr.build_options</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">tiledb</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla, Tony Kuo&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
 
-<div class="viewcode-block" id="create_tiledb_frame_from_column_names">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_column_names">[docs]</a>
-<span class="k">def</span> <span class="nf">create_tiledb_frame_from_column_names</span><span class="p">(</span>
-    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">column_dtype</span><span class="o">=</span><span class="nb">str</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
+<div class="viewcode-block" id="CellMetadataOptions">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.build_options.CellMetadataOptions">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CellMetadataOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional arguments for the ``cell_metadata`` store for</span>
+<span class="sd">    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
 
-<span class="sd">    This will materialize the array directory and all</span>
-<span class="sd">    related schema files.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        skip:</span>
+<span class="sd">            Whether to skip generating cell metadata tiledb.</span>
+<span class="sd">            Defaults to False.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        tiledb_uri_path:</span>
-<span class="sd">            Path to create the metadata tiledb file.</span>
+<span class="sd">        dtype:</span>
+<span class="sd">            NumPy dtype for the cell dimension.</span>
+<span class="sd">            Defaults to np.uint32.</span>
 
-<span class="sd">        column_names:</span>
-<span class="sd">            Column names of the data frame.</span>
+<span class="sd">            Note: make sure the number of cells fit</span>
+<span class="sd">            within the integer limits of unsigned-int32.</span>
 
-<span class="sd">        column_dtype:</span>
-<span class="sd">            Type for the columns, usually str.</span>
-<span class="sd">            Defaults to string.</span>
+<span class="sd">        tiledb_store_name:</span>
+<span class="sd">            Name of the tiledb file.</span>
+<span class="sd">            Defaults to &quot;cell_metadata&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">):</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">)</span>
 
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">column_names</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
-
-    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;schema_only&quot;</span><span class="p">,</span> <span class="n">full_domain</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span>
+    <span class="n">tiledb_store_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cell_metadata&quot;</span></div>
 
 
 
-<div class="viewcode-block" id="create_tiledb_frame_from_dataframe">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.create_tiledb_frame_from_dataframe">[docs]</a>
-<span class="k">def</span> <span class="nf">create_tiledb_frame_from_dataframe</span><span class="p">(</span>
-    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">column_types</span><span class="o">=</span><span class="nb">dict</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
+<div class="viewcode-block" id="GeneAnnotationOptions">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.build_options.GeneAnnotationOptions">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GeneAnnotationOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional arguments for the ``gene_annotation`` store for</span>
+<span class="sd">    :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
 
-<span class="sd">    This will materialize the array directory and all</span>
-<span class="sd">    related schema files.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        feature_column:</span>
+<span class="sd">            Column in ``var`` containing the feature ids (e.g. gene symbols).</span>
+<span class="sd">            Defaults to the index of the ``var`` slot.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        tiledb_uri_path:</span>
-<span class="sd">            Path to create the metadata tiledb file.</span>
+<span class="sd">        skip:</span>
+<span class="sd">            Whether to skip generating gene annotation tiledb.</span>
+<span class="sd">            Defaults to False.</span>
 
-<span class="sd">        column_names:</span>
-<span class="sd">            Column names of the data frame.</span>
+<span class="sd">        dtype:</span>
+<span class="sd">            NumPy dtype for the gene dimension.</span>
+<span class="sd">            Defaults to np.uint32.</span>
 
-<span class="sd">        column_types:</span>
-<span class="sd">            Dictionary specifying the column types for each</span>
-<span class="sd">            column in the frame.</span>
+<span class="sd">            Note: make sure the number of genes fit</span>
+<span class="sd">            within the integer limits of unsigned-int32.</span>
+
+<span class="sd">        tiledb_store_name:</span>
+<span class="sd">            Name of the tiledb file.</span>
+<span class="sd">            Defaults to &quot;gene_annotation&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">):</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">)</span>
 
-    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">column_types</span><span class="o">=</span><span class="n">column_types</span><span class="p">)</span></div>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">feature_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span>
+    <span class="n">tiledb_store_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gene_annotation&quot;</span></div>
 
 
 
-<div class="viewcode-block" id="append_to_tiledb_frame">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_frame.append_to_tiledb_frame">[docs]</a>
-<span class="k">def</span> <span class="nf">append_to_tiledb_frame</span><span class="p">(</span>
-    <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">row_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
+<div class="viewcode-block" id="MatrixOptions">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.build_options.MatrixOptions">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MatrixOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional arguments for the ``matrix`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
 
-<span class="sd">    This will materialize the array directory and all</span>
-<span class="sd">    related schema files.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        matrix_name:</span>
+<span class="sd">            Matrix name from ``layers`` slot to add to tiledb.</span>
+<span class="sd">            Must be consistent across all objects in ``files``.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        tiledb_uri_path:</span>
-<span class="sd">            Path to create the metadata tiledb file.</span>
+<span class="sd">            Defaults to &quot;counts&quot;.</span>
 
-<span class="sd">        frame:</span>
-<span class="sd">            Pandas Dataframe to append to tiledb.</span>
+<span class="sd">        skip:</span>
+<span class="sd">            Whether to skip generating matrix tiledb.</span>
+<span class="sd">            Defaults to False.</span>
 
-<span class="sd">        row_offset:</span>
-<span class="sd">            Row offset to append new rows to.</span>
-<span class="sd">            Defaults to 0.</span>
+<span class="sd">        dtype:</span>
+<span class="sd">            NumPy dtype for the values in the matrix.</span>
+<span class="sd">            Defaults to np.uint16.</span>
+
+<span class="sd">            Note: make sure the matrix values fit</span>
+<span class="sd">            within the range limits of unsigned-int16.</span>
+
+<span class="sd">        tiledb_store_name:</span>
+<span class="sd">            Name of the tiledb file.</span>
+<span class="sd">            Defaults to `matrix`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tiledb</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span>
-        <span class="n">tiledb_uri_path</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span> <span class="n">row_start_idx</span><span class="o">=</span><span class="n">row_offset</span>
-    <span class="p">)</span></div>
+
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span>
+    <span class="n">tiledb_store_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SampleMetadataOptions">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.build_options.SampleMetadataOptions">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SampleMetadataOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional arguments for the ``sample`` store for :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        skip:</span>
+<span class="sd">            Whether to skip generating sample tiledb.</span>
+<span class="sd">            Defaults to False.</span>
+
+<span class="sd">        dtype:</span>
+<span class="sd">            NumPy dtype for the sample dimension.</span>
+<span class="sd">            Defaults to np.uint32.</span>
+
+<span class="sd">            Note: make sure the number of samples fit</span>
+<span class="sd">            within the integer limits of unsigned-int32.</span>
+
+<span class="sd">        tiledb_store_name:</span>
+<span class="sd">            Name of the tiledb file.</span>
+<span class="sd">            Defaults to &quot;sample_metadata&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span>
+    <span class="n">tiledb_store_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sample_metadata&quot;</span></div>
 
 </pre></div>
         </article>
@@ -385,7 +425,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+</div><script src="../../_static/documentation_options.js?v=47de8214"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>

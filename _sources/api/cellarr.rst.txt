@@ -20,6 +20,30 @@ cellarr.build\_cellarrdataset module
    :undoc-members:
    :show-inheritance:
 
+cellarr.build\_options module
+-----------------------------
+
+.. automodule:: cellarr.build_options
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cellarr.buildutils\_tiledb\_array module
+----------------------------------------
+
+.. automodule:: cellarr.buildutils_tiledb_array
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cellarr.buildutils\_tiledb\_frame module
+----------------------------------------
+
+.. automodule:: cellarr.buildutils_tiledb_frame
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cellarr.dataloader module
 -------------------------
 
@@ -28,26 +52,26 @@ cellarr.dataloader module
    :undoc-members:
    :show-inheritance:
 
+cellarr.globalcache module
+--------------------------
+
+.. automodule:: cellarr.globalcache
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cellarr.queryutils\_tiledb\_frame module
+----------------------------------------
+
+.. automodule:: cellarr.queryutils_tiledb_frame
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cellarr.utils\_anndata module
 -----------------------------
 
 .. automodule:: cellarr.utils_anndata
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-cellarr.utils\_tiledb\_array module
------------------------------------
-
-.. automodule:: cellarr.utils_tiledb_array
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-cellarr.utils\_tiledb\_frame module
------------------------------------
-
-.. automodule:: cellarr.utils_tiledb_frame
    :members:
    :undoc-members:
    :show-inheritance:

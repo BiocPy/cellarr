@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.CellArrDataset - cellarr 0.0.2 documentation</title>
+        <title>cellarr.CellArrDataset - cellarr 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -213,14 +213,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/cellarr.html">cellarr package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -257,40 +257,60 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for cellarr.CellArrDataset</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tiledb</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">queryutils_tiledb_frame</span> <span class="k">as</span> <span class="n">qtd</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
+<span class="n">CellArrDatasetSlice</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;CellArrDatasetSlice&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;cell_metadata&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_annotation&quot;</span><span class="p">,</span> <span class="s2">&quot;matrix&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">CellArrDatasetSlice</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Class that represents a realized subset of the `CellArrDataset`.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
 
 <div class="viewcode-block" id="CellArrDataset">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset">[docs]</a>
 <span class="k">class</span> <span class="nc">CellArrDataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that represent a collection of cells in TileDB.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that represent a collection of cells and their associated metadata in a TileDB backed store.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="CellArrDataset.__init__">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">counts_tdb_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span><span class="p">,</span>
-        <span class="n">gene_metadata_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gene_metadata&quot;</span><span class="p">,</span>
+        <span class="n">matrix_tdb_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+        <span class="n">gene_annotation_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gene_annotation&quot;</span><span class="p">,</span>
         <span class="n">cell_metadata_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cell_metadata&quot;</span><span class="p">,</span>
+        <span class="n">sample_metadata_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sample_metadata&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ``CellArr`` dataset.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ``CellArrDataset``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            counts_tdb_uri:</span>
-<span class="sd">                Path to counts TileDB.</span>
+<span class="sd">            dataset_path:</span>
+<span class="sd">                Path to the directory containing the tiledb stores.</span>
+<span class="sd">                Usually the ``output_path`` from the</span>
+<span class="sd">                :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.</span>
 
-<span class="sd">            gene_metadata_uri:</span>
-<span class="sd">                Path to gene metadata TileDB.</span>
+<span class="sd">            counts_tdb_uri:</span>
+<span class="sd">                Relative path to matrix store.</span>
+
+<span class="sd">            gene_annotation_uri:</span>
+<span class="sd">                Relative path to gene annotation store.</span>
 
 <span class="sd">            cell_metadata_uri:</span>
-<span class="sd">                Path to cell metadata TileDB.</span>
+<span class="sd">                Relative path to cell metadata store.</span>
+
+<span class="sd">            sample_metadata_uri:</span>
+<span class="sd">                Relative path to sample metadata store.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">):</span>
@@ -298,103 +318,416 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_path</span> <span class="o">=</span> <span class="n">dataset_path</span>
         <span class="c1"># TODO: Maybe switch to on-demand loading of these objects</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_counts_tdb_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">counts_tdb_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">gene_metadata_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_tdb_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">matrix_tdb_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">gene_annotation_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">cell_metadata_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">sample_metadata_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CellArrDataset.__del__">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__del__">[docs]</a>
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_counts_tdb_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_tdb_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-    <span class="c1"># TODO:</span>
-    <span class="c1"># Methods to implement</span>
-    <span class="c1"># search by gene</span>
-    <span class="c1"># search by cell metadata</span>
-    <span class="c1"># slice counts after search</span>
-
+    <span class="c1">####</span>
+    <span class="c1">## Subset functions for the `cell_metadata` TileDB file.</span>
+    <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_cell_metadata_columns">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_metadata_columns">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_cell_metadata_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">nattr</span><span class="p">):</span>
-            <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">attr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_cell_metadata_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get column names from ``cell_metadata`` store.</span>
 
-        <span class="k">return</span> <span class="n">columns</span></div>
+<span class="sd">        Returns:</span>
+<span class="sd">            List of available metadata columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_schema_names_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CellArrDataset.get_cell_metadata_column">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_metadata_column">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_cell_metadata_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span><span class="o">.</span><span class="n">df</span><span class="p">[:]</span></div>
+    <span class="k">def</span> <span class="nf">get_cell_metadata_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access a column from the ``cell_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name:</span>
+<span class="sd">                Name of the column or attribute. Usually one of the column names</span>
+<span class="sd">                from of :py:meth:`~get_cell_metadata_columns`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of values for this column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_a_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CellArrDataset.get_cell_subset">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_cell_subset">[docs]</a>
     <span class="k">def</span> <span class="nf">get_cell_subset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the ``cell_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset:</span>
+<span class="sd">                A list of integer indices to subset the ``cell_metadata``</span>
+<span class="sd">                store.</span>
+
+<span class="sd">                Alternatively, may also provide a</span>
+<span class="sd">                :py:class:`tiledb.QueryCondition` to query the store.</span>
+
+<span class="sd">            columns:</span>
+<span class="sd">                List of specific column names to access.</span>
+
+<span class="sd">                Defaults to None, in which case all columns are extracted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas Dataframe of the subset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_metadata_columns</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_not_avail</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_metadata_columns</span><span class="p">():</span>
+                    <span class="n">_not_avail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
-        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cond</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">df</span><span class="p">[:]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Columns &#39;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; are not available.&quot;</span>
+                <span class="p">)</span>
 
-
-<div class="viewcode-block" id="CellArrDataset.get_gene_metadata_columns">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_metadata_columns">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_gene_metadata_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">nattr</span><span class="p">):</span>
-            <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">attr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">columns</span></div>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="CellArrDataset.get_gene_metadata_column">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_metadata_column">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_gene_metadata_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="n">column_name</span><span class="p">])</span><span class="o">.</span><span class="n">df</span><span class="p">[:]</span></div>
+    <span class="c1">####</span>
+    <span class="c1">## Subset functions for the `gene_annotation` TileDB file.</span>
+    <span class="c1">####</span>
+<div class="viewcode-block" id="CellArrDataset.get_gene_annotation_columns">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_annotation_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_gene_annotation_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get annotation column names from ``gene_annotation`` store.</span>
 
+<span class="sd">        Returns:</span>
+<span class="sd">            List of available annotations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_schema_names_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_gene_annotation_column">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_annotation_column">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_gene_annotation_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access a column from the ``gene_annotation`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name:</span>
+<span class="sd">                Name of the column or attribute. Usually one of the column names</span>
+<span class="sd">                from of :py:meth:`~get_gene_annotation_columns`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of values for this column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_a_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_gene_annotation_index">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_annotation_index">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_gene_annotation_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get index of the ``gene_annotation`` store.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of unique symbols.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_a_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="p">,</span> <span class="s2">&quot;cellarr_gene_index&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;cellarr_gene_index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_indices_for_gene_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="n">_gene_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gene_annotation_index</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">_match_to_list</span><span class="p">(</span><span class="n">_gene_index</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CellArrDataset.get_gene_subset">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_gene_subset">[docs]</a>
     <span class="k">def</span> <span class="nf">get_gene_subset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">):</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the ``gene_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset:</span>
+<span class="sd">                A list of integer indices to subset the ``gene_metadata``</span>
+<span class="sd">                store.</span>
+
+<span class="sd">                Alternatively, may provide a</span>
+<span class="sd">                :py:class:`tiledb.QueryCondition` to query the store.</span>
+
+<span class="sd">                Alternatively, may provide a list of strings to match with</span>
+<span class="sd">                the index of ``gene_metadata`` store.</span>
+
+<span class="sd">            columns:</span>
+<span class="sd">                List of specific column names to access.</span>
+
+<span class="sd">                Defaults to None, in which case all columns are extracted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas Dataframe of the subset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gene_metadata_columns</span><span class="p">()</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gene_annotation_columns</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_not_avail</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gene_annotation_columns</span><span class="p">():</span>
+                    <span class="n">_not_avail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
-        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gene_metadata_tdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cond</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">df</span><span class="p">[:]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Columns &#39;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; are not available.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">qtd</span><span class="o">.</span><span class="n">_is_list_strings</span><span class="p">(</span><span class="n">subset</span><span class="p">):</span>
+            <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_for_gene_list</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_frame</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span></div>
 
 
+    <span class="c1">####</span>
+    <span class="c1">## Subset functions for the `sample_metadata` TileDB file.</span>
+    <span class="c1">####</span>
+<div class="viewcode-block" id="CellArrDataset.get_sample_metadata_columns">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_sample_metadata_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sample_metadata_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get column names from ``sample_metadata`` store.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of available metadata columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_schema_names_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_sample_metadata_column">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_sample_metadata_column">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sample_metadata_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Access a column from the ``sample_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name:</span>
+<span class="sd">                Name of the column or attribute. Usually one of the column names</span>
+<span class="sd">                from of :py:meth:`~get_sample_metadata_columns`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of values for this column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_a_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_sample_subset">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_sample_subset">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sample_subset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the ``sample_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset:</span>
+<span class="sd">                A list of integer indices to subset the ``sample_metadata``</span>
+<span class="sd">                store.</span>
+
+<span class="sd">                Alternatively, may also provide a</span>
+<span class="sd">                :py:class:`tiledb.QueryCondition` to query the store.</span>
+
+<span class="sd">            columns:</span>
+<span class="sd">                List of specific column names to access.</span>
+
+<span class="sd">                Defaults to None, in which case all columns are extracted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas Dataframe of the subset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_metadata_columns</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_not_avail</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_metadata_columns</span><span class="p">():</span>
+                    <span class="n">_not_avail</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Columns &#39;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_not_avail</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; are not available.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_frame</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Subset functions for the `matrix` TileDB file.</span>
+    <span class="c1">####</span>
+<div class="viewcode-block" id="CellArrDataset.get_matrix_subset">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_matrix_subset">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_matrix_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice the ``sample_metadata`` store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset:</span>
+<span class="sd">                Any `slice`supported by TileDB&#39;s array slicing.</span>
+<span class="sd">                For more info refer to</span>
+<span class="sd">                &lt;TileDB docs https://docs.tiledb.com/main/how-to/arrays/reading-arrays/basic-reading&gt;_.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas Dataframe of the subset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_array</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_tdb_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one slicing argument must be provided.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_array</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_tdb_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_array</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_tdb_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subset</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` only supports 2-dimensional slicing.&quot;</span>
+                <span class="p">)</span></div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Subset functions by cell and gene dimensions.</span>
+    <span class="c1">####</span>
 <div class="viewcode-block" id="CellArrDataset.get_slice">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_slice">[docs]</a>
     <span class="k">def</span> <span class="nf">get_slice</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cell_subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span>
-        <span class="n">gene_subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span>
-    <span class="p">):</span>
+        <span class="n">gene_subset</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">QueryCondition</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CellArrDatasetSlice</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subset a ``CellArrDataset``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cell_subset:</span>
+<span class="sd">                Integer indices, a boolean filter, or (if the current object is</span>
+<span class="sd">                named) names specifying the rows (or cells) to retain.</span>
+
+<span class="sd">            cell_subset:</span>
+<span class="sd">                Integer indices, a boolean filter, or (if the current object is</span>
+<span class="sd">                named) names specifying the columns (or features/genes) to retain.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A :py:class:`~CellArrDatasetSlice` object containing the `cell_metadata`,</span>
+<span class="sd">            `gene_annotation` and the matrix for the given slice ranges.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_csubset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_subset</span><span class="p">(</span><span class="n">cell_subset</span><span class="p">)</span>
         <span class="n">_cell_indices</span> <span class="o">=</span> <span class="n">_csubset</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="n">_gsubset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gene_subset</span><span class="p">(</span><span class="n">gene_subset</span><span class="p">)</span>
         <span class="n">_gene_indices</span> <span class="o">=</span> <span class="n">_gsubset</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts_tdb_tdb</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="n">_cell_indices</span><span class="p">,</span> <span class="n">_gene_indices</span><span class="p">]</span></div>
+        <span class="n">_msubset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_matrix_subset</span><span class="p">((</span><span class="n">_cell_indices</span><span class="p">,</span> <span class="n">_gene_indices</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">CellArrDatasetSlice</span><span class="p">(</span>
+            <span class="n">_csubset</span><span class="p">,</span>
+            <span class="n">_gsubset</span><span class="p">,</span>
+            <span class="n">_msubset</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Dunder method to use `[]` operator.</span>
+    <span class="c1">####</span>
+<div class="viewcode-block" id="CellArrDataset.__getitem__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__getitem__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CellArrDatasetSlice</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subset a ``CellArrDataset``.</span>
+
+<span class="sd">        Mostly an alias to :py:meth:`~.get_slice`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args:</span>
+<span class="sd">                Integer indices, a boolean filter, or (if the current object is</span>
+<span class="sd">                named) names specifying the ranges to be extracted.</span>
+
+<span class="sd">                Alternatively a tuple of length 1. The first entry specifies</span>
+<span class="sd">                the rows (or cells) to retain based on their names or indices.</span>
+
+<span class="sd">                Alternatively a tuple of length 2. The first entry specifies</span>
+<span class="sd">                the rows (or cells) to retain, while the second entry specifies the</span>
+<span class="sd">                columns (or features/genes) to retain, based on their names or indices.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError:</span>
+<span class="sd">                If too many or too few slices provided.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A :py:class:`~CellArrDatasetSlice` object containing the `cell_metadata`,</span>
+<span class="sd">            `gene_annotation` and the matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one slicing argument must be provided.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` only supports 2-dimensional slicing.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;args must be a sequence or a scalar integer or string or a tuple of atmost 2 values.&quot;</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Misc methods.</span>
+    <span class="c1">####</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="CellArrDataset.__len__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__len__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 
 </pre></div>
@@ -429,7 +762,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+</div><script src="../../_static/documentation_options.js?v=47de8214"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="cellarr" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="cellarr" href="api/modules.html" /><link rel="prev" title="cellarr" href="index.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.0.2 documentation</title>
+        <title>Cell Arrays - cellarr 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -214,14 +214,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
 </div>
@@ -267,9 +267,9 @@
 <p>Cell Arrays is a Python package that provides a TileDB-backed store for large collections of genomic experimental data, such as millions of cells across multiple single-cell experiment objects.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<section id="create-the-cellarrdataset">
-<h3>Create the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#create-the-cellarrdataset" title="Link to this heading">¶</a></h3>
-<p>Creating a CellArrDataset generates three TileDB files in the specified output directory:</p>
+<section id="build-the-cellarrdataset">
+<h3>Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#build-the-cellarrdataset" title="Link to this heading">¶</a></h3>
+<p>Creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates three TileDB files in the specified output directory:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gene_metadata</span></code>: Contains feature annotations.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: Contains cell or sample metadata.</p></li>
@@ -293,7 +293,7 @@
 <span class="c1"># Build CellArrDataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
      <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
-     <span class="n">h5ad_or_adata</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
      <span class="n">matrix_dim_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
 <span class="p">)</span>
 </pre></div>
@@ -301,7 +301,7 @@
 <hr class="docutils" />
 <section id="todo-this-following-section-does-not-work-yet">
 <h4>TODO: This following section does not work yet.<a class="headerlink" href="#todo-this-following-section-does-not-work-yet" title="Link to this heading">¶</a></h4>
-<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializng it to the path where the files were created.</p>
+<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializing it to the path where the files were created.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
 
@@ -319,12 +319,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="contributing.html">
+          <a class="next-page" href="api/modules.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Contributing</div>
+                <div class="title">cellarr</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -371,7 +371,7 @@
             <ul>
 <li><a class="reference internal" href="#">Cell Arrays</a><ul>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#create-the-cellarrdataset">Create the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
+<li><a class="reference internal" href="#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
 <li><a class="reference internal" href="#todo-this-following-section-does-not-work-yet">TODO: This following section does not work yet.</a></li>
 </ul>
 </li>
@@ -388,7 +388,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=e3a6060d"></script>
+</div><script src="_static/documentation_options.js?v=47de8214"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

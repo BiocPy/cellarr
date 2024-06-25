@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.0.2 documentation</title>
+        <title>Cell Arrays - cellarr 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -214,14 +214,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
 </div>
@@ -262,18 +262,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <!-- These are examples of badges you might want to add to your README:
-     please update the URLs accordingly
-
-[![Built Status](https://api.cirrus-ci.com/github/<USER>/cellarr.svg?branch=main)](https://cirrus-ci.com/github/<USER>/cellarr)
-[![ReadTheDocs](https://readthedocs.org/projects/cellarr/badge/?version=latest)](https://cellarr.readthedocs.io/en/stable/)
-[![Coveralls](https://img.shields.io/coveralls/github/<USER>/cellarr/main.svg)](https://coveralls.io/r/<USER>/cellarr)
-[![PyPI-Server](https://img.shields.io/pypi/v/cellarr.svg)](https://pypi.org/project/cellarr/)
-[![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/cellarr.svg)](https://anaconda.org/conda-forge/cellarr)
-[![Monthly Downloads](https://pepy.tech/badge/cellarr/month)](https://pepy.tech/project/cellarr)
-[![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter)](https://twitter.com/cellarr)
--->
-<p><a class="reference external" href="https://pypi.org/project/cellarr/"><img alt="PyPI-Server" src="https://img.shields.io/pypi/v/cellarr.svg" /></a>
+          <p><a class="reference external" href="https://pypi.org/project/cellarr/"><img alt="PyPI-Server" src="https://img.shields.io/pypi/v/cellarr.svg" /></a>
 <img alt="Unit tests" src="https://github.com/BiocPy/cellarr/actions/workflows/pypi-test.yml/badge.svg" /></p>
 <section class="tex2jax_ignore mathjax_ignore" id="cell-arrays">
 <h1>Cell Arrays<a class="headerlink" href="#cell-arrays" title="Link to this heading">¶</a></h1>
@@ -289,15 +278,15 @@ datasets but can be generalized to store any 2-dimensional experimental data.</p
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
-<section id="create-a-cellarrdataset">
-<h3>Create a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#create-a-cellarrdataset" title="Link to this heading">¶</a></h3>
-<p>Creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates three TileDB files in the specified output directory:</p>
+<section id="build-a-cellarrdataset">
+<h3>Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#build-a-cellarrdataset" title="Link to this heading">¶</a></h3>
+<p>Building a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates three TileDB files in the specified output directory:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gene_metadata</span></code>: Contains feature annotations.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: Contains cell or sample metadata.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code>: A TileDB-backed sparse array containing expression vectors.</p></li>
 </ul>
-<p>The TileDB matrix file is stored in a cell X gene orientation. This orientation
+<p>The TileDB matrix file is stored in a <strong>cell X gene</strong> orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.</p>
 <p><em><strong>Note: Currently only supports either paths to H5AD or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects</strong></em></p>
@@ -318,24 +307,55 @@ collection is usually the cells rather than genes.</p>
 <span class="c1"># Build CellArrDataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
      <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
-     <span class="n">h5ad_or_adata</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
      <span class="n">matrix_dim_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<hr class="docutils" />
-<section id="todo-this-following-section-does-not-work-yet">
-<h4>TODO: This following section does not work yet.<a class="headerlink" href="#todo-this-following-section-does-not-work-yet" title="Link to this heading">¶</a></h4>
-<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializng it to the path where the files were created.</p>
+<p>The build process usually involves 4 steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Scan the Collection</strong>: Scan the entire collection of files to create
+a unique set of feature ids (e.g. gene symbols). Store this set as the
+<code class="docutils literal notranslate"><span class="pre">gene_annotation</span></code> TileDB file.</p></li>
+<li><p><strong>Sample Metadata</strong>: Store sample metadata in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>
+TileDB file. Each file is typically considered a sample, and an automatic
+mapping is created between files and samples if metadata is not provided.</p></li>
+<li><p><strong>Store Cell Metadata</strong>: Store cell metadata in the <code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>
+TileDB file.</p></li>
+<li><p><strong>Remap and Orient Data</strong>: For each dataset in the collection,
+remap and orient the feature dimension using the feature set from Step 1.
+This step ensures consistency in gene measurement and order, even if
+some genes are unmeasured or ordered differently in the original experiments.</p></li>
+</ol>
+<p><em><strong>Note: The objects to build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> are expected to be fairly consistent, especially along the feature dimension.
+if these are <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> or <code class="docutils literal notranslate"><span class="pre">H5AD</span></code>objects, all objects must contain an index (in the <code class="docutils literal notranslate"><span class="pre">var</span></code> slot) specifying the gene symbols.</strong></em></p>
+<p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/tutorial.html">documentation</a> for more details.</p>
+</section>
+<section id="query-a-cellarrdataset">
+<h3>Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#query-a-cellarrdataset" title="Link to this heading">¶</a></h3>
+<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializing it to the path where the files were created.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
 
 <span class="c1"># Query data from the dataset</span>
 <span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gene1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene10&quot;</span><span class="p">,</span> <span class="s2">&quot;gene500&quot;</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">gene_annotation</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> ## output2
+ &lt;1100x1000 sparse matrix of type &#39;&lt;class &#39;numpy.float32&#39;&gt;&#39;
+      with 3 stored elements in COOrdinate format&gt;
+
+ ## output2
+ 	cellarr_gene_index
+ 0	gene_1
+ 446	gene_50
+ 945	gene_95
 </pre></div>
 </div>
 <!-- pyscaffold-notes -->
-</section>
 </section>
 </section>
 <section id="note">
@@ -385,10 +405,8 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
 <li><a class="reference internal" href="#">Cell Arrays</a><ul>
 <li><a class="reference internal" href="#install">Install</a></li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#create-a-cellarrdataset">Create a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
-<li><a class="reference internal" href="#todo-this-following-section-does-not-work-yet">TODO: This following section does not work yet.</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#build-a-cellarrdataset">Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#note">Note</a></li>
@@ -403,7 +421,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=e3a6060d"></script>
+</div><script src="_static/documentation_options.js?v=47de8214"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

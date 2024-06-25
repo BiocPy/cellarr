@@ -16,11 +16,11 @@ pip install cellarr
 :maxdepth: 2
 
 Overview <tutorial>
-Contributions & Help <contributing>
-License <license>
+Module Reference <api/modules>
 Authors <authors>
 Changelog <changelog>
-Module Reference <api/modules>
+Contributions & Help <contributing>
+License <license>
 ```
 
 ## Indices and tables

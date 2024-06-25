@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.utils_tiledb_array - cellarr 0.0.2 documentation</title>
+        <title>cellarr.buildutils_tiledb_array - cellarr 0.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.0.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.0.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.0.2 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.0.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -213,14 +213,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/cellarr.html">cellarr package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -255,7 +255,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for cellarr.utils_tiledb_array</h1><div class="highlight"><pre>
+          <h1>Source code for cellarr.buildutils_tiledb_array</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
@@ -270,11 +270,11 @@
 
 
 <div class="viewcode-block" id="create_tiledb_array">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_array.create_tiledb_array">[docs]</a>
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.buildutils_tiledb_array.create_tiledb_array">[docs]</a>
 <span class="k">def</span> <span class="nf">create_tiledb_array</span><span class="p">(</span>
     <span class="n">tiledb_uri_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">num_cells</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">num_genes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">x_dim_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_dim_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">x_dim_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cell_index&quot;</span><span class="p">,</span>
     <span class="n">y_dim_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gene_index&quot;</span><span class="p">,</span>
     <span class="n">matrix_attr_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span><span class="p">,</span>
@@ -292,11 +292,17 @@
 <span class="sd">        tiledb_uri_path:</span>
 <span class="sd">            Path to create the array tiledb file.</span>
 
-<span class="sd">        num_cells:</span>
-<span class="sd">            Number of cells (x/fastest-changing dimension).</span>
+<span class="sd">        x_dim_length:</span>
+<span class="sd">            Number of entries along the x/fastest-changing dimension.</span>
+<span class="sd">            e.g. Number of cells.</span>
+<span class="sd">            Defaults to None, in which case, the max integer value of</span>
+<span class="sd">            ``x_dim_dtype`` is used.</span>
 
-<span class="sd">        num_genes:</span>
-<span class="sd">            Number fo genes (y dimension).</span>
+<span class="sd">        y_dim_length:</span>
+<span class="sd">            Number of entries along the y dimension.</span>
+<span class="sd">            e.g. Number of genes.</span>
+<span class="sd">            Defaults to None, in which case, the max integer value of</span>
+<span class="sd">            ``y_dim_dtype`` is used.</span>
 
 <span class="sd">        x_dim_name:</span>
 <span class="sd">            Name for the x-dimension.</span>
@@ -327,14 +333,20 @@
 <span class="sd">            Defaults to True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">xdim</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">x_dim_name</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_cells</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x_dim_dtype</span><span class="p">)</span>
-    <span class="n">ydim</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">y_dim_name</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_genes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y_dim_dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x_dim_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_dim_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">x_dim_dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+
+    <span class="k">if</span> <span class="n">y_dim_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y_dim_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">y_dim_dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+
+    <span class="n">xdim</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">x_dim_name</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_dim_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x_dim_dtype</span><span class="p">)</span>
+    <span class="n">ydim</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">y_dim_name</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_dim_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y_dim_dtype</span><span class="p">)</span>
 
     <span class="n">dom</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">)</span>
 
     <span class="c1"># expecting counts</span>
     <span class="n">tdb_attr</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Attr</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">matrix_attr_name</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">matrix_dim_dtype</span><span class="p">,</span>
         <span class="n">filters</span><span class="o">=</span><span class="n">tiledb</span><span class="o">.</span><span class="n">FilterList</span><span class="p">([</span><span class="n">tiledb</span><span class="o">.</span><span class="n">GzipFilter</span><span class="p">()]),</span>
     <span class="p">)</span>
@@ -352,7 +364,7 @@
 
 
 <div class="viewcode-block" id="write_csr_matrix_to_tiledb">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_array.write_csr_matrix_to_tiledb">[docs]</a>
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.buildutils_tiledb_array.write_csr_matrix_to_tiledb">[docs]</a>
 <span class="k">def</span> <span class="nf">write_csr_matrix_to_tiledb</span><span class="p">(</span>
     <span class="n">tiledb_array_uri</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">SparseArray</span><span class="p">],</span>
     <span class="n">matrix</span><span class="p">:</span> <span class="n">csr_matrix</span><span class="p">,</span>
@@ -419,7 +431,7 @@
 
 
 <div class="viewcode-block" id="optimize_tiledb_array">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_tiledb_array.optimize_tiledb_array">[docs]</a>
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.buildutils_tiledb_array.optimize_tiledb_array">[docs]</a>
 <span class="k">def</span> <span class="nf">optimize_tiledb_array</span><span class="p">(</span><span class="n">tiledb_array_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Consolidate tiledb fragments.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -471,7 +483,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=e3a6060d"></script>
+</div><script src="../../_static/documentation_options.js?v=47de8214"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>
