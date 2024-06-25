@@ -202,8 +202,10 @@ def build_cellarrdataset(
     """
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
+    
+    print("files from input", files)
 
-    uad.extract_anndata_info(
+    files_cache = uad.extract_anndata_info(
         files,
         var_feature_column=gene_annotation_options.feature_column,
         num_threads=num_threads,
@@ -218,7 +220,7 @@ def build_cellarrdataset(
             UserWarning,
         )
 
-        gene_set = uad.scan_for_features()
+        gene_set = uad.scan_for_features(files_cache)
         gene_set = sorted(gene_set)
         gene_annotation = pd.DataFrame({"cellarr_gene_index": gene_set}, index=gene_set)
     elif isinstance(gene_annotation, list):
@@ -286,8 +288,11 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        gene_scan_set = uad.scan_for_features(unique=False)
+        gene_scan_set = uad.scan_for_features(files_cache, unique=False)
+        print(gene_scan_set)
         gene_set_str = [",".join(x) for x in gene_scan_set]
+        print(gene_set_str)
+        print(sample_metadata)
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
         _col_types = {}
@@ -311,7 +316,7 @@ def build_cellarrdataset(
         "Scanning all files to compute cell counts, this may take long",
         UserWarning,
     )
-    cell_counts = uad.scan_for_cellcounts()
+    cell_counts = uad.scan_for_cellcounts(files_cache)
     _cellindex_in_dataset = []
     _dataset = []
     for idx, cci in enumerate(cell_counts):

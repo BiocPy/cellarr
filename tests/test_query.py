@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import tiledb
 from cellarr import CellArrDataset, build_cellarrdataset, MatrixOptions
+import cellarr
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"

@@ -3,7 +3,6 @@ import tempfile
 import anndata
 import numpy as np
 import pandas as pd
-import cellarr.utils_anndata
 import pytest
 import tiledb
 import cellarr
@@ -58,3 +57,33 @@ def test_remap_anndata():
 
     assert cmat.shape == (100, 0)
     assert len(cmat.data) == 0
+
+def test_extract_info():
+    np.random.seed(1)
+
+    n = 100
+    y = np.eye(n, dtype=int)
+    gene_index = [f"gene_{(i % 10)+1}" for i in range(n)]
+
+    var_df = pd.DataFrame({"names": gene_index}, index=gene_index)
+    obs_df = pd.DataFrame({"cells": [f"cell1_{j+1}" for j in range(n)]})
+    adata = anndata.AnnData(layers={"counts": y}, var=var_df, obs=obs_df)
+
+    cache = cellarr.utils_anndata.extract_anndata_info([adata])
+    assert len(cache) == 1
+
+    gene_symbols = cellarr.utils_anndata.scan_for_features(cache, unique=False)
+
+    assert gene_symbols is not None
+    assert len(gene_symbols) == 1
+    assert len(gene_symbols[0]) == 100
+
+    ugene_symbols = cellarr.utils_anndata.scan_for_features(cache, unique=True)
+
+    assert ugene_symbols is not None
+    assert len(ugene_symbols) == 10
+
+    cell_counts = cellarr.utils_anndata.scan_for_cellcounts(cache)
+    assert cell_counts is not None
+    assert len(cell_counts) == 1
+    assert cell_counts[0] == 100

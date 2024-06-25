@@ -7,8 +7,6 @@ import mopsy
 import numpy as np
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
-from .globalcache import PACKAGE_SCAN_CACHE
-
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
@@ -177,7 +175,6 @@ def extract_anndata_info(
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
     var_feature_column: str = "index",
     num_threads: int = 1,
-    force: bool = False,
 ):
     """Extract and generate the list of unique feature identifiers and cell counts across files.
 
@@ -197,45 +194,49 @@ def extract_anndata_info(
             Whether to rescan all the files even though the cache exists.
             Defaults to False.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE or force is True:
-        with Pool(num_threads) as p:
-            _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
-            PACKAGE_SCAN_CACHE["extracted_info"] = p.map(_wrapper_extract_info, _args)
+    with Pool(num_threads) as p:
+        _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
+        print("_args", _args)
+        return p.map(_wrapper_extract_info, _args)
 
 
-def scan_for_features(unique: bool = True) -> List[str]:
+def scan_for_features(cache, unique: bool = True) -> List[str]:
     """Extract and generate the list of unique feature identifiers across files.
 
     Needs calling :py:func:`~.extract_anndata_info` first.
 
     Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
         unique:
             Compute gene list to a unique list.
 
     Returns:
         List of all unique feature ids across all files.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE:
-        raise RuntimeError("run 'extract_anndata_info' first.")
-
-    _features = [x[0] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+    _features = [x[0] for x in cache]
     if unique:
         return list(set(itertools.chain.from_iterable(_features)))
 
     return _features
 
 
-def scan_for_cellcounts() -> List[int]:
+def scan_for_cellcounts(cache) -> List[int]:
     """Extract cell counts across files.
 
     Needs calling :py:func:`~.extract_anndata_info` first.
 
+    Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
     Returns:
         List of cell counts across files.
     """
-    if "extracted_info" not in PACKAGE_SCAN_CACHE:
-        raise RuntimeError("run 'extract_anndata_info' first.")
 
-    _cellcounts = [x[1] for x in PACKAGE_SCAN_CACHE["extracted_info"]]
+    _cellcounts = [x[1] for x in cache]
 
     return _cellcounts
