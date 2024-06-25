@@ -20,7 +20,9 @@ Class that represents a realized subset of the `CellArrDataset`.
 
 
 class CellArrDataset:
-    """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
+    """A class that represent a collection of cells and their associated
+    metadata in a TileDB backed store.
+    """
 
     def __init__(
         self,
@@ -361,6 +363,9 @@ class CellArrDataset:
             _msubset,
         )
 
+    ####
+    ## Dunder method to use `[]` operator.
+    ####
     def __getitem__(
         self,
         args: Union[int, Sequence, tuple],
@@ -409,6 +414,12 @@ class CellArrDataset:
             "args must be a sequence or a scalar integer or string or a tuple of atmost 2 values."
         )
 
+    ####
+    ## Misc methods.
+    ####
     @property
     def shape(self):
         return (self._cell_metadata_tdb.shape[0], self._gene_annotation_tdb.shape[0])
+
+    def __len__(self):
+        return self.shape[0]

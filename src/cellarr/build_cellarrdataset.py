@@ -42,7 +42,7 @@ Example:
         import anndata
         import numpy as np
         import tempfile
-        from cellarr import build_cellarrdataset, CellArrDataset
+        from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
         # Create a temporary directory
         tempdir = tempfile.mkdtemp()
@@ -56,7 +56,7 @@ Example:
         dataset = build_cellarrdataset(
             output_path=tempdir,
             files=[adata1, adata2],
-            matrix_dim_dtype=np.float32
+            matrix_options=MatrixOptions(dtype=np.float32),
         )
 """
 
