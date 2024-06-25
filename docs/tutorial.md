@@ -6,7 +6,7 @@ kernelspec:
 
 # Cell Arrays
 
-Cell Arrays is a Python package that provides a TileDB-backed store for large collections of 
+Cell Arrays is a Python package that provides a TileDB-backed store for large collections of
 genomic experimental data, such as millions of cells across multiple single-cell experiment objects.
 
 # Install the package
