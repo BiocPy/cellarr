@@ -58,9 +58,38 @@ some genes are unmeasured or ordered differently in the original experiments.
 Check out the [reference](https://biocpy.github.io/cellarr/api/cellarr#module-cellarr.build_cellarrdataset) documentation for modifying the parameters for any of these steps.
 :::
 
+First lets mock a few `AnnData` objects:
+
+```{code-cell}
+import anndata
+import numpy as np
+import pandas as pd
+
+def generate_adata(n, d, k):
+    np.random.seed(1)
+
+    z = np.random.normal(loc=np.arange(k), scale=np.arange(k) * 2, size=(n, k))
+    w = np.random.normal(size=(d, k))
+    y = np.dot(z, w.T)
+
+    gene_index = [f"gene_{i+1}" for i in range(d)]
+    var_df = pd.DataFrame({"names": gene_index}, index=gene_index)
+    obs_df = pd.DataFrame({"cells": [f"cell1_{j+1}" for j in range(n)]})
+
+    adata = anndata.AnnData(layers={"counts": y}, var=var_df, obs=obs_df)
+
+    return adata
+
+adata1 = generate_adata(1000, 100, 10)
+adata2 = generate_adata(100, 1000, 100)
+
+print("datasets")
+print(adata1, adata2)
+```
+
 To build a `CellArrDataset` from a collection of `H5AD` or `AnnData` objects:
 
-```python
+```{code-cell}
 import anndata
 import numpy as np
 import tempfile
@@ -69,10 +98,10 @@ from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 # Create a temporary directory
 tempdir = tempfile.mkdtemp()
 
-# Read AnnData objects
-adata1 = anndata.read_h5ad("path/to/object1.h5ad")
-# or just provide the path
-adata2 = "path/to/object2.h5ad"
+# # Read AnnData objects
+# adata1 = anndata.read_h5ad("path/to/object1.h5ad")
+# # or just provide the path
+# adata2 = "path/to/object2.h5ad"
 
 # Build CellArrDataset
 dataset = build_cellarrdataset(
@@ -80,6 +109,8 @@ dataset = build_cellarrdataset(
     files=[adata1, adata2],
     matrix_options=MatrixOptions(dtype=np.float32),
 )
+
+print(dataset)
 ```
 
 :::{important}
@@ -104,23 +135,31 @@ and create a simple range index.
 - Each file is considered a sample and a mapping between cells and samples
 is automatically created. Hence the sample information provided must match
 the number of input files.
-
 :::
-
-
 
 # Query a `CellArrDataset`
 
 Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.
 
-```python
+```{code-cell}
 # Create a CellArrDataset object from the existing dataset
 dataset = CellArrDataset(dataset_path=tempdir)
 
 # Query data from the dataset
-expression_data = dataset[10, ["gene1", "gene10", "gene500"]]
+expression_data = dataset[10, ["gene_1", "gene_10", "gene_500"]]
+
+print("matrix slice:")
 print(expression_data.matrix)
+
+print("gene_annotation slice:")
 print(expression_data.gene_annotation)
+
+print("cell_metadata slice:")
+print(expression_data.cell_metadata)
 ```
+
+This returns a `CellArrDatasetSlice` object that contains the matrix and metadata `DataFrame`'s along the cell and gene axes.
+
+---
 
 Check out the [documentation](https://biocpy.github.io/cellarr/api/modules.html) for more details.

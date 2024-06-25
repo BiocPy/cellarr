@@ -1,6 +1,25 @@
+"""Query the `CellArrDataset`.
+
+This class provides methods to access the directory containing the 
+generated TileDB files usually using the 
+:py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.
+
+Example:
+
+    .. code-block:: python
+
+        from cellarr import CellArrDataset
+
+        cd = CellArrDataset(dataset_path="/path/to/cellar/dir")
+        gene_list = ["gene_1", "gene_95", "gene_50"]
+        result1 = cd[0, gene_list]
+
+        print(result1)
+"""
+
 import os
-from typing import List, Union, Sequence
 from collections import namedtuple
+from typing import List, Sequence, Union
 
 import pandas as pd
 import tiledb
@@ -421,3 +440,32 @@ class CellArrDataset:
 
     def __len__(self):
         return self.shape[0]
+
+    ####
+    ## Printing.
+    ####
+
+    def __repr__(self) -> str:
+        """
+        Returns:
+            A string representation.
+        """
+        output = f"{type(self).__name__}(number_of_rows={self.shape[0]}"
+        output += f", number_of_columns={self.shape[1]}"
+        output += ", at path=" + self._dataset_path
+
+        output += ")"
+        return output
+
+    def __str__(self) -> str:
+        """
+        Returns:
+            A pretty-printed string containing the contents of this object.
+        """
+        output = f"class: {type(self).__name__}\n"
+
+        output += f"number_of_rows: ({self.shape[0]})\n"
+        output += f"number_of_columns({self.shape[1]}\n"
+        output += f"path columns({self._dataset_path}\n"
+
+        return output
