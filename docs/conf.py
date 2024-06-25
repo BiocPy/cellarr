@@ -312,6 +312,9 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "setuptools": ("https://setuptools.pypa.io/en/stable/", None),
     "pyscaffold": ("https://pyscaffold.org/en/stable", None),
+    "anndata": ("https://anndata.readthedocs.io/en/latest/", None),
+    "mopsy": ("https://biocpy.github.io/mopsy", None),
+    "tiledb": ("https://tiledb-inc-tiledb.readthedocs-hosted.com/projects/tiledb-py/en/stable/", None)
 }
 
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
