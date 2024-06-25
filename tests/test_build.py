@@ -60,11 +60,11 @@ def test_build_cellarrdataset():
     )
 
     assert np.allclose(
-        cfp.multi_index[0, gene_indices_tdb]["counts"],
+        cfp.multi_index[0, gene_indices_tdb]["data"],
         adata1.layers["counts"][0, adata1_gene_indices],
     )
     assert np.allclose(
-        cfp.multi_index[1000, gene_indices_tdb]["counts"],
+        cfp.multi_index[1000, gene_indices_tdb]["data"],
         adata2.layers["counts"][0, adata2_gene_indices],
     )
 
