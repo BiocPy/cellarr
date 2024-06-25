@@ -202,7 +202,7 @@ def build_cellarrdataset(
     """
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
-    
+
     print("files from input", files)
 
     files_cache = uad.extract_anndata_info(

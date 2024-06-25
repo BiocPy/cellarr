@@ -58,6 +58,7 @@ def test_remap_anndata():
     assert cmat.shape == (100, 0)
     assert len(cmat.data) == 0
 
+
 def test_extract_info():
     np.random.seed(1)
 
