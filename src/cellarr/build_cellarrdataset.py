@@ -273,7 +273,7 @@ def build_cellarrdataset(
     ####
     _samples = []
     for idx, _ in enumerate(files):
-        _samples.append(f"sample_{idx}")
+        _samples.append(f"sample_{idx + 1}")
 
     warnings.warn(
         "Scanning all files to compute cell counts, this may take long",
@@ -305,7 +305,7 @@ def build_cellarrdataset(
         gene_set_str = [",".join(x) for x in gene_scan_set]
         sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
-        sample_metadata["cellarr_cel_counts"] = cell_counts
+        sample_metadata["cellarr_cell_counts"] = cell_counts
 
         _col_types = {}
         for col in sample_metadata.columns:
@@ -330,7 +330,7 @@ def build_cellarrdataset(
     )
     _sample_per_cell = []
     for idx, cci in enumerate(cell_counts):
-        _sample_per_cell.extend([f"sample_{idx}" for _ in range(cci)])
+        _sample_per_cell.extend([_samples[idx] for _ in range(cci)])
 
     if cell_metadata is None:
         cell_metadata = pd.DataFrame({"cellarr_sample": _sample_per_cell})
