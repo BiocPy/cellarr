@@ -16,6 +16,7 @@ pip install cellarr
 :maxdepth: 2
 
 Overview <tutorial>
+Usage Notes <notes>
 Module Reference <api/modules>
 Authors <authors>
 Changelog <changelog>
