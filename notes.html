@@ -2,10 +2,12 @@
 <html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="cellarr" href="api/modules.html" /><link rel="prev" title="Cell Arrays" href="tutorial.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 --><title>Python Module Index - cellarr 0.1.1 documentation</title>
-<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+        <title>Usage Notes - cellarr 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -190,7 +192,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -210,12 +212,12 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Cell Arrays</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="notes.html">Usage Notes</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Usage Notes</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -243,7 +245,13 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/notes.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
@@ -252,94 +260,70 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          
-<section class="domainindex-section">
-  <h1>Python Module Index</h1>
-  <div class="domainindex-jumpbox"><a href="#cap-c"><strong>c</strong></a></div>
+          <section class="tex2jax_ignore mathjax_ignore" id="usage-notes">
+<h1>Usage Notes<a class="headerlink" href="#usage-notes" title="Link to this heading">¶</a></h1>
+<p>While our package provides methods to generate TileDB files, it makes certain assumptions. We will continue to document some of the gotcha’s as we run into them. Please review the following for a smooth experience:</p>
+<section id="experimental-data-consistency">
+<h2>1. Experimental Data Consistency<a class="headerlink" href="#experimental-data-consistency" title="Link to this heading">¶</a></h2>
+<p>All experimental data objects (either as <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> or H5AD paths) are expected to be fairly consistent:</p>
+<ul class="simple">
+<li><p><strong>Matrix Location</strong>: If the matrix to use is “counts”, all objects must contain this matrix in the <code class="docutils literal notranslate"><span class="pre">layers</span></code> slot, not in <code class="docutils literal notranslate"><span class="pre">X</span></code> or under a different name.</p></li>
+<li><p><strong>Feature IDs/Gene Symbols</strong>: These should be consistent across objects, either as the index or as a column in the <code class="docutils literal notranslate"><span class="pre">var</span></code> dataframe.</p></li>
+</ul>
 </section>
-<table class="domainindex-table">
-  <tr class="pcap">
-    <td></td><td>&#160;</td><td></td>
-  </tr>
-  <tr class="cap" id="cap-c">
-    <td></td><td><strong>c</strong></td><td></td>
-  </tr>
-  <tr>
-    <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-    <td>
-        <a href="api/cellarr.html#module-cellarr"><code class="xref">cellarr</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.build_cellarrdataset"><code class="xref">cellarr.build_cellarrdataset</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.build_options"><code class="xref">cellarr.build_options</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.buildutils_tiledb_array"><code class="xref">cellarr.buildutils_tiledb_array</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.buildutils_tiledb_frame"><code class="xref">cellarr.buildutils_tiledb_frame</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.CellArrDataset"><code class="xref">cellarr.CellArrDataset</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.CellArrDatasetSlice"><code class="xref">cellarr.CellArrDatasetSlice</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.dataloader"><code class="xref">cellarr.dataloader</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.queryutils_tiledb_frame"><code class="xref">cellarr.queryutils_tiledb_frame</code></a></td><td>
-    <em></em></td>
-  </tr>
-  <tr class="cg-1">
-    <td></td>
-    <td>&#160;&#160;&#160;
-        <a href="api/cellarr.html#module-cellarr.utils_anndata"><code class="xref">cellarr.utils_anndata</code></a></td><td>
-    <em></em></td>
-  </tr>
-</table>
+<section id="cell-metadata">
+<h2>2. Cell Metadata<a class="headerlink" href="#cell-metadata" title="Link to this heading">¶</a></h2>
+<p>If <code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code> is not provided, the build process scans all files to count the number of cells and creates a simple range index.</p>
+</section>
+<section id="sample-information">
+<h2>3. Sample Information<a class="headerlink" href="#sample-information" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Each file is considered a sample, hence a mapping between cells and samples is automatically created.</p></li>
+<li><p>The sample information provided must match the number of input files.</p></li>
+</ul>
+</section>
+<section id="handling-metadata-columns-with-none-nan-values">
+<h2>4. Handling Metadata Columns with None/NaN Values<a class="headerlink" href="#handling-metadata-columns-with-none-nan-values" title="Link to this heading">¶</a></h2>
+<p>For metadata columns containing <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">nan</span></code>, or <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values:</p>
+<ul class="simple">
+<li><p>It’s best to specify <code class="docutils literal notranslate"><span class="pre">float</span></code> as the type of the column</p></li>
+<li><p>Even if most values are integers, TileDB may behave unexpectedly with mixed types</p></li>
+</ul>
+<p>For further assistance or clarification, please refer to our documentation or raise an issue on GitHub.</p>
+</section>
+</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="api/modules.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">cellarr</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="tutorial.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Cell Arrays</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -358,8 +342,30 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Usage Notes</a><ul>
+<li><a class="reference internal" href="#experimental-data-consistency">1. Experimental Data Consistency</a></li>
+<li><a class="reference internal" href="#cell-metadata">2. Cell Metadata</a></li>
+<li><a class="reference internal" href="#sample-information">3. Sample Information</a></li>
+<li><a class="reference internal" href="#handling-metadata-columns-with-none-nan-values">4. Handling Metadata Columns with None/NaN Values</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -12,6 +12,14 @@ cellarr.CellArrDataset module
    :undoc-members:
    :show-inheritance:
 
+cellarr.CellArrDatasetSlice module
+----------------------------------
+
+.. automodule:: cellarr.CellArrDatasetSlice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cellarr.build\_cellarrdataset module
 ------------------------------------
 

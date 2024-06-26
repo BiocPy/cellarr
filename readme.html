@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.1.0 documentation</title>
+        <title>Cell Arrays - cellarr 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.1.0 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Usage Notes</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -283,12 +284,16 @@ datasets but can be generalized to store any 2-dimensional experimental data.</p
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <section id="build-a-cellarrdataset">
 <h3>Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#build-a-cellarrdataset" title="Link to this heading">¶</a></h3>
-<p>Building a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates three TileDB files in the specified output directory:</p>
+<p>Building a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> generates 4 TileDB files in the specified output directory:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">gene_metadata</span></code>: Contains feature annotations.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: Contains cell or sample metadata.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code>: A TileDB-backed sparse array containing expression vectors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gene_annotation</span></code>: A TileDB file containing feature/gene annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>: A TileDB file containing sample metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: A TileDB file containing cell metadata including mapping to the samples
+they are tagged with in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>.</p></li>
+<li><p>A matrix TileDB file named by the <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter. This allows the package
+to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.</p></li>
 </ul>
+<p>The organization is inspired by the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html">MultiAssayExperiment</a> data structure.</p>
 <p>The TileDB matrix file is stored in a <strong>cell X gene</strong> orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.</p>
@@ -297,7 +302,7 @@ collection is usually the cells rather than genes.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">anndata</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span>
+<span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span><span class="p">,</span> <span class="n">MatrixOptions</span>
 
 <span class="c1"># Create a temporary directory</span>
 <span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
@@ -309,9 +314,9 @@ collection is usually the cells rather than genes.</p>
 
 <span class="c1"># Build CellArrDataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
-     <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
-     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
-     <span class="n">matrix_dim_dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -341,15 +346,17 @@ if these are <code class="docutils literal notranslate"><span class="pre">AnnDat
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
 
 <span class="c1"># Query data from the dataset</span>
-<span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gene1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene10&quot;</span><span class="p">,</span> <span class="s2">&quot;gene500&quot;</span><span class="p">]]</span>
+<span class="n">gene_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gene_1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_95&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_50&quot;</span><span class="p">]</span>
+<span class="n">expression_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">gene_list</span><span class="p">]</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">gene_annotation</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span> ## output 1
- &lt;1x3 sparse matrix of type &#39;&lt;class &#39;numpy.float32&#39;&gt;&#39;
-      with 3 stored elements in COOrdinate format&gt;
+ &lt;11x3 sparse matrix of type &#39;&lt;class &#39;numpy.float32&#39;&gt;&#39;
+      with 9 stored elements in COOrdinate format&gt;
 
  ## output 2
  	cellarr_gene_index
@@ -424,7 +431,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=01f34227"></script>
+</div><script src="_static/documentation_options.js?v=a58bc63e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

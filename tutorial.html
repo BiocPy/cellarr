@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="cellarr" href="api/modules.html" /><link rel="prev" title="cellarr" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Usage Notes" href="notes.html" /><link rel="prev" title="cellarr" href="index.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.1.0 documentation</title>
+        <title>Cell Arrays - cellarr 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.1.0 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes.html">Usage Notes</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
 </ul>
@@ -402,18 +403,18 @@ AnnData object with n_obs × n_vars = 1000 × 100
   warnings.warn(
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpo8s_vlic/gene_annotation
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpihdgok_2/gene_annotation
 Fragments before consolidation: 1
 Fragments after consolidation: 1
-Optimizing /tmp/tmpo8s_vlic/sample_metadata
+Optimizing /tmp/tmpihdgok_2/sample_metadata
 Fragments before consolidation: 1
 Fragments after consolidation: 1
-Optimizing /tmp/tmpo8s_vlic/cell_metadata
+Optimizing /tmp/tmpihdgok_2/cell_metadata
 Fragments before consolidation: 1
 Fragments after consolidation: 1
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpo8s_vlic/counts
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpihdgok_2/counts
 Fragments before consolidation: 2
 </pre></div>
 </div>
@@ -421,7 +422,7 @@ Fragments before consolidation: 2
 class: CellArrDataset
 number_of_rows: 1100
 number_of_columns: 1000
-path: &#39;/tmp/tmpo8s_vlic&#39;
+path: &#39;/tmp/tmpihdgok_2&#39;
 </pre></div>
 </div>
 </div>
@@ -433,12 +434,12 @@ to make them consistent is outside the scope of this function
 and package.</p>
 <p>There’s a few assumptions this process makes:</p>
 <ul class="simple">
-<li><p>If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an :py:class:<code class="docutils literal notranslate"><span class="pre">~anndata.AnnData</span></code>
+<li><p>If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <code class="docutils literal notranslate"><span class="pre">AnnData</span></code>
 or H5AD object, these must contain an assay matrix in the
 layers slot of the object named as <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter.</p></li>
 <li><p>Feature information must contain a column defined by the parameter
 <code class="docutils literal notranslate"><span class="pre">feature_column</span></code> in the
-:py:class:<code class="docutils literal notranslate"><span class="pre">~cellarr.build_options.GeneAnnotationOptions.</span></code> that
+<code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.</span></code> that
 contains feature ids or gene symbols across all files.</p></li>
 <li><p>If no <code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code> is provided, we scan to count the number of cells
 and create a simple range index.</p></li>
@@ -462,10 +463,10 @@ the number of input files.</p></li>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matrix slice:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;gene_annotation slice:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> gene_annotation slice:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">gene_annotation</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cell_metadata slice:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> cell_metadata slice:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">cell_metadata</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -474,12 +475,16 @@ the number of input files.</p></li>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>matrix slice:
   (0, 0)	12.436595916748047
   (0, 1)	22.075590133666992
-gene_annotation slice:
+
+
+ gene_annotation slice:
     cellarr_gene_index
 0               gene_1
 1              gene_10
 447           gene_500
-cell_metadata slice:
+
+
+ cell_metadata slice:
    cellarr_sample
 10       sample_1
 </pre></div>
@@ -487,6 +492,101 @@ cell_metadata slice:
 </div>
 </div>
 <p>This returns a <code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object that contains the matrix and metadata <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>’s along the cell and gene axes.</p>
+<p>Users can easily convert these to analysis-ready representations</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;as anndata:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_anndata</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> as summarizedexperiment:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_summarizedexperiment</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>as anndata:
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;as anndata:&quot;</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_anndata</span><span class="p">())</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> as summarizedexperiment:&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_summarizedexperiment</span><span class="p">())</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/CellArrDatasetSlice.py:41,</span> in <span class="ni">CellArrDatasetSlice.to_anndata</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span> <span class="k">def</span> <span class="nf">to_anndata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="ne">---&gt; </span><span class="mi">41</span>     <span class="k">return</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span>         <span class="n">layers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;matrix&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">},</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span>         <span class="n">obs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span>         <span class="n">var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_annotation</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span>     <span class="p">)</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/anndata.py:271,</span> in <span class="ni">AnnData.__init__</span><span class="nt">(self, X, obs, var, uns, obsm, varm, layers, raw, dtype, shape, filename, filemode, asview, obsp, varp, oidx, vidx)</span>
+<span class="g g-Whitespace">    </span><span class="mi">269</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_init_as_view</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">oidx</span><span class="p">,</span> <span class="n">vidx</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">270</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">271</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_init_as_actual</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">272</span>         <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">273</span>         <span class="n">obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">274</span>         <span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">275</span>         <span class="n">uns</span><span class="o">=</span><span class="n">uns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">276</span>         <span class="n">obsm</span><span class="o">=</span><span class="n">obsm</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">277</span>         <span class="n">varm</span><span class="o">=</span><span class="n">varm</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">278</span>         <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">279</span>         <span class="n">layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">280</span>         <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">281</span>         <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">282</span>         <span class="n">obsp</span><span class="o">=</span><span class="n">obsp</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">283</span>         <span class="n">varp</span><span class="o">=</span><span class="n">varp</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">284</span>         <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">285</span>         <span class="n">filemode</span><span class="o">=</span><span class="n">filemode</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">286</span>     <span class="p">)</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/anndata.py:501,</span> in <span class="ni">AnnData._init_as_actual</span><span class="nt">(self, X, obs, var, uns, obsm, varm, varp, obsp, raw, layers, dtype, shape, filename, filemode)</span>
+<span class="g g-Whitespace">    </span><span class="mi">498</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_up_old_format</span><span class="p">(</span><span class="n">uns</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">500</span> <span class="c1"># layers</span>
+<span class="ne">--&gt; </span><span class="mi">501</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layers</span> <span class="o">=</span> <span class="n">Layers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layers</span><span class="p">)</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:331,</span> in <span class="ni">Layers.__init__</span><span class="nt">(self, parent, vals)</span>
+<span class="g g-Whitespace">    </span><span class="mi">329</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">330</span> <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">331</span>     <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/_collections_abc.py:941,</span> in <span class="ni">MutableMapping.update</span><span class="nt">(self, other, **kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">939</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">940</span>     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">941</span>         <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">942</span> <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;keys&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">943</span>     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:199,</span> in <span class="ni">AlignedActualMixin.__setitem__</span><span class="nt">(self, key, value)</span>
+<span class="g g-Whitespace">    </span><span class="mi">198</span> <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">V</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">199</span>     <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">200</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:89,</span> in <span class="ni">AlignedMapping._validate_value</span><span class="nt">(self, val, key)</span>
+<span class="g g-Whitespace">     </span><span class="mi">83</span>         <span class="n">dims</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="s2">&quot;obs&quot;</span><span class="p">,</span> <span class="s2">&quot;var&quot;</span><span class="p">)[</span><span class="n">ax</span><span class="p">]</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">84</span>         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">85</span>             <span class="sa">f</span><span class="s2">&quot;Value passed for key </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> is of incorrect shape. &quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">86</span>             <span class="sa">f</span><span class="s2">&quot;Values of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="si">}</span><span class="s2"> must match dimensions </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2"> of parent. &quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">87</span>             <span class="sa">f</span><span class="s2">&quot;Value had shape </span><span class="si">{</span><span class="n">actual_shape</span><span class="si">}</span><span class="s2"> while it should have had </span><span class="si">{</span><span class="n">right_shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span>         <span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">89</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">91</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_df</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">92</span>     <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrname</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+
+<span class="ne">ValueError</span>: Value passed for key &#39;matrix&#39; is of incorrect shape. Values of layers must match dimensions (&#39;obs&#39;, &#39;var&#39;) of parent. Value had shape (1, 2) while it should have had (1, 3).
+</pre></div>
+</div>
+</div>
+</div>
 <hr class="docutils" />
 <p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/api/modules.html">documentation</a> for more details.</p>
 </section>
@@ -496,12 +596,12 @@ cell_metadata slice:
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="api/modules.html">
+          <a class="next-page" href="notes.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">cellarr</div>
+                <div class="title">Usage Notes</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -540,7 +640,7 @@ cell_metadata slice:
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=01f34227"></script>
+</div><script src="_static/documentation_options.js?v=a58bc63e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

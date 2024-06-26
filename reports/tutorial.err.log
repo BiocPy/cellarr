@@ -1,0 +1,104 @@
+Traceback (most recent call last):
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/nbclient/client.py", line 1314, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+  File "/opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+print("as anndata:")
+print(expression_data.to_anndata())
+
+print("\n\n as summarizedexperiment:")
+print(expression_data.to_summarizedexperiment())
+------------------
+
+----- stdout -----
+as anndata:
+----- stderr -----
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn("Transforming to str index.", ImplicitModificationWarning)
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:67: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn("Transforming to str index.", ImplicitModificationWarning)
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mValueError[0m                                Traceback (most recent call last)
+Cell [0;32mIn[4], line 2[0m
+[1;32m      1[0m [38;5;28mprint[39m([38;5;124m"[39m[38;5;124mas anndata:[39m[38;5;124m"[39m)
+[0;32m----> 2[0m [38;5;28mprint[39m([43mexpression_data[49m[38;5;241;43m.[39;49m[43mto_anndata[49m[43m([49m[43m)[49m)
+[1;32m      4[0m [38;5;28mprint[39m([38;5;124m"[39m[38;5;130;01m\n[39;00m[38;5;130;01m\n[39;00m[38;5;124m as summarizedexperiment:[39m[38;5;124m"[39m)
+[1;32m      5[0m [38;5;28mprint[39m(expression_data[38;5;241m.[39mto_summarizedexperiment())
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/CellArrDatasetSlice.py:41[0m, in [0;36mCellArrDatasetSlice.to_anndata[0;34m(self)[0m
+[1;32m     40[0m [38;5;28;01mdef[39;00m [38;5;21mto_anndata[39m([38;5;28mself[39m):
+[0;32m---> 41[0m     [38;5;28;01mreturn[39;00m [43manndata[49m[38;5;241;43m.[39;49m[43mAnnData[49m[43m([49m
+[1;32m     42[0m [43m        [49m[43mlayers[49m[38;5;241;43m=[39;49m[43m{[49m[38;5;124;43m"[39;49m[38;5;124;43mmatrix[39;49m[38;5;124;43m"[39;49m[43m:[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mmatrix[49m[43m}[49m[43m,[49m
+[1;32m     43[0m [43m        [49m[43mobs[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mcell_metadata[49m[43m,[49m
+[1;32m     44[0m [43m        [49m[43mvar[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mgene_annotation[49m[43m,[49m
+[1;32m     45[0m [43m    [49m[43m)[49m
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/anndata.py:271[0m, in [0;36mAnnData.__init__[0;34m(self, X, obs, var, uns, obsm, varm, layers, raw, dtype, shape, filename, filemode, asview, obsp, varp, oidx, vidx)[0m
+[1;32m    269[0m     [38;5;28mself[39m[38;5;241m.[39m_init_as_view(X, oidx, vidx)
+[1;32m    270[0m [38;5;28;01melse[39;00m:
+[0;32m--> 271[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_init_as_actual[49m[43m([49m
+[1;32m    272[0m [43m        [49m[43mX[49m[38;5;241;43m=[39;49m[43mX[49m[43m,[49m
+[1;32m    273[0m [43m        [49m[43mobs[49m[38;5;241;43m=[39;49m[43mobs[49m[43m,[49m
+[1;32m    274[0m [43m        [49m[43mvar[49m[38;5;241;43m=[39;49m[43mvar[49m[43m,[49m
+[1;32m    275[0m [43m        [49m[43muns[49m[38;5;241;43m=[39;49m[43muns[49m[43m,[49m
+[1;32m    276[0m [43m        [49m[43mobsm[49m[38;5;241;43m=[39;49m[43mobsm[49m[43m,[49m
+[1;32m    277[0m [43m        [49m[43mvarm[49m[38;5;241;43m=[39;49m[43mvarm[49m[43m,[49m
+[1;32m    278[0m [43m        [49m[43mraw[49m[38;5;241;43m=[39;49m[43mraw[49m[43m,[49m
+[1;32m    279[0m [43m        [49m[43mlayers[49m[38;5;241;43m=[39;49m[43mlayers[49m[43m,[49m
+[1;32m    280[0m [43m        [49m[43mdtype[49m[38;5;241;43m=[39;49m[43mdtype[49m[43m,[49m
+[1;32m    281[0m [43m        [49m[43mshape[49m[38;5;241;43m=[39;49m[43mshape[49m[43m,[49m
+[1;32m    282[0m [43m        [49m[43mobsp[49m[38;5;241;43m=[39;49m[43mobsp[49m[43m,[49m
+[1;32m    283[0m [43m        [49m[43mvarp[49m[38;5;241;43m=[39;49m[43mvarp[49m[43m,[49m
+[1;32m    284[0m [43m        [49m[43mfilename[49m[38;5;241;43m=[39;49m[43mfilename[49m[43m,[49m
+[1;32m    285[0m [43m        [49m[43mfilemode[49m[38;5;241;43m=[39;49m[43mfilemode[49m[43m,[49m
+[1;32m    286[0m [43m    [49m[43m)[49m
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/anndata.py:501[0m, in [0;36mAnnData._init_as_actual[0;34m(self, X, obs, var, uns, obsm, varm, varp, obsp, raw, layers, dtype, shape, filename, filemode)[0m
+[1;32m    498[0m [38;5;28mself[39m[38;5;241m.[39m_clean_up_old_format(uns)
+[1;32m    500[0m [38;5;66;03m# layers[39;00m
+[0;32m--> 501[0m [38;5;28mself[39m[38;5;241m.[39m_layers [38;5;241m=[39m [43mLayers[49m[43m([49m[38;5;28;43mself[39;49m[43m,[49m[43m [49m[43mlayers[49m[43m)[49m
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:331[0m, in [0;36mLayers.__init__[0;34m(self, parent, vals)[0m
+[1;32m    329[0m [38;5;28mself[39m[38;5;241m.[39m_data [38;5;241m=[39m [38;5;28mdict[39m()
+[1;32m    330[0m [38;5;28;01mif[39;00m vals [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
+[0;32m--> 331[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mupdate[49m[43m([49m[43mvals[49m[43m)[49m
+
+File [0;32m/opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/_collections_abc.py:941[0m, in [0;36mMutableMapping.update[0;34m(self, other, **kwds)[0m
+[1;32m    939[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(other, Mapping):
+[1;32m    940[0m     [38;5;28;01mfor[39;00m key [38;5;129;01min[39;00m other:
+[0;32m--> 941[0m         [38;5;28;43mself[39;49m[43m[[49m[43mkey[49m[43m][49m [38;5;241m=[39m other[key]
+[1;32m    942[0m [38;5;28;01melif[39;00m [38;5;28mhasattr[39m(other, [38;5;124m"[39m[38;5;124mkeys[39m[38;5;124m"[39m):
+[1;32m    943[0m     [38;5;28;01mfor[39;00m key [38;5;129;01min[39;00m other[38;5;241m.[39mkeys():
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:199[0m, in [0;36mAlignedActualMixin.__setitem__[0;34m(self, key, value)[0m
+[1;32m    198[0m [38;5;28;01mdef[39;00m [38;5;21m__setitem__[39m([38;5;28mself[39m, key: [38;5;28mstr[39m, value: V):
+[0;32m--> 199[0m     value [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_validate_value[49m[43m([49m[43mvalue[49m[43m,[49m[43m [49m[43mkey[49m[43m)[49m
+[1;32m    200[0m     [38;5;28mself[39m[38;5;241m.[39m_data[key] [38;5;241m=[39m value
+
+File [0;32m~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_mapping.py:89[0m, in [0;36mAlignedMapping._validate_value[0;34m(self, val, key)[0m
+[1;32m     83[0m         dims [38;5;241m=[39m [38;5;28mtuple[39m(([38;5;124m"[39m[38;5;124mobs[39m[38;5;124m"[39m, [38;5;124m"[39m[38;5;124mvar[39m[38;5;124m"[39m)[ax] [38;5;28;01mfor[39;00m ax [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39maxes)
+[1;32m     84[0m         msg [38;5;241m=[39m (
+[1;32m     85[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mValue passed for key [39m[38;5;132;01m{[39;00mkey[38;5;132;01m!r}[39;00m[38;5;124m is of incorrect shape. [39m[38;5;124m"[39m
+[1;32m     86[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mValues of [39m[38;5;132;01m{[39;00m[38;5;28mself[39m[38;5;241m.[39mattrname[38;5;132;01m}[39;00m[38;5;124m must match dimensions [39m[38;5;132;01m{[39;00mdims[38;5;132;01m}[39;00m[38;5;124m of parent. [39m[38;5;124m"[39m
+[1;32m     87[0m             [38;5;124mf[39m[38;5;124m"[39m[38;5;124mValue had shape [39m[38;5;132;01m{[39;00mactual_shape[38;5;132;01m}[39;00m[38;5;124m while it should have had [39m[38;5;132;01m{[39;00mright_shape[38;5;132;01m}[39;00m[38;5;124m.[39m[38;5;124m"[39m
+[1;32m     88[0m         )
+[0;32m---> 89[0m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(msg)
+[1;32m     91[0m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m[38;5;241m.[39m_allow_df [38;5;129;01mand[39;00m [38;5;28misinstance[39m(val, pd[38;5;241m.[39mDataFrame):
+[1;32m     92[0m     name [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mattrname[38;5;241m.[39mtitle()[38;5;241m.[39mrstrip([38;5;124m"[39m[38;5;124ms[39m[38;5;124m"[39m)
+
+[0;31mValueError[0m: Value passed for key 'matrix' is of incorrect shape. Values of layers must match dimensions ('obs', 'var') of parent. Value had shape (1, 2) while it should have had (1, 3).
+

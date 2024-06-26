@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Contributors" href="../authors.html" /><link rel="prev" title="cellarr" href="modules.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr package - cellarr 0.1.0 documentation</title>
+        <title>cellarr package - cellarr 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">cellarr 0.1.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">cellarr 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes.html">Usage Notes</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">Module Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">cellarr package</a></li>
 </ul>
@@ -316,10 +317,10 @@ columns (or features/genes) to retain, based on their names or indices.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If too many or too few slices provided.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice" title="cellarr.CellArrDataset.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice" title="cellarr.CellArrDataset.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a> object containing the <cite>cell_metadata</cite>,
+<dd class="field-even"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object containing the <cite>cell_metadata</cite>,
 <cite>gene_annotation</cite> and the matrix.</p>
 </dd>
 </dl>
@@ -585,10 +586,10 @@ named) names specifying the columns (or features/genes) to retain.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice" title="cellarr.CellArrDataset.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A <a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice" title="cellarr.CellArrDataset.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a> object containing the <cite>cell_metadata</cite>,
+<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object containing the <cite>cell_metadata</cite>,
 <cite>gene_annotation</cite> and the matrix for the given slice ranges.</p>
 </dd>
 </dl>
@@ -601,51 +602,89 @@ named) names specifying the columns (or features/genes) to retain.</p></li>
 
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cellarr.CellArrDataset.</span></span><span class="sig-name descname"><span class="pre">CellArrDatasetSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+</section>
+<section id="module-cellarr.CellArrDatasetSlice">
+<span id="cellarr-cellarrdatasetslice-module"></span><h2>cellarr.CellArrDatasetSlice module<a class="headerlink" href="#module-cellarr.CellArrDatasetSlice" title="Link to this heading">¶</a></h2>
 <p>Class that represents a realized subset of the <cite>CellArrDataset</cite>.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.__getnewargs__">
-<span class="sig-name descname"><span class="pre">__getnewargs__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__getnewargs__" title="Link to this definition">¶</a></dt>
-<dd><p>Return self as a plain tuple.  Used by copy and pickle.</p>
-</dd></dl>
+<p>This class provides a slice data class usually generated by the access
+methods from
+<a class="reference internal" href="#cellarr.CellArrDataset.CellArrDataset" title="cellarr.CellArrDataset.CellArrDataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">cellarr.CellArrDataset.CellArrDataset()</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">CellArrDataset</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.__new__">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__new__" title="Link to this definition">¶</a></dt>
-<dd><p>Create new instance of CellArrDatasetSlice(cell_metadata, gene_annotation, matrix)</p>
-</dd></dl>
+<span class="n">cd</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;/path/to/cellar/dir&quot;</span><span class="p">)</span>
+<span class="n">gene_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gene_1&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_95&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_50&quot;</span><span class="p">]</span>
+<span class="n">result1</span> <span class="o">=</span> <span class="n">cd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">gene_list</span><span class="p">]</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__repr__" title="Link to this definition">¶</a></dt>
-<dd><p>Return a nicely formatted representation string</p>
-</dd></dl>
-
+<span class="nb">print</span><span class="p">(</span><span class="n">result1</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cellarr.CellArrDatasetSlice.</span></span><span class="sig-name descname"><span class="pre">CellArrDatasetSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/CellArrDatasetSlice.html#CellArrDatasetSlice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that represents a realized subset of the <cite>CellArrDataset</cite>.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.__slots__">
-<span class="sig-name descname"><span class="pre">__slots__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__slots__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__annotations__">
+<span class="sig-name descname"><span class="pre">__annotations__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cell_metadata':</span> <span class="pre">&lt;class</span> <span class="pre">'pandas.core.frame.DataFrame'&gt;,</span> <span class="pre">'gene_annotation':</span> <span class="pre">&lt;class</span> <span class="pre">'pandas.core.frame.DataFrame'&gt;,</span> <span class="pre">'matrix':</span> <span class="pre">typing.Any}</span></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__annotations__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.cell_metadata">
-<span class="sig-name descname"><span class="pre">cell_metadata</span></span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.cell_metadata" title="Link to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_fields__">
+<span class="sig-name descname"><span class="pre">__dataclass_fields__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cell_metadata':</span> <span class="pre">Field(name='cell_metadata',type=&lt;class</span> <span class="pre">'pandas.core.frame.DataFrame'&gt;,default=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,default_factory=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),_field_type=_FIELD),</span> <span class="pre">'gene_annotation':</span> <span class="pre">Field(name='gene_annotation',type=&lt;class</span> <span class="pre">'pandas.core.frame.DataFrame'&gt;,default=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,default_factory=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),_field_type=_FIELD),</span> <span class="pre">'matrix':</span> <span class="pre">Field(name='matrix',type=typing.Any,default=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,default_factory=&lt;dataclasses._MISSING_TYPE</span> <span class="pre">object&gt;,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),_field_type=_FIELD)}</span></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_fields__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_params__">
+<span class="sig-name descname"><span class="pre">__dataclass_params__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">_DataclassParams(init=True,repr=True,eq=True,order=False,unsafe_hash=False,frozen=False)</span></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_params__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__eq__" title="Link to this definition">¶</a></dt>
+<dd><p>Return self==value.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.gene_annotation">
-<span class="sig-name descname"><span class="pre">gene_annotation</span></span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.gene_annotation" title="Link to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__hash__">
+<span class="sig-name descname"><span class="pre">__hash__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__hash__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__repr__" title="Link to this definition">¶</a></dt>
+<dd><p>Return repr(self).</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="cellarr.CellArrDataset.CellArrDatasetSlice.matrix">
-<span class="sig-name descname"><span class="pre">matrix</span></span><a class="headerlink" href="#cellarr.CellArrDataset.CellArrDatasetSlice.matrix" title="Link to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.cell_metadata">
+<span class="sig-name descname"><span class="pre">cell_metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.cell_metadata" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.gene_annotation">
+<span class="sig-name descname"><span class="pre">gene_annotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.gene_annotation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.matrix">
+<span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></em><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.matrix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_anndata">
+<span class="sig-name descname"><span class="pre">to_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/CellArrDatasetSlice.html#CellArrDatasetSlice.to_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_anndata" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_summarizedexperiment">
+<span class="sig-name descname"><span class="pre">to_summarizedexperiment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/CellArrDatasetSlice.html#CellArrDatasetSlice.to_summarizedexperiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_summarizedexperiment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -711,7 +750,7 @@ some genes are unmeasured or ordered differently in the original experiments.</p
 to make them consistent is outside the scope of this function
 and package.</p>
 <p>There’s a few assumptions this process makes:
-- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+g11351f9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 or H5AD object, these must contain an assay matrix in the
 layers slot of the object named as <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter.
 - Feature information must contain a column defined by the parameter
@@ -726,7 +765,7 @@ the number of input files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+g11351f9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
 <li><p><strong>output_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to where the output TileDB files should be stored.</p></li>
 <li><p><strong>gene_metadata</strong> – <p>A <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a> containing the feature/gene
 annotations across all objects.</p>
@@ -1530,7 +1569,7 @@ multiple rows with the same feature id or gene symbol.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+g11351f9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>AnnData object with duplicate gene symbols consolidated.</p>
@@ -1545,7 +1584,7 @@ multiple rows with the same feature id or gene symbol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+g11351f9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
+<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
 <li><p><strong>var_feature_column</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column containing the feature ids (e.g. gene symbols).
 Defaults to “index”.</p></li>
 <li><p><strong>num_threads</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Number of threads to use.
@@ -1560,7 +1599,7 @@ Defaults to False.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="cellarr.utils_anndata.remap_anndata">
 <span class="sig-prename descclassname"><span class="pre">cellarr.utils_anndata.</span></span><span class="sig-name descname"><span class="pre">remap_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5ad_or_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_set_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_feature_column='index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_matrix_name='counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consolidate_duplicate_gene_func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">sum&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/utils_anndata.html#remap_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.utils_anndata.remap_anndata" title="Link to this definition">¶</a></dt>
-<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+g11351f9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1719,14 +1758,22 @@ multiple rows with the same feature id or gene symbol.</p>
 <li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDataset.shape"><code class="docutils literal notranslate"><span class="pre">CellArrDataset.shape</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a><ul>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__getnewargs__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__getnewargs__()</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__new__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__new__()</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__repr__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__repr__()</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.__slots__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__slots__</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.cell_metadata"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.cell_metadata</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.gene_annotation"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.gene_annotation</span></code></a></li>
-<li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrDatasetSlice.matrix"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.matrix</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-cellarr.CellArrDatasetSlice">cellarr.CellArrDatasetSlice module</a><ul>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a><ul>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__annotations__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__annotations__</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_fields__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__dataclass_fields__</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__dataclass_params__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__dataclass_params__</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__eq__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__hash__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__hash__</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__init__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.__repr__"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.cell_metadata"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.cell_metadata</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.gene_annotation"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.gene_annotation</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.matrix"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.matrix</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_anndata"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.to_anndata()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_summarizedexperiment"><code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice.to_summarizedexperiment()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1860,7 +1907,7 @@ multiple rows with the same feature id or gene symbol.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=4e2eecee"></script>
