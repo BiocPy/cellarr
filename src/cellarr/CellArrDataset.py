@@ -316,7 +316,10 @@ class CellArrDataset:
         """
         if isinstance(subset, (str, int)):
             return qtd.subset_array(
-                self._matrix_tdb_tdb, subset, slice(None), shape=(len(subset), self.shape[1])
+                self._matrix_tdb_tdb,
+                subset,
+                slice(None),
+                shape=(len(subset), self.shape[1]),
             )
 
         if isinstance(subset, tuple):
@@ -325,11 +328,17 @@ class CellArrDataset:
 
             if len(subset) == 1:
                 return qtd.subset_array(
-                    self._matrix_tdb_tdb, subset[0], slice(None), shape=(len(subset[0]), self.shape[1])
+                    self._matrix_tdb_tdb,
+                    subset[0],
+                    slice(None),
+                    shape=(len(subset[0]), self.shape[1]),
                 )
             elif len(subset) == 2:
                 return qtd.subset_array(
-                    self._matrix_tdb_tdb, subset[0], subset[1], shape=(len(subset[0]), len(subset[1]))
+                    self._matrix_tdb_tdb,
+                    subset[0],
+                    subset[1],
+                    shape=(len(subset[0]), len(subset[1])),
                 )
             else:
                 raise ValueError(
