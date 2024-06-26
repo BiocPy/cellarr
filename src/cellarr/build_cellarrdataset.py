@@ -48,7 +48,7 @@ Example:
         tempdir = tempfile.mkdtemp()
 
         # Read AnnData objects
-        adata1 = anndata.read_h5ad("path/to/object1.h5ad")
+        adata1 = anndata.read_h5ad("path/to/object1.h5ad", "r")
         # or just provide the path
         adata2 = "path/to/object2.h5ad"
 
