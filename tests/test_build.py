@@ -285,3 +285,58 @@ def test_build_cellarrdataset_from_frame_with_types():
     cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
     cell_df = cellfp.df[:]
     assert len(cell_df) == 1100
+
+
+def test_build_cellarrdataset_from_frame_containing_nan():
+    tempdir = tempfile.mkdtemp()
+
+    adata1 = generate_adata(1000, 100, 10)
+    adata2 = generate_adata(100, 1000, 100)
+
+    gannot = pd.DataFrame(
+        {"names": [f"gene_{i+1}" for i in range(1000)]},
+        index=[f"gene_{i+1}" for i in range(1000)],
+    )
+
+    smeta = pd.DataFrame(
+        {"samples": ["sample1", "sample2"], "some_meta": [10, None]}
+    )
+
+    # without types
+    build_cellarrdataset(
+        output_path=tempdir,
+        files=[adata1, adata2],
+        gene_annotation=gannot,
+        sample_metadata=smeta,
+        matrix_options=MatrixOptions(dtype=np.float32),
+        sample_metadata_options=SampleMetadataOptions(
+            column_types={
+                "samples": "ascii",
+            }
+        ),
+    )
+
+    sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
+    samples = sfp.df[:]
+    assert len(samples) == 2
+    assert samples["some_meta"].tolist() == ['10.0', 'nan']
+
+    # with types
+    build_cellarrdataset(
+        output_path=tempdir,
+        files=[adata1, adata2],
+        gene_annotation=gannot,
+        sample_metadata=smeta,
+        matrix_options=MatrixOptions(dtype=np.float32),
+        sample_metadata_options=SampleMetadataOptions(
+            column_types={
+                "samples": "ascii",
+                "some_meta": int
+            }
+        ),
+    )
+
+    sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
+    samples = sfp.df[:]
+    assert len(samples) == 2
+    assert samples["some_meta"].tolist() == [10, 0]
