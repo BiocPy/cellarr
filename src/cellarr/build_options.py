@@ -1,6 +1,7 @@
-import numpy as np
-
 from dataclasses import dataclass
+from typing import Dict
+
+import numpy as np
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -27,11 +28,19 @@ class CellMetadataOptions:
         tiledb_store_name:
             Name of the TileDB file.
             Defaults to "cell_metadata".
+
+        column_types:
+            A dictionary containing column names as keys
+            and the value representing the type to in
+            the tiledb.
+
+            If `None`, all columns are cast as 'ascii'.
     """
 
     skip: bool = False
     dtype: np.dtype = np.uint32
     tiledb_store_name: str = "cell_metadata"
+    column_types: Dict[str, np.dtype] = None
 
 
 @dataclass
@@ -58,12 +67,20 @@ class GeneAnnotationOptions:
         tiledb_store_name:
             Name of the TileDB file.
             Defaults to "gene_annotation".
+
+        column_types:
+            A dictionary containing column names as keys
+            and the value representing the type to in
+            the tiledb.
+
+            If `None`, all columns are cast as 'ascii'.
     """
 
     skip: bool = False
     feature_column: str = "index"
     dtype: np.dtype = np.uint32
     tiledb_store_name: str = "gene_annotation"
+    column_types: Dict[str, np.dtype] = None
 
 
 @dataclass
@@ -130,8 +147,16 @@ class SampleMetadataOptions:
         tiledb_store_name:
             Name of the TileDB file.
             Defaults to "sample_metadata".
+
+        column_types:
+            A dictionary containing column names as keys
+            and the value representing the type to in
+            the tiledb.
+
+            If `None`, all columns are cast as 'ascii'.
     """
 
     skip: bool = False
     dtype: np.dtype = np.uint32
     tiledb_store_name: str = "sample_metadata"
+    column_types: Dict[str, np.dtype] = None

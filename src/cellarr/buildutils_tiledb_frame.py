@@ -1,7 +1,8 @@
 import os
 import shutil
-from typing import List
+from typing import Dict, List
 
+import numpy as np
 import pandas as pd
 import tiledb
 
@@ -11,7 +12,7 @@ __license__ = "MIT"
 
 
 def create_tiledb_frame_from_column_names(
-    tiledb_uri_path: str, column_names: List[str], column_dtype=str
+    tiledb_uri_path: str, column_names: List[str], column_types: Dict[str, np.dtype]
 ):
     """Create a TileDB file with the provided attributes to persistent storage.
 
@@ -25,14 +26,14 @@ def create_tiledb_frame_from_column_names(
         column_names:
             Column names of the data frame.
 
-        column_dtype:
-            Type for the columns, usually str.
-            Defaults to string.
+        column_types:
+            Dictionary specifying the column types for each
+            column in the frame.
     """
     if os.path.exists(tiledb_uri_path):
         shutil.rmtree(tiledb_uri_path)
 
-    df = pd.DataFrame(columns=list(column_names), dtype=column_dtype)
+    df = pd.DataFrame(columns=list(column_names), dtype=column_types)
     for c in df.columns:
         df.loc[0, c] = "None"
 
@@ -86,3 +87,32 @@ def append_to_tiledb_frame(
     tiledb.from_pandas(
         tiledb_uri_path, dataframe=frame, mode="append", row_start_idx=row_offset
     )
+
+
+# TODO: At some point, hopefully figure out an easy way to identify
+# individual column types.
+def infer_column_types(frame: pd.DataFrame, col_types: dict) -> Dict[str, str]:
+    """Infer column types based on pandas types for each column.
+
+    Note: Currently sets all columns to 'ascii'.
+
+    Args:
+        frame:
+            DataFrame to infer column types from.
+
+    Returns:
+        Dictionary containing column names as keys and
+        value representing the column types.
+    """
+    _to_return_col_types = {}
+
+    if col_types is None:
+        col_types = {}
+
+    for col in frame.columns:
+        if col in col_types:
+            _to_return_col_types[col] = col_types[col]
+        else:
+            _to_return_col_types[col] = "ascii"
+
+    return _to_return_col_types
