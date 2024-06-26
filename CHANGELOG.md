@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.1.0 
+## Version 0.1.0
 
 This is the first release of the package to support both creation and access to large
 collection of files based on TileDB.

@@ -298,9 +298,7 @@ def test_build_cellarrdataset_from_frame_containing_nan():
         index=[f"gene_{i+1}" for i in range(1000)],
     )
 
-    smeta = pd.DataFrame(
-        {"samples": ["sample1", "sample2"], "some_meta": [10, None]}
-    )
+    smeta = pd.DataFrame({"samples": ["sample1", "sample2"], "some_meta": [10, None]})
 
     # without types
     build_cellarrdataset(
@@ -319,7 +317,7 @@ def test_build_cellarrdataset_from_frame_containing_nan():
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
     samples = sfp.df[:]
     assert len(samples) == 2
-    assert samples["some_meta"].tolist() == ['10.0', 'nan']
+    assert samples["some_meta"].tolist() == ["10.0", "nan"]
 
     # with types
     build_cellarrdataset(
@@ -329,10 +327,7 @@ def test_build_cellarrdataset_from_frame_containing_nan():
         sample_metadata=smeta,
         matrix_options=MatrixOptions(dtype=np.float32),
         sample_metadata_options=SampleMetadataOptions(
-            column_types={
-                "samples": "ascii",
-                "some_meta": int
-            }
+            column_types={"samples": "ascii", "some_meta": int}
         ),
     )
 
