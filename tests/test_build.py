@@ -327,14 +327,12 @@ def test_build_cellarrdataset_from_frame_containing_nan():
         sample_metadata=smeta,
         matrix_options=MatrixOptions(dtype=np.float32),
         sample_metadata_options=SampleMetadataOptions(
-            column_types={"samples": "ascii", "some_meta": int}
+            column_types={"samples": "ascii", "some_meta": float}
         ),
     )
 
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
     samples = sfp.df[:]
     assert len(samples) == 2
-    assert np.allclose(
-        samples["some_meta"].tolist(),
-        [10, 0],
-    )
+    assert samples["some_meta"][0] == 10.0
+    assert np.isnan(samples["some_meta"][1])
