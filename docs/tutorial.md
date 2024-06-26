@@ -120,13 +120,13 @@ and package.
 
 There's a few assumptions this process makes:
 
-- If object in ``files`` is an :py:class:`~anndata.AnnData`
+- If object in ``files`` is an `AnnData`
 or H5AD object, these must contain an assay matrix in the
 layers slot of the object named as ``layer_matrix_name`` parameter.
 
 - Feature information must contain a column defined by the parameter
 ``feature_column`` in the
-:py:class:`~cellarr.build_options.GeneAnnotationOptions.` that
+`GeneAnnotationOptions.` that
 contains feature ids or gene symbols across all files.
 
 - If no ``cell_metadata`` is provided, we scan to count the number of cells
@@ -151,14 +151,24 @@ expression_data = dataset[10, ["gene_1", "gene_10", "gene_500"]]
 print("matrix slice:")
 print(expression_data.matrix)
 
-print("gene_annotation slice:")
+print("\n\n gene_annotation slice:")
 print(expression_data.gene_annotation)
 
-print("cell_metadata slice:")
+print("\n\n cell_metadata slice:")
 print(expression_data.cell_metadata)
 ```
 
 This returns a `CellArrDatasetSlice` object that contains the matrix and metadata `DataFrame`'s along the cell and gene axes.
+
+Users can easily convert these to analysis-ready representations
+
+```{code-cell}
+print("as anndata:")
+print(expression_data.to_anndata())
+
+print("\n\n as summarizedexperiment:")
+print(expression_data.to_summarizedexperiment())
+```
 
 ---
 
