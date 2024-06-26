@@ -6,7 +6,6 @@ import pandas as pd
 import pytest
 import tiledb
 from cellarr import CellArrDataset, build_cellarrdataset, MatrixOptions
-import cellarr
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -51,7 +50,6 @@ def test_query_cellarrdataset():
     gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
-    _genes_from_tile = genes["cellarr_gene_index"].tolist()
 
     adata1_gene_indices = sorted(
         [adata1.var.index.tolist().index(x) for x in gene_list]

@@ -62,16 +62,17 @@ Example:
 
 import os
 import warnings
-from typing import List, Union
+from typing import Dict, List, Union
 
 import anndata
+import numpy as np
 import pandas as pd
 
-from . import utils_anndata as uad
+from . import build_options as bopt
 from . import buildutils_tiledb_array as uta
 from . import buildutils_tiledb_frame as utf
+from . import utils_anndata as uad
 from .CellArrDataset import CellArrDataset
-from . import build_options as bopt
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -256,9 +257,9 @@ def build_cellarrdataset(
 
     # Create the gene annotation TileDB
     if not gene_annotation_options.skip:
-        _col_types = {}
-        for col in gene_annotation.columns:
-            _col_types[col] = "ascii"
+        _col_types = utf.infer_column_types(
+            gene_annotation, gene_annotation_options.column_types
+        )
 
         _gene_output_uri = f"{output_path}/{gene_annotation_options.tiledb_store_name}"
         generate_metadata_tiledb_frame(
@@ -307,9 +308,9 @@ def build_cellarrdataset(
 
         sample_metadata["cellarr_cell_counts"] = cell_counts
 
-        _col_types = {}
-        for col in sample_metadata.columns:
-            _col_types[col] = "ascii"
+        _col_types = utf.infer_column_types(
+            sample_metadata, sample_metadata_options.column_types
+        )
 
         _sample_output_uri = (
             f"{output_path}/{sample_metadata_options.tiledb_store_name}"
@@ -367,18 +368,19 @@ def build_cellarrdataset(
 
         if isinstance(cell_metadata, str):
             _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=0)
-            generate_metadata_tiledb_csv(
-                _cell_output_uri, cell_metadata, _cell_metaframe.columns
+            _col_types = utf.infer_column_types(
+                _cell_metaframe, cell_metadata_options.column_types
             )
+            generate_metadata_tiledb_csv(_cell_output_uri, cell_metadata, _col_types)
         elif isinstance(cell_metadata, pd.DataFrame):
-            _col_types = {}
-            for col in cell_metadata.columns:
-                _col_types[col] = "ascii"
+            _col_types = utf.infer_column_types(
+                cell_metadata, cell_metadata_options.column_types
+            )
 
-            _to_write = cell_metadata.astype(str)
+            # _to_write = cell_metadata.astype(str)
 
             generate_metadata_tiledb_frame(
-                _cell_output_uri, _to_write, column_types=_col_types
+                _cell_output_uri, cell_metadata, column_types=_col_types
             )
 
         if optimize_tiledb:
@@ -449,16 +451,14 @@ def generate_metadata_tiledb_frame(
 
             Defaults to None.
     """
-    _to_write = input.astype(str)
-    utf.create_tiledb_frame_from_dataframe(
-        output_uri, _to_write, column_types=column_types
-    )
+    # _to_write = input.astype(str)
+    utf.create_tiledb_frame_from_dataframe(output_uri, input, column_types=column_types)
 
 
 def generate_metadata_tiledb_csv(
     output_uri: str,
     input: str,
-    column_dtype=str,
+    column_dtype: Dict[str, np.dtype] = None,
     index_col: bool = False,
     chunksize=1000,
 ):
@@ -476,8 +476,8 @@ def generate_metadata_tiledb_csv(
             contain the column names.
 
         column_dtype:
-            Dtype of the columns.
-            Defaults to str.
+            Dtype for each of the columns.
+            Defaults to None.
 
         chunksize:
             Chunk size to read the dataframe.
@@ -490,10 +490,10 @@ def generate_metadata_tiledb_csv(
     for chunk in pd.read_csv(input, chunksize=chunksize, header=0, index_col=index_col):
         if initfile:
             utf.create_tiledb_frame_from_column_names(
-                output_uri, chunk.columns, column_dtype
+                output_uri, chunk.columns, utf.infer_column_types(chunk, column_dtype)
             )
             initfile = False
 
-        _to_write = chunk.astype(str)
-        utf.append_to_tiledb_frame(output_uri, _to_write, offset)
+        # _to_write = chunk.astype(str)
+        utf.append_to_tiledb_frame(output_uri, chunk, offset)
         offset += len(chunk)
