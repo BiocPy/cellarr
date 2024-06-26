@@ -20,11 +20,16 @@ pip install cellarr
 
 ### Build a `CellArrDataset`
 
-Building a `CellArrDataset` generates three TileDB files in the specified output directory:
+Building a `CellArrDataset` generates 4 TileDB files in the specified output directory:
 
-- `gene_metadata`: Contains feature annotations.
-- `cell_metadata`: Contains cell or sample metadata.
-- `matrix`: A TileDB-backed sparse array containing expression vectors.
+- `gene_annotation`: A TileDB file containing feature/gene annotations.
+- `sample_metadata`: A TileDB file containing sample metadata.
+- `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
+they are tagged with in ``sample_metadata``.
+- A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
+to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.
+
+The organization is inspired by the [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) data structure.
 
 The TileDB matrix file is stored in a **cell X gene** orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
