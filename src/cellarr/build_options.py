@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Dict
 
 import numpy as np
-import tiledb.datatypes
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"

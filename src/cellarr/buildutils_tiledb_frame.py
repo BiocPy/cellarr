@@ -40,7 +40,9 @@ def create_tiledb_frame_from_column_names(
     tiledb.from_pandas(tiledb_uri_path, df, mode="schema_only", full_domain=True)
 
 
-def create_tiledb_frame_from_dataframe(tiledb_uri_path: str, frame: List[str], column_types=dict):
+def create_tiledb_frame_from_dataframe(
+    tiledb_uri_path: str, frame: List[str], column_types=dict
+):
     """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
@@ -63,7 +65,9 @@ def create_tiledb_frame_from_dataframe(tiledb_uri_path: str, frame: List[str], c
     tiledb.from_pandas(tiledb_uri_path, dataframe=frame, column_types=column_types)
 
 
-def append_to_tiledb_frame(tiledb_uri_path: str, frame: pd.DataFrame, row_offset: int = 0):
+def append_to_tiledb_frame(
+    tiledb_uri_path: str, frame: pd.DataFrame, row_offset: int = 0
+):
     """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
@@ -80,7 +84,9 @@ def append_to_tiledb_frame(tiledb_uri_path: str, frame: pd.DataFrame, row_offset
             Row offset to append new rows to.
             Defaults to 0.
     """
-    tiledb.from_pandas(tiledb_uri_path, dataframe=frame, mode="append", row_start_idx=row_offset)
+    tiledb.from_pandas(
+        tiledb_uri_path, dataframe=frame, mode="append", row_start_idx=row_offset
+    )
 
 
 # TODO: At some point, hopefully figure out an easy way to identify
