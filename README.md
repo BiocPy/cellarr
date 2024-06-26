@@ -20,11 +20,16 @@ pip install cellarr
 
 ### Build a `CellArrDataset`
 
-Building a `CellArrDataset` generates three TileDB files in the specified output directory:
+Building a `CellArrDataset` generates 4 TileDB files in the specified output directory:
 
-- `gene_metadata`: Contains feature annotations.
-- `cell_metadata`: Contains cell or sample metadata.
-- `matrix`: A TileDB-backed sparse array containing expression vectors.
+- `gene_annotation`: A TileDB file containing feature/gene annotations.
+- `sample_metadata`: A TileDB file containing sample metadata.
+- `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
+they are tagged with in ``sample_metadata``.
+- A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
+to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.
+
+The organization is inspired by the [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) data structure.
 
 The TileDB matrix file is stored in a **cell X gene** orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
@@ -38,7 +43,7 @@ To build a `CellArrDataset` from a collection of `H5AD` or `AnnData` objects:
 import anndata
 import numpy as np
 import tempfile
-from cellarr import build_cellarrdataset, CellArrDataset
+from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
 # Create a temporary directory
 tempdir = tempfile.mkdtemp()
@@ -50,9 +55,9 @@ adata2 = "path/to/object2.h5ad"
 
 # Build CellArrDataset
 dataset = build_cellarrdataset(
-     output_path=tempdir,
-     files=[adata1, adata2],
-     matrix_dim_dtype=np.float32
+    output_path=tempdir,
+    files=[adata1, adata2],
+    matrix_options=MatrixOptions(dtype=np.float32),
 )
 ```
 
@@ -88,14 +93,16 @@ Users have the option to reuse the `dataset` object retuned when building the da
 dataset = CellArrDataset(dataset_path=tempdir)
 
 # Query data from the dataset
-expression_data = dataset[10, ["gene1", "gene10", "gene500"]]
+gene_list = ["gene_1", "gene_95", "gene_50"]
+expression_data = dataset[0:10, gene_list]
+
 print(expression_data.matrix)
 
 print(expression_data.gene_annotation)
 ```
      ## output 1
-     <1x3 sparse matrix of type '<class 'numpy.float32'>'
-          with 3 stored elements in COOrdinate format>
+     <11x3 sparse matrix of type '<class 'numpy.float32'>'
+          with 9 stored elements in COOrdinate format>
 
      ## output 2
      	cellarr_gene_index
