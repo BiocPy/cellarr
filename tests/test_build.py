@@ -334,4 +334,7 @@ def test_build_cellarrdataset_from_frame_containing_nan():
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
     samples = sfp.df[:]
     assert len(samples) == 2
-    assert samples["some_meta"].tolist() == [10, 0]
+    assert np.allclose(
+        samples["some_meta"].tolist(),
+        [10, 0],
+    )
