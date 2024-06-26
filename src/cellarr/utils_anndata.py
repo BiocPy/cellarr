@@ -56,7 +56,7 @@ def remap_anndata(
     """
 
     if isinstance(h5ad_or_adata, str):
-        adata = anndata.read_h5ad(h5ad_or_adata)
+        adata = anndata.read_h5ad(h5ad_or_adata, "r")
     else:
         if not isinstance(h5ad_or_adata, anndata.AnnData):
             raise TypeError("Input is not an 'AnnData' object.")
@@ -151,7 +151,7 @@ def _extract_info(
     var_feature_column: str = "index",
 ) -> Tuple[List[str], int]:
     if isinstance(h5ad_or_adata, str):
-        adata = anndata.read_h5ad(h5ad_or_adata, backed=True)
+        adata = anndata.read_h5ad(h5ad_or_adata, "r")
     else:
         if not isinstance(h5ad_or_adata, anndata.AnnData):
             raise TypeError("Input is not an 'AnnData' object.")
