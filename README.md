@@ -43,7 +43,7 @@ To build a `CellArrDataset` from a collection of `H5AD` or `AnnData` objects:
 import anndata
 import numpy as np
 import tempfile
-from cellarr import build_cellarrdataset, CellArrDataset
+from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
 # Create a temporary directory
 tempdir = tempfile.mkdtemp()
@@ -55,9 +55,9 @@ adata2 = "path/to/object2.h5ad"
 
 # Build CellArrDataset
 dataset = build_cellarrdataset(
-     output_path=tempdir,
-     files=[adata1, adata2],
-     matrix_dim_dtype=np.float32
+    output_path=tempdir,
+    files=[adata1, adata2],
+    matrix_options=MatrixOptions(dtype=np.float32),
 )
 ```
 
@@ -93,14 +93,16 @@ Users have the option to reuse the `dataset` object retuned when building the da
 dataset = CellArrDataset(dataset_path=tempdir)
 
 # Query data from the dataset
-expression_data = dataset[10, ["gene1", "gene10", "gene500"]]
+gene_list = ["gene_1", "gene_95", "gene_50"]
+expression_data = dataset[0:10, gene_list]
+
 print(expression_data.matrix)
 
 print(expression_data.gene_annotation)
 ```
      ## output 1
-     <1x3 sparse matrix of type '<class 'numpy.float32'>'
-          with 3 stored elements in COOrdinate format>
+     <11x3 sparse matrix of type '<class 'numpy.float32'>'
+          with 9 stored elements in COOrdinate format>
 
      ## output 2
      	cellarr_gene_index
