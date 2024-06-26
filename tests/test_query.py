@@ -98,3 +98,6 @@ def test_query_cellarrdataset():
 
     assert result1 is not None
     assert result1.matrix.shape == (101, len(gene_list))
+
+    assert result1.to_anndata() is not None
+    assert result1.to_summarizedexperiment() is not None

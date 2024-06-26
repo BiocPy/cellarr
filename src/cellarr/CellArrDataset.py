@@ -18,24 +18,17 @@ Example:
 """
 
 import os
-from collections import namedtuple
 from typing import List, Sequence, Union
 
 import pandas as pd
 import tiledb
 
 from . import queryutils_tiledb_frame as qtd
+from .CellArrDatasetSlice import CellArrDatasetSlice
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
-
-CellArrDatasetSlice = namedtuple(
-    "CellArrDatasetSlice", ["cell_metadata", "gene_annotation", "matrix"]
-)
-CellArrDatasetSlice.__doc__ = """
-Class that represents a realized subset of the `CellArrDataset`.
-"""
 
 
 class CellArrDataset:

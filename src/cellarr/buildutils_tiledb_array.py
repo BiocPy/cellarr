@@ -142,6 +142,9 @@ def write_csr_matrix_to_tiledb(
     indices = matrix.indices
     data = matrix.data.astype(value_dtype)
 
+    if matrix.shape[1] == 0 or len(data) == 0:
+        return
+
     x = []
     y = []
     vals = []
