@@ -93,11 +93,11 @@ print(expression_data.matrix)
 
 print(expression_data.gene_annotation)
 ```
-     ## output2
-     <1100x1000 sparse matrix of type '<class 'numpy.float32'>'
+     ## output 1
+     <1x3 sparse matrix of type '<class 'numpy.float32'>'
           with 3 stored elements in COOrdinate format>
 
-     ## output2
+     ## output 2
      	cellarr_gene_index
      0	gene_1
      446	gene_50

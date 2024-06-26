@@ -14,7 +14,7 @@ class CellMetadataOptions:
 
     Attributes:
         skip:
-            Whether to skip generating cell metadata tiledb.
+            Whether to skip generating cell metadata TileDB.
             Defaults to False.
 
         dtype:
@@ -25,7 +25,7 @@ class CellMetadataOptions:
             within the integer limits of unsigned-int32.
 
         tiledb_store_name:
-            Name of the tiledb file.
+            Name of the TileDB file.
             Defaults to "cell_metadata".
     """
 
@@ -45,7 +45,7 @@ class GeneAnnotationOptions:
             Defaults to the index of the ``var`` slot.
 
         skip:
-            Whether to skip generating gene annotation tiledb.
+            Whether to skip generating gene annotation TileDB.
             Defaults to False.
 
         dtype:
@@ -56,7 +56,7 @@ class GeneAnnotationOptions:
             within the integer limits of unsigned-int32.
 
         tiledb_store_name:
-            Name of the tiledb file.
+            Name of the TileDB file.
             Defaults to "gene_annotation".
     """
 
@@ -72,10 +72,14 @@ class MatrixOptions:
 
     Attributes:
         matrix_name:
-            Matrix name from ``layers`` slot to add to tiledb.
+            Matrix name from ``layers`` slot to add to TileDB.
             Must be consistent across all objects in ``files``.
 
             Defaults to "counts".
+
+        matrix_attr_name:
+            Name of the matrix to be stored in the TileDB file.
+            Defaults to "data".
 
         consolidate_duplicate_gene_func:
             Function to consolidate when the AnnData object contains
@@ -84,7 +88,7 @@ class MatrixOptions:
             Defaults to :py:func:`sum`.
 
         skip:
-            Whether to skip generating matrix tiledb.
+            Whether to skip generating matrix TileDB.
             Defaults to False.
 
         dtype:
@@ -95,13 +99,14 @@ class MatrixOptions:
             within the range limits of unsigned-int16.
 
         tiledb_store_name:
-            Name of the tiledb file.
+            Name of the TileDB file.
             Defaults to `matrix`.
     """
 
     skip: bool = False
     consolidate_duplicate_gene_func: callable = sum
     matrix_name: str = "counts"
+    matrix_attr_name: str = "data"
     dtype: np.dtype = np.uint16
     tiledb_store_name: str = "counts"
 
@@ -112,7 +117,7 @@ class SampleMetadataOptions:
 
     Attributes:
         skip:
-            Whether to skip generating sample tiledb.
+            Whether to skip generating sample TileDB.
             Defaults to False.
 
         dtype:
@@ -123,7 +128,7 @@ class SampleMetadataOptions:
             within the integer limits of unsigned-int32.
 
         tiledb_store_name:
-            Name of the tiledb file.
+            Name of the TileDB file.
             Defaults to "sample_metadata".
     """
 

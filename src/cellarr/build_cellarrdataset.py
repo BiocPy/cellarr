@@ -117,7 +117,7 @@ def build_cellarrdataset(
             List of file paths to `H5AD` or ``AnnData`` objects.
 
         output_path:
-            Path to where the output tiledb files should be stored.
+            Path to where the output TileDB files should be stored.
 
         gene_metadata:
             A :py:class:`~pandas.DataFrame` containing the feature/gene
@@ -194,7 +194,7 @@ def build_cellarrdataset(
             Optional parameters when generating ``matrix`` store.
 
         optimize_tiledb:
-            Whether to run TileDb's vaccum and consolidation (may take long).
+            Whether to run TileDB's vaccum and consolidation (may take long).
 
         num_threads:
             Number of threads.
@@ -254,7 +254,7 @@ def build_cellarrdataset(
 
     gene_annotation.reset_index(drop=True, inplace=True)
 
-    # Create the gene annotation tiledb
+    # Create the gene annotation TileDB
     if not gene_annotation_options.skip:
         _col_types = {}
         for col in gene_annotation.columns:
@@ -361,7 +361,7 @@ def build_cellarrdataset(
 
         cell_metadata["cellarr_sample"] = _sample_per_cell
 
-    # Create the cell metadata tiledb
+    # Create the cell metadata TileDB
     if not cell_metadata_options.skip:
         _cell_output_uri = f"{output_path}/cell_metadata"
 
@@ -396,7 +396,7 @@ def build_cellarrdataset(
         _counts_uri = f"{output_path}/{matrix_options.tiledb_store_name}"
         uta.create_tiledb_array(
             _counts_uri,
-            matrix_attr_name=matrix_options.matrix_name,
+            matrix_attr_name=matrix_options.matrix_attr_name,
             x_dim_dtype=cell_metadata_options.dtype,
             y_dim_dtype=gene_annotation_options.dtype,
             matrix_dim_dtype=matrix_options.dtype,
@@ -434,7 +434,7 @@ def build_cellarrdataset(
 def generate_metadata_tiledb_frame(
     output_uri: str, input: pd.DataFrame, column_types: dict = None
 ):
-    """Generate metadata tiledb from a :pu:class:`~pandas.DataFrame`.
+    """Generate metadata TileDB from a :pu:class:`~pandas.DataFrame`.
 
     Args:
         output_uri:
@@ -462,7 +462,7 @@ def generate_metadata_tiledb_csv(
     index_col: bool = False,
     chunksize=1000,
 ):
-    """Generate a metadata tiledb from csv.
+    """Generate a metadata TileDB from csv.
 
     The difference between this and ``generate_metadata_tiledb_frame``
     is when the csv is super large and it won't fit into memory.

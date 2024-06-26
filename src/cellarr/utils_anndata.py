@@ -42,7 +42,7 @@ def remap_anndata(
             Defaults to the index of the ``var`` slot.
 
         layer_matrix_name:
-            Layer containing the matrix to add to tiledb.
+            Layer containing the matrix to add to TileDB.
             Defaults to "counts".
 
         consolidate_duplicate_gene_func:

@@ -17,7 +17,7 @@ def create_tiledb_array(
     y_dim_length: int = None,
     x_dim_name: str = "cell_index",
     y_dim_name: str = "gene_index",
-    matrix_attr_name: str = "counts",
+    matrix_attr_name: str = "data",
     x_dim_dtype: np.dtype = np.uint32,
     y_dim_dtype: np.dtype = np.uint32,
     matrix_dim_dtype: np.dtype = np.uint32,
@@ -54,7 +54,7 @@ def create_tiledb_array(
 
         matrix_attr_name:
             Name for the attribute in the array.
-            Defaults to "counts".
+            Defaults to "data".
 
         x_dim_dtype:
             NumPy dtype for the x-dimension.
@@ -86,7 +86,7 @@ def create_tiledb_array(
 
     # expecting counts
     tdb_attr = tiledb.Attr(
-        name="data",
+        name=matrix_attr_name,
         dtype=matrix_dim_dtype,
         filters=tiledb.FilterList([tiledb.GzipFilter()]),
     )
