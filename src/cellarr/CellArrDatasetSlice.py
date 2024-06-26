@@ -39,14 +39,14 @@ class CellArrDatasetSlice:
 
     def to_anndata(self):
         return anndata.AnnData(
-            layers={"matrix": self.matrix},
+            layers={"matrix": self.matrix.tocsr()},
             obs=self.cell_metadata,
             var=self.gene_annotation,
         )
 
     def to_summarizedexperiment(self):
         return se.SummarizedExperiment(
-            assays={"matrix": self.matrix.transpose().tocsr()},
+            assays={"matrix": self.matrix.tocsr().transpose()},
             row_data=self.gene_annotation,
             column_data=self.cell_metadata,
         )

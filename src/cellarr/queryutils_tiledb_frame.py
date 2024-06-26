@@ -114,12 +114,13 @@ def subset_array(
     """
     data = tiledb_obj.multi_index[row_subset, column_subset]
 
-    _cell_rows, num_row_shape = _remap_index(data["cell_index"])
-    _gene_cols, num_col_shape = _remap_index(data["gene_index"])
+    _cell_rows, _ = _remap_index(data["cell_index"])
+    _gene_cols, _ = _remap_index(data["gene_index"])
 
+    print("shape:", shape)
     mat = sp.coo_matrix(
         (data["data"], (_cell_rows, _gene_cols)),
-        shape=(num_row_shape, num_col_shape),
+        shape=shape,
     )
 
     return mat
