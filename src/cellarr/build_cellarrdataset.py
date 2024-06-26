@@ -377,8 +377,6 @@ def build_cellarrdataset(
                 cell_metadata, cell_metadata_options.column_types
             )
 
-            # _to_write = cell_metadata.astype(str)
-
             generate_metadata_tiledb_frame(
                 _cell_output_uri, cell_metadata, column_types=_col_types
             )
@@ -451,7 +449,6 @@ def generate_metadata_tiledb_frame(
 
             Defaults to None.
     """
-    # _to_write = input.astype(str)
     utf.create_tiledb_frame_from_dataframe(output_uri, input, column_types=column_types)
 
 
@@ -494,6 +491,5 @@ def generate_metadata_tiledb_csv(
             )
             initfile = False
 
-        # _to_write = chunk.astype(str)
         utf.append_to_tiledb_frame(output_uri, chunk, offset)
         offset += len(chunk)
