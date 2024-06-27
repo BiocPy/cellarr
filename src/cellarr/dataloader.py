@@ -1,6 +1,37 @@
+"""A dataloader using TileDB files in the pytorch-lightning framework.
+
+This class provides a dataloader using the generated TileDB files built using the
+:py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.
+
+Example:
+
+    .. code-block:: python
+
+        from cellarr.dataloader import DataModule
+
+        datamodule = cellarr.dataloader.DataModule(
+            dataset_path="/path/to/cellar/dir",
+            cell_metadata_uri="cell_metadata",
+            gene_annotation_uri="gene_annotation",
+            matrix_uri="counts",
+            val_studies=["test3"],
+            label_column="label",
+            study_column="study",
+            batch_size=100,
+            lognorm=True,
+            target_sum=1e4,
+        )
+
+        dataloader = datamodule.train_dataloader()
+        batch = next(iter(dataloader))
+        data, labels, studies = batch
+        print(data, labels, studies)
+"""
+
 from collections import Counter
 import numpy as np
 import os
+import pandas
 import pytorch_lightning as pl
 from scipy.sparse import coo_matrix, csr_matrix
 import tiledb
@@ -8,7 +39,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from typing import List, Optional
 
-from cellarr.queryutils_tiledb_frame import subset_frame
+from .queryutils_tiledb_frame import subset_frame
 
 __author__ = "Tony Kuo"
 __copyright__ = "Jayaram Kancherla"
@@ -26,12 +57,12 @@ config["vfs.num_threads"] = 1
 
 
 class scDataset(Dataset):
-    """A pytorch Dataset that enumerates cells and cell labels in TileDB."""
+    """A class that extends a pytorch Dataset to enumerate cells and cell labels using TileDB."""
 
     def __init__(
         self,
-        data_df: "pandas.DataFrame",
-        matrix_tdb: "tiledb.libtiledb.SparseArrayImpl",
+        data_df: pandas.DataFrame,
+        matrix_tdb: tiledb.Array,
         matrix_shape: tuple,
         gene_indices: List[int],
         label_column: str,
@@ -39,26 +70,32 @@ class scDataset(Dataset):
         lognorm: bool = True,
         target_sum: float = 1e4,
     ):
-        """Constructor.
+        """Initialize a ``scDataset``.
 
-        Parameters
-        ----------
-        data_df: pandas.DataFrame
-            Pandas dataframe of valid cells.
-        matrix_tdb: tiledb.libtiledb.SparseArrayImpl
-            Counts TileDB.
-        matrix_shape: tuple,
-            Shape of the counts matrix
-        gene_indices: List[int]
-            The index of genes to return.
-        label_column: str, default: "cellTypeName"
-            Label column name.
-        study_column: str, default: "dataset"
-            Study column name.
-        lognorm: bool, default: True
-            Whether to return log normalized expression instead of raw counts.
-        target_sum: float, default: 1e4
-            Target sum for log normalization.
+        Args:
+            data_df:
+                Pandas dataframe of valid cells.
+
+            matrix_tdb:
+                Counts TileDB.
+
+            matrix_shape:
+                Shape of the counts matrix
+
+            gene_indices:
+                The index of genes to return.
+
+            label_column:
+                Label column name.
+
+            study_column:
+                Study column name.
+
+            lognorm:
+                Whether to return log normalized expression instead of raw counts.
+
+            target_sum:
+                Target sum for log normalization.
         """
 
         self.data_df = data_df
@@ -100,9 +137,32 @@ class scDataset(Dataset):
             self.data_df.loc[cell_idx, self.study_column],
         )
 
+    def __repr__(self) -> str:
+        """
+        Returns:
+            A string representation.
+        """
+        output = f"{type(self).__name__}("
+        output += f"number_of_cells={self.data_df.shape[0]}"
+        output += f"number_of_genes={self.matrix_shape[1]}"
+        output += ")"
+
+        return output
+
+    def __str__(self) -> str:
+        """
+        Returns:
+            A pretty-printed string containing the contents of this object.
+        """
+        output = f"class: {type(self).__name__}\n"
+        output += f"number_of_cells: {self.data_df.shape[0]}\n"
+        output += f"number_of_genes: {self.matrix_shape[1]}\n"
+
+        return output
+
 
 class DataModule(pl.LightningDataModule):
-    """A pytorch-lightning datamodule template."""
+    """A class that extends a pytorch-lightning data module to create pytorch dataloaders using TileDB."""
 
     def __init__(
         self,
@@ -119,34 +179,44 @@ class DataModule(pl.LightningDataModule):
         lognorm: bool = True,
         target_sum: float = 1e4,
     ):
-        """Constructor.
+        """Initialize a ``DataModule``.
 
-        Parameters
-        ----------
-        dataset_path: str
-            Path to the directory containing the TileDB stores.
-        cell_metadata_uri: str, default: "cell_metadata"
-            Relative path to cell metadata store.
-        gene_annotation_uri: str, default: "gene_annotation"
-            Relative path to gene annotation store.
-        matrix_uri: str, default: "counts"
-            Relative path to matrix store.
-        val_studies: List[str], optional, default: None
-            List of studies to use as validation and test.
-        label_column: str, default: "celltype_id"
-            Label column name.
-        study_column: str, default: "dataset"
-            Study column name.
-        gene_order: str, optional, default: None
-            Use a given gene order as described in the specified file. One gene symbol per line.
-        batch_size: int, default: 1000
-            Batch size.
-        num_workers: int, default: 1
-            The number of worker threads for dataloaders
-        lognorm: bool, default: True
-            Whether to return log normalized expression instead of raw counts.
-        target_sum: float, default: 1e4
-            Target sum for log normalization.
+        Args:
+            dataset_path:
+                Path to the directory containing the TileDB stores.
+
+            cell_metadata_uri:
+                Relative path to cell metadata store.
+
+            gene_annotation_uri:
+                Relative path to gene annotation store.
+
+            matrix_uri:
+                Relative path to matrix store.
+
+            val_studies:
+                List of studies to use as validation and test.
+
+            label_column:
+                Label column name.
+
+            study_column:
+                Study column name.
+
+            gene_order:
+                Use a given gene order as described in the specified file. One gene symbol per line.
+
+            batch_size:
+                Batch size.
+
+            num_workers:
+                The number of worker threads for dataloaders
+
+            lognorm:
+                Whether to return log normalized expression instead of raw counts.
+
+            target_sum:
+                Target sum for log normalization.
         """
 
         super().__init__()
@@ -275,14 +345,11 @@ class DataModule(pl.LightningDataModule):
     ) -> WeightedRandomSampler:
         """Get weighted random sampler.
 
-        Parameters
-        ----------
-        dataset: scDataset
-            Single cell dataset.
+        Args:
+            dataset: scDataset
+                Single cell dataset.
 
-        Returns
-        -------
-        WeightedRandomSampler
+        Returns:
             A WeightedRandomSampler object.
         """
 
@@ -309,14 +376,11 @@ class DataModule(pl.LightningDataModule):
     def collate(self, batch):
         """Collate tensors.
 
-        Parameters
-        ----------
-        batch:
-            Batch to collate.
+        Args:
+            batch:
+                Batch to collate.
 
-        Returns
-        -------
-        tuple
+        Returns:
             A Tuple[torch.Tensor, torch.Tensor, list] containing information
             on the collated tensors.
         """
@@ -335,9 +399,7 @@ class DataModule(pl.LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         """Load the training dataset.
 
-        Returns
-        -------
-        DataLoader
+        Returns:
             A DataLoader object containing the training dataset.
         """
 
@@ -354,9 +416,7 @@ class DataModule(pl.LightningDataModule):
     def val_dataloader(self) -> DataLoader:
         """Load the validation dataset.
 
-        Returns
-        -------
-        DataLoader
+        Returns:
             A DataLoader object containing the validation dataset.
         """
 
@@ -372,3 +432,35 @@ class DataModule(pl.LightningDataModule):
             sampler=self.get_sampler_weights(self.val_Y, self.val_study),
             collate_fn=self.collate,
         )
+
+    def __repr__(self) -> str:
+        """
+        Returns:
+            A string representation.
+        """
+        output = f"{type(self).__name__}("
+        output += f"number_of_training_cells={self.data_df.shape[0]}"
+        if self.val_df is not None:
+            output += f", number_of_validation_cells={self.val_df.shape[0]}"
+        else:
+            output += f", number_of_validation_cells=0"
+        output += f", at path={self.dataset_path}"
+        output += ")"
+
+        return output
+
+    def __str__(self) -> str:
+        """
+        Returns:
+            A pretty-printed string containing the contents of this object.
+        """
+        output = f"class: {type(self).__name__}\n"
+        output += f"number_of_training_cells: {self.data_df.shape[0]}\n"
+        if self.val_df is not None:
+            output += f"number_of_validation_cells: {self.val_df.shape[0]}\n"
+        else:
+            output += f"number_of_validation_cells: 0\n"
+        output += f"number_of_genes: {len(self.gene_indices)}\n"
+        output += f"path: '{self.dataset_path}'\n"
+
+        return output

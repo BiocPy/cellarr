@@ -11,8 +11,8 @@ from cellarr import (
     build_cellarrdataset,
     MatrixOptions,
 )
-from cellarr.dataloader import DataModule
 import cellarr
+from cellarr.dataloader import DataModule
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -54,7 +54,7 @@ def test_dataloader():
         matrix_options=MatrixOptions(dtype=np.float32),
     )
 
-    datamodule = cellarr.dataloader.DataModule(
+    datamodule = DataModule(
         dataset_path=tempdir,
         cell_metadata_uri="cell_metadata",
         gene_annotation_uri="gene_annotation",
@@ -72,8 +72,8 @@ def test_dataloader():
     assert "test3" not in datamodule.data_df["study"].values
     assert "test3" in datamodule.val_df["study"].values
 
-    data_loader = datamodule.train_dataloader()
-    batch = next(iter(data_loader))
+    dataloader = datamodule.train_dataloader()
+    batch = next(iter(dataloader))
     data, labels, studies = batch
     print(data, labels, studies)
     assert len(labels) == 100
