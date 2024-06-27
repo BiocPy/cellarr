@@ -2,7 +2,7 @@ from collections import Counter
 import numpy as np
 import os
 import pytorch_lightning as pl
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_matrix, csr_matrix
 import tiledb
 import torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
@@ -90,7 +90,7 @@ class scDataset(Dataset):
             counts_per_cell = np.ravel(counts_per_cell)
             counts_per_cell = counts_per_cell / self.target_sum
             X = X / counts_per_cell[:, None]
-            X = X.log1p()
+            X = csr_matrix(X).log1p()
 
         X = X.toarray()
 
