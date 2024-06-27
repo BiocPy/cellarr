@@ -231,7 +231,7 @@ class DataModule(pl.LightningDataModule):
             for x in self.gene_order:
                 try:
                     self.gene_indices.append(genes.index(x))
-                except:
+                except NameError:
                     print(f"Gene not found: {x}")
                     pass
         else:
@@ -326,7 +326,9 @@ class DataModule(pl.LightningDataModule):
         )  # tuple([list(t) for t in zip(*batch)])
         return (
             torch.squeeze(torch.Tensor(np.vstack(profiles))),
-            torch.Tensor([self.label2int[l] for l in labels]),  # text to int labels
+            torch.Tensor(
+                [self.label2int[label] for label in labels]
+            ),  # text to int labels
             studies,
         )
 
