@@ -443,7 +443,7 @@ class DataModule(pl.LightningDataModule):
         if self.val_df is not None:
             output += f", number_of_validation_cells={self.val_df.shape[0]}"
         else:
-            output += f", number_of_validation_cells=0"
+            output += ", number_of_validation_cells=0"
         output += f", at path={self.dataset_path}"
         output += ")"
 
@@ -459,7 +459,7 @@ class DataModule(pl.LightningDataModule):
         if self.val_df is not None:
             output += f"number_of_validation_cells: {self.val_df.shape[0]}\n"
         else:
-            output += f"number_of_validation_cells: 0\n"
+            output += "number_of_validation_cells: 0\n"
         output += f"number_of_genes: {len(self.gene_indices)}\n"
         output += f"path: '{self.dataset_path}'\n"
 
