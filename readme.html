@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.1.3 documentation</title>
+        <title>Cell Arrays - cellarr 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html#a-single-cell-dataloader">A single cell dataloader</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes.html">Usage Notes</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api/modules.html">Module Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/cellarr.html">cellarr package</a></li>
@@ -365,6 +366,26 @@ if these are <code class="docutils literal notranslate"><span class="pre">AnnDat
  945	gene_95
 </pre></div>
 </div>
+</section>
+<section id="a-built-in-dataloader-for-the-pytorch-lightning-framework">
+<h3>A built-in dataloader for the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework<a class="headerlink" href="#a-built-in-dataloader-for-the-pytorch-lightning-framework" title="Link to this heading">¶</a></h3>
+<p>The package includes a dataloader in the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.</p>
+<p>This dataloader can be used as a template to create custom dataloaders specific to your needs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">DataModule</span>
+
+<span class="n">datamodule</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;/path/to/cellar/dir&quot;</span><span class="p">,</span>
+    <span class="n">cell_metadata_uri</span><span class="o">=</span><span class="s2">&quot;cell_metadata&quot;</span><span class="p">,</span>
+    <span class="n">gene_annotation_uri</span><span class="o">=</span><span class="s2">&quot;gene_annotation&quot;</span><span class="p">,</span>
+    <span class="n">matrix_uri</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+    <span class="n">label_column_name</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">study_column_name</span><span class="o">=</span><span class="s2">&quot;study&quot;</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">lognorm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">target_sum</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <!-- pyscaffold-notes -->
 </section>
 </section>
@@ -417,6 +438,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
 <li><a class="reference internal" href="#usage">Usage</a><ul>
 <li><a class="reference internal" href="#build-a-cellarrdataset">Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li><a class="reference internal" href="#a-built-in-dataloader-for-the-pytorch-lightning-framework">A built-in dataloader for the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#note">Note</a></li>
@@ -431,7 +453,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

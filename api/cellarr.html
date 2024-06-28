@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Contributors" href="../authors.html" /><link rel="prev" title="cellarr" href="modules.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr package - cellarr 0.1.3 documentation</title>
+        <title>cellarr package - cellarr 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">cellarr 0.1.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">cellarr 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html#a-single-cell-dataloader">A single cell dataloader</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes.html">Usage Notes</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">Module Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">cellarr package</a></li>
@@ -276,7 +277,7 @@
 <p>Query the <cite>CellArrDataset</cite>.</p>
 <p>This class provides methods to access the directory containing the
 generated TileDB files usually using the
-<a class="reference internal" href="#cellarr.build_cellarrdataset.build_cellarrdataset" title="cellarr.build_cellarrdataset.build_cellarrdataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">cellarr.build_cellarrdataset.build_cellarrdataset()</span></code></a>.</p>
+<a class="reference internal" href="#cellarr.build_cellarrdataset.build_cellarrdataset" title="cellarr.build_cellarrdataset.build_cellarrdataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_cellarrdataset()</span></code></a>.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">CellArrDataset</span>
 
@@ -320,8 +321,8 @@ columns (or features/genes) to retain, based on their names or indices.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object containing the <cite>cell_metadata</cite>,
-<cite>gene_annotation</cite> and the matrix.</p>
+<dd class="field-even"><p>A <a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a> object
+containing the <cite>cell_metadata</cite>, <cite>gene_annotation</cite> and the matrix.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -589,8 +590,9 @@ named) names specifying the columns (or features/genes) to retain.</p></li>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object containing the <cite>cell_metadata</cite>,
-<cite>gene_annotation</cite> and the matrix for the given slice ranges.</p>
+<dd class="field-odd"><p>A <a class="reference internal" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice" title="cellarr.CellArrDatasetSlice.CellArrDatasetSlice"><code class="xref py py-class docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code></a> object
+containing the <cite>cell_metadata</cite>, <cite>gene_annotation</cite> and the matrix for
+the given slice ranges.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -750,7 +752,7 @@ some genes are unmeasured or ordered differently in the original experiments.</p
 to make them consistent is outside the scope of this function
 and package.</p>
 <p>There’s a few assumptions this process makes:
-- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gc0b4e8f)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 or H5AD object, these must contain an assay matrix in the
 layers slot of the object named as <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter.
 - Feature information must contain a column defined by the parameter
@@ -765,7 +767,7 @@ the number of input files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gc0b4e8f)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
 <li><p><strong>output_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to where the output TileDB files should be stored.</p></li>
 <li><p><strong>gene_metadata</strong> – <p>A <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a> containing the feature/gene
 annotations across all objects.</p>
@@ -851,7 +853,7 @@ Defaults to 1000.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="cellarr.build_cellarrdataset.generate_metadata_tiledb_frame">
 <span class="sig-prename descclassname"><span class="pre">cellarr.build_cellarrdataset.</span></span><span class="sig-name descname"><span class="pre">generate_metadata_tiledb_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/build_cellarrdataset.html#generate_metadata_tiledb_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.build_cellarrdataset.generate_metadata_tiledb_frame" title="Link to this definition">¶</a></dt>
-<dd><p>Generate metadata TileDB from a <a href="#id3"><span class="problematic" id="id4">:pu:class:`~pandas.DataFrame`</span></a>.</p>
+<dd><p>Generate metadata TileDB from a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -950,19 +952,19 @@ the tiledb.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cell_metadata'</span></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cell_metadata'</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1050,29 +1052,29 @@ the tiledb.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">column_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">column_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">feature_column</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'index'</span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">feature_column</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'index'</span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id12">
-<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gene_annotation'</span></em><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gene_annotation'</span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1166,8 +1168,8 @@ Defaults to <cite>matrix</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id13">
-<span class="sig-name descname"><span class="pre">consolidate_duplicate_gene_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">consolidate_duplicate_gene_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
 <dd><p>Return the sum of a ‘start’ value (default: 0) plus an iterable of numbers</p>
 <p>When the iterable is empty, return the start value.
 This function is intended specifically for use with numeric values and may
@@ -1175,29 +1177,29 @@ reject non-numeric types.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id14">
-<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">matrix_attr_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data'</span></em><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">matrix_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'counts'</span></em><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="id15">
-<span class="sig-name descname"><span class="pre">matrix_attr_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data'</span></em><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id16">
-<span class="sig-name descname"><span class="pre">matrix_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'counts'</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id17">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id18">
-<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'counts'</span></em><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'counts'</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1277,24 +1279,24 @@ the tiledb.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id19">
-<span class="sig-name descname"><span class="pre">column_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">column_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id20">
-<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id21">
-<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id21" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id22">
-<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sample_metadata'</span></em><a class="headerlink" href="#id22" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">tiledb_store_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sample_metadata'</span></em><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1388,6 +1390,25 @@ Defaults to 0.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_chunk">
+<span class="sig-prename descclassname"><span class="pre">cellarr.buildutils_tiledb_frame.</span></span><span class="sig-name descname"><span class="pre">create_tiledb_frame_from_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiledb_uri_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/buildutils_tiledb_frame.html#create_tiledb_frame_from_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_chunk" title="Link to this definition">¶</a></dt>
+<dd><p>Create a TileDB file from the DataFrame chunk, to persistent storage. This is used by the importer for large
+datasets stored in csv.</p>
+<p>This will materialize the array directory and all
+related schema files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tiledb_uri_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to create the metadata TileDB file.</p></li>
+<li><p><strong>chunk</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – Pandas data frame.</p></li>
+<li><p><strong>column_types</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code></a>]</span>) – Dictionary specifying the column types for each
+column in the frame.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_column_names">
 <span class="sig-prename descclassname"><span class="pre">cellarr.buildutils_tiledb_frame.</span></span><span class="sig-name descname"><span class="pre">create_tiledb_frame_from_column_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiledb_uri_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/buildutils_tiledb_frame.html#create_tiledb_frame_from_column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_column_names" title="Link to this definition">¶</a></dt>
 <dd><p>Create a TileDB file with the provided attributes to persistent storage.</p>
@@ -1445,18 +1466,214 @@ value representing the column types.</p>
 </section>
 <section id="module-cellarr.dataloader">
 <span id="cellarr-dataloader-module"></span><h2>cellarr.dataloader module<a class="headerlink" href="#module-cellarr.dataloader" title="Link to this heading">¶</a></h2>
+<p>A dataloader using TileDB files in the pytorch-lightning framework.</p>
+<p>This class provides a dataloader using the generated TileDB files built using the
+<a class="reference internal" href="#cellarr.build_cellarrdataset.build_cellarrdataset" title="cellarr.build_cellarrdataset.build_cellarrdataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_cellarrdataset()</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr.dataloader</span> <span class="kn">import</span> <span class="n">DataModule</span>
+
+<span class="n">datamodule</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;/path/to/cellar/dir&quot;</span><span class="p">,</span>
+    <span class="n">cell_metadata_uri</span><span class="o">=</span><span class="s2">&quot;cell_metadata&quot;</span><span class="p">,</span>
+    <span class="n">gene_annotation_uri</span><span class="o">=</span><span class="s2">&quot;gene_annotation&quot;</span><span class="p">,</span>
+    <span class="n">matrix_uri</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+    <span class="n">val_studies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;test3&quot;</span><span class="p">],</span>
+    <span class="n">label_column_name</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">study_column_name</span><span class="o">=</span><span class="s2">&quot;study&quot;</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">lognorm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">target_sum</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dataloader</span> <span class="o">=</span> <span class="n">datamodule</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">()</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">))</span>
+<span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">studies</span> <span class="o">=</span> <span class="n">batch</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">studies</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cellarr.dataloader.</span></span><span class="sig-name descname"><span class="pre">DataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_metadata_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cell_metadata'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gene_annotation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'celltype_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'study'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_studies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lognorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningDataModule</span></code></p>
+<p>A class that extends a pytorch-lightning <code class="xref py py-class docutils literal notranslate"></code> to create pytorch dataloaders using TileDB.</p>
+<p>The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.__del__">
+<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.__del__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.__del__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_metadata_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cell_metadata'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_annotation_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gene_annotation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'celltype_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'study'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_studies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lognorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize a <code class="docutils literal notranslate"><span class="pre">DataModule</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to the directory containing the TileDB stores.
+Usually the <code class="docutils literal notranslate"><span class="pre">output_path</span></code> from the
+<a class="reference internal" href="#cellarr.build_cellarrdataset.build_cellarrdataset" title="cellarr.build_cellarrdataset.build_cellarrdataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_cellarrdataset()</span></code></a>.</p></li>
+<li><p><strong>cell_metadata_uri</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Relative path to cell metadata store.</p></li>
+<li><p><strong>gene_annotation_uri</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Relative path to gene annotation store.</p></li>
+<li><p><strong>matrix_uri</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Relative path to matrix store.</p></li>
+<li><p><strong>label_column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column name in <cite>cell_metadata_uri</cite> containing cell labels.</p></li>
+<li><p><strong>study_column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column name in <cite>cell_metadata_uri</cite> containing study information.</p></li>
+<li><p><strong>val_studies</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – List of studies to use for validation and test.
+If None, all studies are used for training.</p></li>
+<li><p><strong>gene_order</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – List of genes to subset to from the gene space.
+If None, all genes from the <cite>gene_annotation</cite> are used for training.</p></li>
+<li><p><strong>batch_size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Batch size to use.
+Defaults to 1000.</p></li>
+<li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – The number of worker threads for dataloaders.</p></li>
+<li><p><strong>lognorm</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to return log-normalized expression instead of raw counts.</p></li>
+<li><p><strong>target_sum</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Target sum for log-normalization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.__repr__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string representation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.collate">
+<span class="sig-name descname"><span class="pre">collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.collate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.collate" title="Link to this definition">¶</a></dt>
+<dd><p>Collate tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> – Batch to collate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Tuple[torch.Tensor, torch.Tensor, list] containing information
+on the collated tensors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.get_sampler_weights">
+<span class="sig-name descname"><span class="pre">get_sampler_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">studies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.get_sampler_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.get_sampler_weights" title="Link to this definition">¶</a></dt>
+<dd><p>Get weighted random sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> – Single cell dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">WeightedRandomSampler</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A WeightedRandomSampler object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.train_dataloader">
+<span class="sig-name descname"><span class="pre">train_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.train_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.train_dataloader" title="Link to this definition">¶</a></dt>
+<dd><p>Load the training dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataLoader object containing the training dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.DataModule.val_dataloader">
+<span class="sig-name descname"><span class="pre">val_dataloader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#DataModule.val_dataloader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.DataModule.val_dataloader" title="Link to this definition">¶</a></dt>
+<dd><p>Load the validation dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataLoader object containing the validation dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cellarr.dataloader.</span></span><span class="sig-name descname"><span class="pre">scDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_tdb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lognorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#scDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.scDataset" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A class that extends pytorch <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code> to enumerate cells and cell labels using
+TileDB.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#scDataset.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.scDataset.__getitem__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_tdb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lognorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_sum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#scDataset.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.scDataset.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize a <code class="docutils literal notranslate"><span class="pre">scDataset</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_df</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a></span>) – Pandas dataframe of valid cells.</p></li>
+<li><p><strong>matrix_tdb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://tiledb-inc-tiledb.readthedocs-hosted.com/projects/tiledb-py/en/stable/python-api.html#tiledb.libtiledb.Array" title="(in TileDB-Py v0.30)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></a></span>) – TileDB object containing the experimental data, e.g. counts.</p></li>
+<li><p><strong>matrix_shape</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></span>) – Shape of the counts matrix.</p></li>
+<li><p><strong>gene_indices</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – The index of genes to return.</p></li>
+<li><p><strong>label_column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column name containing cell labels.</p></li>
+<li><p><strong>study_column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column name containing study information.</p></li>
+<li><p><strong>lognorm</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to return log-normalized expression instead of raw counts.</p></li>
+<li><p><strong>target_sum</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Target sum for log-normalization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#scDataset.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.scDataset.__len__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset.__parameters__">
+<span class="sig-name descname"><span class="pre">__parameters__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#cellarr.dataloader.scDataset.__parameters__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cellarr.dataloader.scDataset.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/dataloader.html#scDataset.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.dataloader.scDataset.__repr__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string representation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-cellarr.queryutils_tiledb_frame">
 <span id="cellarr-queryutils-tiledb-frame-module"></span><h2>cellarr.queryutils_tiledb_frame module<a class="headerlink" href="#module-cellarr.queryutils_tiledb_frame" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cellarr.queryutils_tiledb_frame.get_a_column">
 <span class="sig-prename descclassname"><span class="pre">cellarr.queryutils_tiledb_frame.</span></span><span class="sig-name descname"><span class="pre">get_a_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiledb_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/queryutils_tiledb_frame.html#get_a_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.queryutils_tiledb_frame.get_a_column" title="Link to this definition">¶</a></dt>
-<dd><p>Get a single column from the TileDB object.</p>
+<dd><p>Access column(s) from the TileDB object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tiledb_obj</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://tiledb-inc-tiledb.readthedocs-hosted.com/projects/tiledb-py/en/stable/python-api.html#tiledb.libtiledb.Array" title="(in TileDB-Py v0.30)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></a></span>) – A TileDB object.</p></li>
-<li><p><strong>column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the column to access.</p></li>
+<li><p><strong>column_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Name(s) of the column to access.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1569,7 +1786,7 @@ multiple rows with the same feature id or gene symbol.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gc0b4e8f)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>AnnData object with duplicate gene symbols consolidated.</p>
@@ -1584,7 +1801,7 @@ multiple rows with the same feature id or gene symbol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
+<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gc0b4e8f)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
 <li><p><strong>var_feature_column</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column containing the feature ids (e.g. gene symbols).
 Defaults to “index”.</p></li>
 <li><p><strong>num_threads</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Number of threads to use.
@@ -1599,7 +1816,7 @@ Defaults to False.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="cellarr.utils_anndata.remap_anndata">
 <span class="sig-prename descclassname"><span class="pre">cellarr.utils_anndata.</span></span><span class="sig-name descname"><span class="pre">remap_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5ad_or_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_set_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_feature_column='index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_matrix_name='counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consolidate_duplicate_gene_func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">sum&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/utils_anndata.html#remap_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.utils_anndata.remap_anndata" title="Link to this definition">¶</a></dt>
-<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gf87f3a8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.1.dev50+gc0b4e8f)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1798,9 +2015,9 @@ multiple rows with the same feature id or gene symbol.</p>
 <li><a class="reference internal" href="#cellarr.build_options.CellMetadataOptions.__init__"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.CellMetadataOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.__repr__()</span></code></a></li>
 <li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.column_types</span></code></a></li>
-<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.dtype</span></code></a></li>
-<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.skip</span></code></a></li>
-<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.tiledb_store_name</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.dtype</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.skip</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cellarr.build_options.GeneAnnotationOptions"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions</span></code></a><ul>
@@ -1816,11 +2033,11 @@ multiple rows with the same feature id or gene symbol.</p>
 <li><a class="reference internal" href="#cellarr.build_options.GeneAnnotationOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__hash__</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.GeneAnnotationOptions.__init__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.GeneAnnotationOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__repr__()</span></code></a></li>
-<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.column_types</span></code></a></li>
-<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.dtype</span></code></a></li>
-<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.feature_column</span></code></a></li>
-<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.skip</span></code></a></li>
-<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.tiledb_store_name</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.column_types</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.dtype</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.feature_column</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.skip</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cellarr.build_options.MatrixOptions"><code class="docutils literal notranslate"><span class="pre">MatrixOptions</span></code></a><ul>
@@ -1837,12 +2054,12 @@ multiple rows with the same feature id or gene symbol.</p>
 <li><a class="reference internal" href="#cellarr.build_options.MatrixOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__hash__</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.MatrixOptions.__init__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.MatrixOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__repr__()</span></code></a></li>
-<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.consolidate_duplicate_gene_func()</span></code></a></li>
-<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.dtype</span></code></a></li>
-<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_attr_name</span></code></a></li>
-<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_name</span></code></a></li>
-<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.skip</span></code></a></li>
-<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.tiledb_store_name</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.consolidate_duplicate_gene_func()</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.dtype</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_attr_name</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_name</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.skip</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cellarr.build_options.SampleMetadataOptions"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions</span></code></a><ul>
@@ -1857,10 +2074,10 @@ multiple rows with the same feature id or gene symbol.</p>
 <li><a class="reference internal" href="#cellarr.build_options.SampleMetadataOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__hash__</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.SampleMetadataOptions.__init__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.build_options.SampleMetadataOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__repr__()</span></code></a></li>
-<li><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.column_types</span></code></a></li>
-<li><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.dtype</span></code></a></li>
-<li><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.skip</span></code></a></li>
-<li><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.tiledb_store_name</span></code></a></li>
+<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.column_types</span></code></a></li>
+<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.dtype</span></code></a></li>
+<li><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.skip</span></code></a></li>
+<li><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1873,12 +2090,33 @@ multiple rows with the same feature id or gene symbol.</p>
 </li>
 <li><a class="reference internal" href="#module-cellarr.buildutils_tiledb_frame">cellarr.buildutils_tiledb_frame module</a><ul>
 <li><a class="reference internal" href="#cellarr.buildutils_tiledb_frame.append_to_tiledb_frame"><code class="docutils literal notranslate"><span class="pre">append_to_tiledb_frame()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_chunk"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_chunk()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_column_names"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_column_names()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_dataframe"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_dataframe()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.buildutils_tiledb_frame.infer_column_types"><code class="docutils literal notranslate"><span class="pre">infer_column_types()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-cellarr.dataloader">cellarr.dataloader module</a></li>
+<li><a class="reference internal" href="#module-cellarr.dataloader">cellarr.dataloader module</a><ul>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule"><code class="docutils literal notranslate"><span class="pre">DataModule</span></code></a><ul>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.__del__"><code class="docutils literal notranslate"><span class="pre">DataModule.__del__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.__init__"><code class="docutils literal notranslate"><span class="pre">DataModule.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.__repr__"><code class="docutils literal notranslate"><span class="pre">DataModule.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.collate"><code class="docutils literal notranslate"><span class="pre">DataModule.collate()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.get_sampler_weights"><code class="docutils literal notranslate"><span class="pre">DataModule.get_sampler_weights()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.train_dataloader"><code class="docutils literal notranslate"><span class="pre">DataModule.train_dataloader()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.DataModule.val_dataloader"><code class="docutils literal notranslate"><span class="pre">DataModule.val_dataloader()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset"><code class="docutils literal notranslate"><span class="pre">scDataset</span></code></a><ul>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset.__getitem__"><code class="docutils literal notranslate"><span class="pre">scDataset.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset.__init__"><code class="docutils literal notranslate"><span class="pre">scDataset.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset.__len__"><code class="docutils literal notranslate"><span class="pre">scDataset.__len__()</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset.__parameters__"><code class="docutils literal notranslate"><span class="pre">scDataset.__parameters__</span></code></a></li>
+<li><a class="reference internal" href="#cellarr.dataloader.scDataset.__repr__"><code class="docutils literal notranslate"><span class="pre">scDataset.__repr__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-cellarr.queryutils_tiledb_frame">cellarr.queryutils_tiledb_frame module</a><ul>
 <li><a class="reference internal" href="#cellarr.queryutils_tiledb_frame.get_a_column"><code class="docutils literal notranslate"><span class="pre">get_a_column()</span></code></a></li>
 <li><a class="reference internal" href="#cellarr.queryutils_tiledb_frame.get_index"><code class="docutils literal notranslate"><span class="pre">get_index()</span></code></a></li>
@@ -1907,7 +2145,7 @@ multiple rows with the same feature id or gene symbol.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=4e2eecee"></script>

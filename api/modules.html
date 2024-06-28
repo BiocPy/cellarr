@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="cellarr package" href="cellarr.html" /><link rel="prev" title="Usage Notes" href="../notes.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr - cellarr 0.1.3 documentation</title>
+        <title>cellarr - cellarr 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">cellarr 0.1.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">cellarr 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,6 +217,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#install-the-package">Install the package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#build-the-cellarrdataset">Build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html#a-single-cell-dataloader">A single cell dataloader</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes.html">Usage Notes</a></li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Module Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="cellarr.html">cellarr package</a></li>
@@ -334,9 +335,9 @@
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.CellMetadataOptions.__init__"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.CellMetadataOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.__repr__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#id0"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.column_types</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id5"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.dtype</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id6"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.skip</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id7"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.tiledb_store_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id3"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.dtype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id4"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.skip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id5"><code class="docutils literal notranslate"><span class="pre">CellMetadataOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.build_options.GeneAnnotationOptions"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions</span></code></a><ul>
@@ -352,11 +353,11 @@
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.GeneAnnotationOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__hash__</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.GeneAnnotationOptions.__init__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.GeneAnnotationOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.__repr__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id8"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.column_types</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id9"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.dtype</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id10"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.feature_column</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id11"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.skip</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id12"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.tiledb_store_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id6"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.column_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id7"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.dtype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id8"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.feature_column</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id9"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.skip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id10"><code class="docutils literal notranslate"><span class="pre">GeneAnnotationOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.build_options.MatrixOptions"><code class="docutils literal notranslate"><span class="pre">MatrixOptions</span></code></a><ul>
@@ -373,12 +374,12 @@
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.MatrixOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__hash__</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.MatrixOptions.__init__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.MatrixOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.__repr__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id13"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.consolidate_duplicate_gene_func()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id14"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.dtype</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id15"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_attr_name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id16"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id17"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.skip</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id18"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.tiledb_store_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id11"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.consolidate_duplicate_gene_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id12"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.dtype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id13"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_attr_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id14"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.matrix_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id15"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.skip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id16"><code class="docutils literal notranslate"><span class="pre">MatrixOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.build_options.SampleMetadataOptions"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions</span></code></a><ul>
@@ -393,10 +394,10 @@
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.SampleMetadataOptions.__hash__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__hash__</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.SampleMetadataOptions.__init__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.build_options.SampleMetadataOptions.__repr__"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.__repr__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id19"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.column_types</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id20"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.dtype</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id21"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.skip</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id22"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.tiledb_store_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id17"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.column_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id18"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.dtype</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id19"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.skip</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#id20"><code class="docutils literal notranslate"><span class="pre">SampleMetadataOptions.tiledb_store_name</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -409,12 +410,33 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cellarr.html#module-cellarr.buildutils_tiledb_frame">cellarr.buildutils_tiledb_frame module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.buildutils_tiledb_frame.append_to_tiledb_frame"><code class="docutils literal notranslate"><span class="pre">append_to_tiledb_frame()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_chunk"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_chunk()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_column_names"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_column_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.buildutils_tiledb_frame.create_tiledb_frame_from_dataframe"><code class="docutils literal notranslate"><span class="pre">create_tiledb_frame_from_dataframe()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.buildutils_tiledb_frame.infer_column_types"><code class="docutils literal notranslate"><span class="pre">infer_column_types()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cellarr.html#module-cellarr.dataloader">cellarr.dataloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.html#module-cellarr.dataloader">cellarr.dataloader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule"><code class="docutils literal notranslate"><span class="pre">DataModule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.__del__"><code class="docutils literal notranslate"><span class="pre">DataModule.__del__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.__init__"><code class="docutils literal notranslate"><span class="pre">DataModule.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.__repr__"><code class="docutils literal notranslate"><span class="pre">DataModule.__repr__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.collate"><code class="docutils literal notranslate"><span class="pre">DataModule.collate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.get_sampler_weights"><code class="docutils literal notranslate"><span class="pre">DataModule.get_sampler_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.train_dataloader"><code class="docutils literal notranslate"><span class="pre">DataModule.train_dataloader()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.DataModule.val_dataloader"><code class="docutils literal notranslate"><span class="pre">DataModule.val_dataloader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset"><code class="docutils literal notranslate"><span class="pre">scDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset.__getitem__"><code class="docutils literal notranslate"><span class="pre">scDataset.__getitem__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset.__init__"><code class="docutils literal notranslate"><span class="pre">scDataset.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset.__len__"><code class="docutils literal notranslate"><span class="pre">scDataset.__len__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset.__parameters__"><code class="docutils literal notranslate"><span class="pre">scDataset.__parameters__</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.html#cellarr.dataloader.scDataset.__repr__"><code class="docutils literal notranslate"><span class="pre">scDataset.__repr__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="cellarr.html#module-cellarr.queryutils_tiledb_frame">cellarr.queryutils_tiledb_frame module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.queryutils_tiledb_frame.get_a_column"><code class="docutils literal notranslate"><span class="pre">get_a_column()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="cellarr.html#cellarr.queryutils_tiledb_frame.get_index"><code class="docutils literal notranslate"><span class="pre">get_index()</span></code></a></li>
@@ -487,7 +509,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=4e2eecee"></script>
