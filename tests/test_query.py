@@ -80,7 +80,7 @@ def test_query_cellarrdataset():
     assert cd.shape == (1100, 1000)
     assert len(cd) == 1100
 
-    assert cd.get_cell_metadata_columns() == ["cellarr_sample"]
+    assert cd.get_cell_metadata_columns() == ["cellarr_sample", "cellarr_cell_index_in_sample"]
     assert len(cd.get_cell_metadata_column("cellarr_sample")) == 1100
     assert len(cd.get_cell_subset("cellarr_sample == 'sample_1'")) == 1000
 
