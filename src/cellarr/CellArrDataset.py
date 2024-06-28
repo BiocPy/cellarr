@@ -2,7 +2,7 @@
 
 This class provides methods to access the directory containing the
 generated TileDB files usually using the
-:py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.
+:py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
 Example:
 
@@ -107,7 +107,8 @@ class CellArrDataset:
         Returns:
             A list of values for this column.
         """
-        return qtd.get_a_column(self._cell_metadata_tdb, column_name=column_name)
+        res = qtd.get_a_column(self._cell_metadata_tdb, column_name=column_name)
+        return res[column_name]
 
     def get_cell_subset(
         self, subset: Union[slice, tiledb.QueryCondition], columns=None
@@ -171,7 +172,8 @@ class CellArrDataset:
         Returns:
             A list of values for this column.
         """
-        return qtd.get_a_column(self._gene_annotation_tdb, column_name=column_name)
+        res = qtd.get_a_column(self._gene_annotation_tdb, column_name=column_name)
+        return res[column_name]
 
     def get_gene_annotation_index(self) -> List[str]:
         """Get index of the ``gene_annotation`` store.
@@ -256,7 +258,8 @@ class CellArrDataset:
         Returns:
             A list of values for this column.
         """
-        return qtd.get_a_column(self._sample_metadata_tdb, column_name=column_name)
+        res = qtd.get_a_column(self._sample_metadata_tdb, column_name=column_name)
+        return res[column_name]
 
     def get_sample_subset(
         self, subset: Union[slice, tiledb.QueryCondition], columns=None
@@ -365,8 +368,9 @@ class CellArrDataset:
                 named) names specifying the columns (or features/genes) to retain.
 
         Returns:
-            A :py:class:`~CellArrDatasetSlice` object containing the `cell_metadata`,
-            `gene_annotation` and the matrix for the given slice ranges.
+            A :py:class:`~cellarr.CellArrDatasetSlice.CellArrDatasetSlice` object
+            containing the `cell_metadata`, `gene_annotation` and the matrix for
+            the given slice ranges.
         """
         _csubset = self.get_cell_subset(cell_subset)
         _cell_indices = _csubset.index.tolist()
@@ -410,8 +414,8 @@ class CellArrDataset:
                 If too many or too few slices provided.
 
         Returns:
-            A :py:class:`~CellArrDatasetSlice` object containing the `cell_metadata`,
-            `gene_annotation` and the matrix.
+            A :py:class:`~cellarr.CellArrDatasetSlice.CellArrDatasetSlice` object
+            containing the `cell_metadata`, `gene_annotation` and the matrix.
         """
         if isinstance(args, (str, int)):
             return self.get_slice(args, slice(None))
