@@ -41,6 +41,7 @@ print(u'aあä'.encode('ascii', 'ignore'))
   ## output
   b'a'
 ```
+
 Compared to,
 
 ```python
