@@ -145,7 +145,7 @@ def get_a_column(tiledb_obj: tiledb.Array, column_name: Union[str, List[str]]) -
     if isinstance(column_name, str):
         column_name = [column_name]
 
-    return tiledb_obj.query(attrs=[column_name]).df[:]
+    return tiledb_obj.query(attrs=column_name).df[:]
 
 
 @lru_cache
