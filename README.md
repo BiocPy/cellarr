@@ -100,6 +100,7 @@ print(expression_data.matrix)
 
 print(expression_data.gene_annotation)
 ```
+
      ## output 1
      <11x3 sparse matrix of type '<class 'numpy.float32'>'
           with 9 stored elements in COOrdinate format>
