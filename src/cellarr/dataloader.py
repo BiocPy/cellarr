@@ -163,7 +163,10 @@ class scDataset(Dataset):
 
 
 class DataModule(pl.LightningDataModule):
-    """A class that extends a pytorch-lightning :py:class:`~` to create pytorch dataloaders using TileDB."""
+    """A class that extends a pytorch-lightning :py:class:`~` to create pytorch dataloaders using TileDB.
+
+    The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
+    """
 
     def __init__(
         self,

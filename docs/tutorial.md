@@ -172,10 +172,10 @@ print(expression_data.to_summarizedexperiment())
 
 # A single cell dataloader
 
-A basic single cell dataloader can be instantiated by using the DataModule class.
+A basic single cell dataloader can be instantiated by using the `DataModule` class.
 
-```{code-cell}
-from cellarr.dataloader import DataModule
+```python
+from cellarr import DataModule
 
 datamodule = DataModule(
     dataset_path="/path/to/cellar/dir",
@@ -190,9 +190,10 @@ datamodule = DataModule(
 )
 ```
 
-Users can optionally set a list of studies to be used as validation instead of training as well as optionally customize the gene space.
+Users can optionally set a list of studies to be used as validation. If not provided, all studies are used for training.
+Additionally users may also provide the gene space to train their models.
 
-```{code-cell}
+```python
 val_studies = ["study1", "study100"]
 
 gene_list = [
@@ -221,12 +222,13 @@ datamodule = DataModule(
 
 Users can access training cells by index.
 
-```{code-cell}
+```python
 datamodule.train_dataset[100]
 ```
 
 Batches can be created and examined.
-```{code-cell}
+
+```python
 dataloader = datamodule.train_dataloader()
 
 batch = next(iter(dataloader))
