@@ -254,8 +254,8 @@ class DataModule(pl.LightningDataModule):
         )
 
         self.matrix_shape = (
-            self.cell_metadata_tdb.shape[0],
-            self.gene_annotation_tdb.shape[0],
+            self.cell_metadata_tdb.nonempty_domain()[0][1] + 1,
+            self.gene_annotation_tdb.nonempty_domain()[0][1] + 1,
         )
 
         # limit to cells with labels
