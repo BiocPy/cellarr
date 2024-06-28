@@ -496,8 +496,8 @@ def generate_metadata_tiledb_csv(
 
     for chunk in pd.read_csv(input, chunksize=chunksize, header=0, index_col=index_col):
         if initfile:
-            utf.create_tiledb_frame_from_column_names(
-                output_uri, chunk.columns, utf.infer_column_types(chunk, column_dtype)
+            utf.create_tiledb_frame_from_chunk(
+                output_uri, chunk, utf.infer_column_types(chunk, column_dtype)
             )
             initfile = False
 
