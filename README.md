@@ -114,7 +114,7 @@ print(expression_data.gene_annotation)
 
 The package includes a dataloader in the `pytorch-lightning` framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
 
-This dataloader can be used as a template to create custom dataloader's specific to your needs.
+This dataloader can be used as a template to create custom dataloaders specific to your needs.
 
 ```python
 from cellarr import DataModule
