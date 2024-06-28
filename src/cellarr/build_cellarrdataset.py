@@ -330,11 +330,18 @@ def build_cellarrdataset(
         UserWarning,
     )
     _sample_per_cell = []
+    _cell_index_in_sample = []
     for idx, cci in enumerate(cell_counts):
         _sample_per_cell.extend([_samples[idx] for _ in range(cci)])
+        _cell_index_in_sample.extend([i for i in range(cci)])
 
     if cell_metadata is None:
-        cell_metadata = pd.DataFrame({"cellarr_sample": _sample_per_cell})
+        cell_metadata = pd.DataFrame(
+            {
+                "cellarr_sample": _sample_per_cell,
+                "cellarr_cell_index_in_sample": _cell_index_in_sample,
+            }
+        )
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
@@ -361,13 +368,16 @@ def build_cellarrdataset(
             )
 
         cell_metadata["cellarr_sample"] = _sample_per_cell
+        cell_metadata["cellarr_cell_index_in_sample"] = _cell_index_in_sample
+
+        cell_metadata.reset_index(drop=True, inplace=True)
 
     # Create the cell metadata TileDB
     if not cell_metadata_options.skip:
         _cell_output_uri = f"{output_path}/cell_metadata"
 
         if isinstance(cell_metadata, str):
-            _cell_metaframe = pd.read_csv(cell_metadata, chunksize=5, header=0)
+            _cell_metaframe = next(pd.read_csv(cell_metadata, chunksize=5, header=0))
             _col_types = utf.infer_column_types(
                 _cell_metaframe, cell_metadata_options.column_types
             )
