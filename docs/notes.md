@@ -58,7 +58,7 @@ print(u'aあä'.encode('ascii'))
   ---------------------------------------------------------------------------
 ```
 
-Additionally since the build options helps specify column types, `'ascii'` is preferred compared to `str`. 
+Additionally since the build options helps specify column types, `'ascii'` is preferred compared to `str`.
 We've run into issues writing large chunks of string columns to TileDB.
 
 For further assistance or clarification, please refer to our documentation or raise an issue on GitHub.
