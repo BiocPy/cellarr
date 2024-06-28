@@ -442,7 +442,10 @@ class CellArrDataset:
     ####
     @property
     def shape(self):
-        return (self._cell_metadata_tdb.shape[0], self._gene_annotation_tdb.shape[0])
+        return (
+            self._cell_metadata_tdb.nonempty_domain()[0][1] + 1,
+            self._gene_annotation_tdb.nonempty_domain()[0][1] + 1,
+        )
 
     def __len__(self):
         return self.shape[0]
