@@ -170,6 +170,69 @@ print("\n\n as summarizedexperiment:")
 print(expression_data.to_summarizedexperiment())
 ```
 
+# A single cell dataloader
+
+A basic single cell dataloader can be instantiated by using the DataModule class.
+
+```{code-cell}
+from cellarr.dataloader import DataModule
+
+datamodule = DataModule(
+    dataset_path="/path/to/cellar/dir",
+    cell_metadata_uri="cell_metadata",
+    gene_annotation_uri="gene_annotation",
+    matrix_uri="counts",
+    label_column="label",
+    study_column="study",
+    batch_size=1000,
+    lognorm=True,
+    target_sum=1e4,
+)
+```
+
+Users can optionally set a list of studies to be used as validation instead of training as well as optionally customize the gene space.
+
+```{code-cell}
+val_studies = ["study1", "study100"]
+
+gene_list = [
+    "GPNMB", "TREM2", "LPL", "HLA-DQA1", "CD109",
+    "IL6ST", "SDC2", "MSR1", "ALCAM", "SLC1A3",
+    "CD9", "CD59", "MRC1", "SLC11A1", "CPM",
+    "GPR183", "ITGAX", "HLA-DMB", "NRP2", "SV2C",
+    "PTPRJ", "EMP1", "HLA-DQB1", "MERTK", "CD52",
+    "CXCL16", "ABCA1", "HLA-DPB1", "OLR1", "CD83"
+]
+
+datamodule = DataModule(
+    dataset_path="/path/to/cellar/dir",
+    cell_metadata_uri="cell_metadata",
+    gene_annotation_uri="gene_annotation",
+    matrix_uri="counts",
+    val_studies=val_studies,
+    label_column="label",
+    study_column="study",
+    gene_order=gene_list,
+    batch_size=1000,
+    lognorm=True,
+    target_sum=1e4,
+)
+```
+
+Users can access training cells by index.
+
+```{code-cell}
+datamodule.train_dataset[100]
+```
+
+Batches can be created and examined.
+```{code-cell}
+dataloader = datamodule.train_dataloader()
+
+batch = next(iter(dataloader))
+expression, labels, studies = batch
+```
+
 ---
 
 Check out the [documentation](https://biocpy.github.io/cellarr/api/modules.html) for more details.

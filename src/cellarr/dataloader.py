@@ -9,7 +9,7 @@ Example:
 
         from cellarr.dataloader import DataModule
 
-        datamodule = cellarr.dataloader.DataModule(
+        datamodule = DataModule(
             dataset_path="/path/to/cellar/dir",
             cell_metadata_uri="cell_metadata",
             gene_annotation_uri="gene_annotation",
@@ -173,7 +173,7 @@ class DataModule(pl.LightningDataModule):
         val_studies: Optional[List[str]] = None,
         label_column: str = "celltype_id",
         study_column: str = "study",
-        gene_order: Optional[str] = None,
+        gene_order: Optional[List[str]] = None,
         batch_size: int = 1000,
         num_workers: int = 0,
         lognorm: bool = True,
@@ -204,7 +204,7 @@ class DataModule(pl.LightningDataModule):
                 Study column name.
 
             gene_order:
-                Use a given gene order as described in the specified file. One gene symbol per line.
+                A list of genes describing the gene space.
 
             batch_size:
                 Batch size.
@@ -227,6 +227,7 @@ class DataModule(pl.LightningDataModule):
         self.val_studies = val_studies
         self.label_column = label_column
         self.study_column = study_column
+        self.gene_order = gene_order
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.lognorm = lognorm
@@ -293,10 +294,7 @@ class DataModule(pl.LightningDataModule):
         self.int2label = {value: key for key, value in self.label2int.items()}
 
         genes = self.gene_annotation_tdb.df[:]["cellarr_gene_index"].tolist()
-        if gene_order is not None:
-            # gene space needs be aligned to the given gene order
-            with open(gene_order, "r") as fh:
-                self.gene_order = [line.strip() for line in fh]
+        if self.gene_order is not None:
             self.gene_indices = []
             for x in self.gene_order:
                 try:
