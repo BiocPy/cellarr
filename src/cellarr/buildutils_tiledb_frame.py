@@ -11,6 +11,38 @@ __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
+def create_tiledb_frame_from_chunk(
+    tiledb_uri_path: str, chunk: pd.DataFrame, column_types: Dict[str, np.dtype]
+):
+    """Create a TileDB file from the DataFrame chunk, to persistent storage. This is used by the importer for large
+    datasets stored in csv.
+
+    This will materialize the array directory and all
+    related schema files.
+
+    Args:
+        tiledb_uri_path:
+            Path to create the metadata TileDB file.
+
+        chunk:
+            Pandas data frame.
+
+        column_types:
+            Dictionary specifying the column types for each
+            column in the frame.
+    """
+    if os.path.exists(tiledb_uri_path):
+        shutil.rmtree(tiledb_uri_path)
+
+    tiledb.from_pandas(
+        tiledb_uri_path,
+        chunk,
+        mode="schema_only",
+        full_domain=True,
+        column_types=column_types,
+    )
+
+
 def create_tiledb_frame_from_column_names(
     tiledb_uri_path: str, column_names: List[str], column_types: Dict[str, np.dtype]
 ):
@@ -37,7 +69,13 @@ def create_tiledb_frame_from_column_names(
     for c in df.columns:
         df.loc[0, c] = "None"
 
-    tiledb.from_pandas(tiledb_uri_path, df, mode="schema_only", full_domain=True)
+    tiledb.from_pandas(
+        tiledb_uri_path,
+        df,
+        mode="schema_only",
+        full_domain=True,
+        column_types=column_types,
+    )
 
 
 def create_tiledb_frame_from_dataframe(
