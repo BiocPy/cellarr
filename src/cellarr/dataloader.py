@@ -58,7 +58,8 @@ config["vfs.num_threads"] = 1
 
 
 class scDataset(Dataset):
-    """A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell labels using TileDB."""
+    """A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell labels using
+    TileDB."""
 
     def __init__(
         self,

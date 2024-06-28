@@ -141,7 +141,7 @@ def get_a_column(tiledb_obj: tiledb.Array, column_name: Union[str, List[str]]) -
     """
     if column_name not in get_schema_names_frame(tiledb_obj):
         raise ValueError(f"Column '{column_name}' does not exist.")
-    
+
     if isinstance(column_name, str):
         column_name = [column_name]
 
