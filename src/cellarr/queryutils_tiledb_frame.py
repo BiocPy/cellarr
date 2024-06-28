@@ -126,15 +126,15 @@ def subset_array(
     return mat
 
 
-def get_a_column(tiledb_obj: tiledb.Array, column_name: str) -> list:
-    """Get a single column from the TileDB object.
+def get_a_column(tiledb_obj: tiledb.Array, column_name: Union[str, List[str]]) -> list:
+    """Access column(s) from the TileDB object.
 
     Args:
         tiledb_obj:
             A TileDB object.
 
         column_name:
-            Name of the column to access.
+            Name(s) of the column to access.
 
     Returns:
         List containing the column values.
@@ -142,7 +142,10 @@ def get_a_column(tiledb_obj: tiledb.Array, column_name: str) -> list:
     if column_name not in get_schema_names_frame(tiledb_obj):
         raise ValueError(f"Column '{column_name}' does not exist.")
 
-    return tiledb_obj.query(attrs=[column_name]).df[:]
+    if isinstance(column_name, str):
+        column_name = [column_name]
+
+    return tiledb_obj.query(attrs=column_name).df[:]
 
 
 @lru_cache

@@ -110,21 +110,22 @@ print(expression_data.gene_annotation)
      446	gene_50
      945	gene_95
 
-### A dataloader in the `pytorch-lightning` framework
+### A built-in dataloader for the `pytorch-lightning` framework
 
-We have provided a working dataloader in the `pytorch-lightning` framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
+The package includes a dataloader in the `pytorch-lightning` framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
 
-This dataloader can be used as a template to create the user's own dataloader specific to their needs.
+This dataloader can be used as a template to create custom dataloaders specific to your needs.
 
 ```python
-from cellarr.dataloader import DataModule
+from cellarr import DataModule
+
 datamodule = DataModule(
     dataset_path="/path/to/cellar/dir",
     cell_metadata_uri="cell_metadata",
     gene_annotation_uri="gene_annotation",
     matrix_uri="counts",
-    label_column="label",
-    study_column="study",
+    label_column_name="label",
+    study_column_name="study",
     batch_size=1000,
     lognorm=True,
     target_sum=1e4,

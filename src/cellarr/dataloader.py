@@ -1,7 +1,7 @@
 """A dataloader using TileDB files in the pytorch-lightning framework.
 
 This class provides a dataloader using the generated TileDB files built using the
-:py:func:`cellarr.build_cellarrdataset.build_cellarrdataset`.
+:py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
 Example:
 
@@ -15,8 +15,8 @@ Example:
             gene_annotation_uri="gene_annotation",
             matrix_uri="counts",
             val_studies=["test3"],
-            label_column="label",
-            study_column="study",
+            label_column_name="label",
+            study_column_name="study",
             batch_size=100,
             lognorm=True,
             target_sum=1e4,
@@ -28,16 +28,17 @@ Example:
         print(data, labels, studies)
 """
 
-from collections import Counter
-import numpy as np
 import os
+from collections import Counter
+from typing import List, Optional
+
+import numpy as np
 import pandas
 import pytorch_lightning as pl
-from scipy.sparse import coo_matrix, csr_matrix
 import tiledb
 import torch
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
-from typing import List, Optional
+from scipy.sparse import coo_matrix, csr_matrix
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 from .queryutils_tiledb_frame import subset_frame
 
@@ -57,7 +58,8 @@ config["vfs.num_threads"] = 1
 
 
 class scDataset(Dataset):
-    """A class that extends a pytorch Dataset to enumerate cells and cell labels using TileDB."""
+    """A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell labels using
+    TileDB."""
 
     def __init__(
         self,
@@ -65,8 +67,8 @@ class scDataset(Dataset):
         matrix_tdb: tiledb.Array,
         matrix_shape: tuple,
         gene_indices: List[int],
-        label_column: str,
-        study_column: str,
+        label_column_name: str,
+        study_column_name: str,
         lognorm: bool = True,
         target_sum: float = 1e4,
     ):
@@ -77,25 +79,25 @@ class scDataset(Dataset):
                 Pandas dataframe of valid cells.
 
             matrix_tdb:
-                Counts TileDB.
+                TileDB object containing the experimental data, e.g. counts.
 
             matrix_shape:
-                Shape of the counts matrix
+                Shape of the counts matrix.
 
             gene_indices:
                 The index of genes to return.
 
-            label_column:
-                Label column name.
+            label_column_name:
+                Column name containing cell labels.
 
-            study_column:
-                Study column name.
+            study_column_name:
+                Column name containing study information.
 
             lognorm:
-                Whether to return log normalized expression instead of raw counts.
+                Whether to return log-normalized expression instead of raw counts.
 
             target_sum:
-                Target sum for log normalization.
+                Target sum for log-normalization.
         """
 
         self.data_df = data_df
@@ -104,8 +106,8 @@ class scDataset(Dataset):
         self.gene_indices = gene_indices
         self.lognorm = lognorm
         self.target_sum = target_sum
-        self.label_column = label_column
-        self.study_column = study_column
+        self.label_column_name = label_column_name
+        self.study_column_name = study_column_name
 
     def __len__(self):
         return self.data_df.shape[0]
@@ -133,8 +135,8 @@ class scDataset(Dataset):
 
         return (
             X,
-            self.data_df.loc[cell_idx, self.label_column],
-            self.data_df.loc[cell_idx, self.study_column],
+            self.data_df.loc[cell_idx, self.label_column_name],
+            self.data_df.loc[cell_idx, self.study_column_name],
         )
 
     def __repr__(self) -> str:
@@ -162,7 +164,10 @@ class scDataset(Dataset):
 
 
 class DataModule(pl.LightningDataModule):
-    """A class that extends a pytorch-lightning data module to create pytorch dataloaders using TileDB."""
+    """A class that extends a pytorch-lightning :py:class:`~` to create pytorch dataloaders using TileDB.
+
+    The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
+    """
 
     def __init__(
         self,
@@ -170,9 +175,9 @@ class DataModule(pl.LightningDataModule):
         cell_metadata_uri: str = "cell_metadata",
         gene_annotation_uri: str = "gene_annotation",
         matrix_uri: str = "counts",
+        label_column_name: str = "celltype_id",
+        study_column_name: str = "study",
         val_studies: Optional[List[str]] = None,
-        label_column: str = "celltype_id",
-        study_column: str = "study",
         gene_order: Optional[List[str]] = None,
         batch_size: int = 1000,
         num_workers: int = 0,
@@ -184,6 +189,8 @@ class DataModule(pl.LightningDataModule):
         Args:
             dataset_path:
                 Path to the directory containing the TileDB stores.
+                Usually the ``output_path`` from the
+                :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
             cell_metadata_uri:
                 Relative path to cell metadata store.
@@ -194,29 +201,32 @@ class DataModule(pl.LightningDataModule):
             matrix_uri:
                 Relative path to matrix store.
 
+            label_column_name:
+                Column name in `cell_metadata_uri` containing cell labels.
+
+            study_column_name:
+                Column name in `cell_metadata_uri` containing study information.
+
             val_studies:
-                List of studies to use as validation and test.
-
-            label_column:
-                Label column name.
-
-            study_column:
-                Study column name.
+                List of studies to use for validation and test.
+                If None, all studies are used for training.
 
             gene_order:
-                A list of genes describing the gene space.
+                List of genes to subset to from the gene space.
+                If None, all genes from the `gene_annotation` are used for training.
 
             batch_size:
-                Batch size.
+                Batch size to use.
+                Defaults to 1000.
 
             num_workers:
-                The number of worker threads for dataloaders
+                The number of worker threads for dataloaders.
 
             lognorm:
-                Whether to return log normalized expression instead of raw counts.
+                Whether to return log-normalized expression instead of raw counts.
 
             target_sum:
-                Target sum for log normalization.
+                Target sum for log-normalization.
         """
 
         super().__init__()
@@ -225,8 +235,8 @@ class DataModule(pl.LightningDataModule):
         self.gene_annotation_uri = gene_annotation_uri
         self.matrix_uri = matrix_uri
         self.val_studies = val_studies
-        self.label_column = label_column
-        self.study_column = study_column
+        self.label_column_name = label_column_name
+        self.study_column_name = study_column_name
         self.gene_order = gene_order
         self.batch_size = batch_size
         self.num_workers = num_workers
@@ -244,44 +254,44 @@ class DataModule(pl.LightningDataModule):
         )
 
         self.matrix_shape = (
-            self.cell_metadata_tdb.df[:].shape[0],
-            self.gene_annotation_tdb.df[:].shape[0],
+            self.cell_metadata_tdb.shape[0],
+            self.gene_annotation_tdb.shape[0],
         )
 
         # limit to cells with labels
-        query_condition = f"{self.label_column} != 'nan'"
+        query_condition = f"{self.label_column_name} != 'nan'"
         self.data_df = subset_frame(
             self.cell_metadata_tdb,
             query_condition,
-            columns=[self.study_column, self.label_column],
+            columns=[self.study_column_name, self.label_column_name],
         )
 
         # limit to labels that exist in at least 2 studies
         study_celltype_counts = (
-            self.data_df[[self.study_column, self.label_column]]
+            self.data_df[[self.study_column_name, self.label_column_name]]
             .drop_duplicates()
-            .groupby(self.label_column)
+            .groupby(self.label_column_name)
             .size()
             .sort_values(ascending=False)
         )
         well_represented_labels = study_celltype_counts[study_celltype_counts > 1].index
         self.data_df = self.data_df[
-            self.data_df[self.label_column].isin(well_represented_labels)
+            self.data_df[self.label_column_name].isin(well_represented_labels)
         ]
 
         self.val_df = None
         if self.val_studies is not None:
             # split out validation studies
             self.val_df = self.data_df[
-                self.data_df[self.study_column].isin(self.val_studies)
+                self.data_df[self.study_column_name].isin(self.val_studies)
             ]
             self.data_df = self.data_df[
-                ~self.data_df[self.study_column].isin(self.val_studies)
+                ~self.data_df[self.study_column_name].isin(self.val_studies)
             ]
             # limit validation celltypes to those in the training data
             self.val_df = self.val_df[
-                self.val_df[self.label_column].isin(
-                    self.data_df[self.label_column].unique()
+                self.val_df[self.label_column_name].isin(
+                    self.data_df[self.label_column_name].unique()
                 )
             ]
 
@@ -289,11 +299,15 @@ class DataModule(pl.LightningDataModule):
         if self.val_df is not None:
             print(f"Validation data size: {self.val_df.shape}")
 
-        self.class_names = set(self.data_df[self.label_column].values)
+        self.class_names = set(self.data_df[self.label_column_name].values)
         self.label2int = {label: i for i, label in enumerate(self.class_names)}
         self.int2label = {value: key for key, value in self.label2int.items()}
 
-        genes = self.gene_annotation_tdb.df[:]["cellarr_gene_index"].tolist()
+        genes = (
+            self.gene_annotation_tdb.query(attrs=["cellarr_gene_index"])
+            .df[:]["cellarr_gene_index"]
+            .tolist()
+        )
         if self.gene_order is not None:
             self.gene_indices = []
             for x in self.gene_order:
@@ -303,32 +317,32 @@ class DataModule(pl.LightningDataModule):
                     print(f"Gene not found: {x}")
                     pass
         else:
-            self.gene_indices = [i for i, x in enumerate(genes)]
+            self.gene_indices = [i for i in range(len(genes))]
 
-        self.train_Y = self.data_df[self.label_column].values.tolist()
-        self.train_study = self.data_df[self.study_column].values.tolist()
+        self.train_Y = self.data_df[self.label_column_name].values.tolist()
+        self.train_study = self.data_df[self.study_column_name].values.tolist()
         self.train_dataset = scDataset(
             data_df=self.data_df,
             matrix_tdb=self.matrix_tdb,
             matrix_shape=self.matrix_shape,
             gene_indices=self.gene_indices,
-            label_column=self.label_column,
-            study_column=self.study_column,
+            label_column_name=self.label_column_name,
+            study_column_name=self.study_column_name,
             lognorm=self.lognorm,
             target_sum=self.target_sum,
         )
 
         self.val_dataset = None
         if self.val_df is not None:
-            self.val_Y = self.val_df[self.label_column].values.tolist()
-            self.val_study = self.val_df[self.study_column].values.tolist()
+            self.val_Y = self.val_df[self.label_column_name].values.tolist()
+            self.val_study = self.val_df[self.study_column_name].values.tolist()
             self.val_dataset = scDataset(
                 data_df=self.val_df,
                 matrix_tdb=self.matrix_tdb,
                 matrix_shape=self.matrix_shape,
                 gene_indices=self.gene_indices,
-                label_column=self.label_column,
-                study_column=self.study_column,
+                label_column_name=self.label_column_name,
+                study_column_name=self.study_column_name,
                 lognorm=self.lognorm,
                 target_sum=self.target_sum,
             )
@@ -344,7 +358,7 @@ class DataModule(pl.LightningDataModule):
         """Get weighted random sampler.
 
         Args:
-            dataset: scDataset
+            dataset:
                 Single cell dataset.
 
         Returns:

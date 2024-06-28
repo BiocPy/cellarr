@@ -18,3 +18,4 @@ finally:
 from .build_options import CellMetadataOptions, GeneAnnotationOptions, MatrixOptions, SampleMetadataOptions
 from .build_cellarrdataset import build_cellarrdataset
 from .CellArrDataset import CellArrDataset
+from .dataloader import DataLoader

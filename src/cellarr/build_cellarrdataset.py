@@ -434,7 +434,7 @@ def build_cellarrdataset(
 def generate_metadata_tiledb_frame(
     output_uri: str, input: pd.DataFrame, column_types: dict = None
 ):
-    """Generate metadata TileDB from a :pu:class:`~pandas.DataFrame`.
+    """Generate metadata TileDB from a :py:class:`~pandas.DataFrame`.
 
     Args:
         output_uri:
