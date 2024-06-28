@@ -32,7 +32,7 @@ For metadata columns containing `None`, `nan`, or `NaN` values:
 
 ### Metadata contains unicode characters?
 
-We've run into a few issues when metadata objects containing unicode characters are written into a tiledb frame. 
+We've run into a few issues when metadata objects containing unicode characters are written into a tiledb frame.
 The best solution I can think of is to ignore them
 
 ```python
