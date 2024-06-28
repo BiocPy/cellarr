@@ -14,8 +14,8 @@ __license__ = "MIT"
 def create_tiledb_frame_from_chunk(
     tiledb_uri_path: str, chunk: pd.DataFrame, column_types: Dict[str, np.dtype]
 ):
-    """Create a TileDB file from the DataFrame chunk, to persistent storage.
-    This is used by the importer for large datasets stored in csv.
+    """Create a TileDB file from the DataFrame chunk, to persistent storage. This is used by the importer for large
+    datasets stored in csv.
 
     This will materialize the array directory and all
     related schema files.
