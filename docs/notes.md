@@ -27,6 +27,7 @@ If `cell_metadata` is not provided, the build process scans all files to count t
 ### Handling Metadata Columns with None/NaN Values
 
 For metadata columns containing `None`, `nan`, or `NaN` values:
+
 - It's best to specify `float` as the type of the column
 - Even if most values are integers, TileDB may behave unexpectedly with mixed types
 
