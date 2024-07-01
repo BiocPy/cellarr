@@ -34,9 +34,9 @@ from typing import List, Optional
 
 import numpy as np
 import pandas
-import pytorch_lightning as pl
 import tiledb
-import torch
+from torch import squeeze, Tensor
+from pytorch_lightning import LightningDataModule
 from scipy.sparse import coo_matrix, csr_matrix
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
@@ -163,8 +163,9 @@ class scDataset(Dataset):
         return output
 
 
-class DataModule(pl.LightningDataModule):
-    """A class that extends a pytorch-lightning :py:class:`~` to create pytorch dataloaders using TileDB.
+class DataModule(LightningDataModule):
+    """A class that extends a pytorch-lightning :py:class:`~pytorch_lightning.LightningDataModule`
+    to create pytorch dataloaders using TileDB.
 
     The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
     """
@@ -367,7 +368,7 @@ class DataModule(pl.LightningDataModule):
 
         if studies is None:
             class_sample_count = Counter(labels)
-            sample_weights = torch.Tensor([1.0 / class_sample_count[t] for t in labels])
+            sample_weights = Tensor([1.0 / class_sample_count[t] for t in labels])
         else:
             class_sample_count = Counter(labels)
             study_sample_count = Counter(studies)
@@ -377,7 +378,7 @@ class DataModule(pl.LightningDataModule):
             study_sample_count = {
                 x: np.log1p(study_sample_count[x] / 1e5) for x in study_sample_count
             }
-            sample_weights = torch.Tensor(
+            sample_weights = Tensor(
                 [
                     1.0 / class_sample_count[labels[i]] / study_sample_count[studies[i]]
                     for i in range(len(labels))
@@ -401,8 +402,8 @@ class DataModule(pl.LightningDataModule):
             map(list, zip(*batch))
         )  # tuple([list(t) for t in zip(*batch)])
         return (
-            torch.squeeze(torch.Tensor(np.vstack(profiles))),
-            torch.Tensor(
+            squeeze(Tensor(np.vstack(profiles))),
+            Tensor(
                 [self.label2int[label] for label in labels]
             ),  # text to int labels
             studies,
