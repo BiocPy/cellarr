@@ -164,8 +164,8 @@ class scDataset(Dataset):
 
 
 class DataModule(LightningDataModule):
-    """A class that extends a pytorch-lightning :py:class:`~pytorch_lightning.LightningDataModule`
-    to create pytorch dataloaders using TileDB.
+    """A class that extends a pytorch-lightning :py:class:`~pytorch_lightning.LightningDataModule` to create pytorch
+    dataloaders using TileDB.
 
     The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
     """
@@ -403,9 +403,7 @@ class DataModule(LightningDataModule):
         )  # tuple([list(t) for t in zip(*batch)])
         return (
             squeeze(Tensor(np.vstack(profiles))),
-            Tensor(
-                [self.label2int[label] for label in labels]
-            ),  # text to int labels
+            Tensor([self.label2int[label] for label in labels]),  # text to int labels
             studies,
         )
 
