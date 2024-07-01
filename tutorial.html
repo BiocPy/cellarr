@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Usage Notes" href="notes.html" /><link rel="prev" title="cellarr" href="index.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>Cell Arrays - cellarr 0.2.0 documentation</title>
+        <title>Cell Arrays - cellarr 0.2.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -180,7 +180,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.2.0 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.2.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -204,7 +204,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.0 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -404,18 +404,18 @@ AnnData object with n_obs × n_vars = 1000 × 100
   warnings.warn(
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpzvpzqw4f/gene_annotation
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpi8alvxlx/gene_annotation
 Fragments before consolidation: 1
 Fragments after consolidation: 1
-Optimizing /tmp/tmpzvpzqw4f/sample_metadata
+Optimizing /tmp/tmpi8alvxlx/sample_metadata
 Fragments before consolidation: 1
 Fragments after consolidation: 1
-Optimizing /tmp/tmpzvpzqw4f/cell_metadata
+Optimizing /tmp/tmpi8alvxlx/cell_metadata
 Fragments before consolidation: 1
 Fragments after consolidation: 1
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpzvpzqw4f/counts
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmpi8alvxlx/counts
 Fragments before consolidation: 2
 </pre></div>
 </div>
@@ -423,7 +423,7 @@ Fragments before consolidation: 2
 class: CellArrDataset
 number_of_rows: 1100
 number_of_columns: 1000
-path: &#39;/tmp/tmpzvpzqw4f&#39;
+path: &#39;/tmp/tmpi8alvxlx&#39;
 </pre></div>
 </div>
 </div>
@@ -536,7 +536,7 @@ metadata(0):
 <section class="tex2jax_ignore mathjax_ignore" id="a-single-cell-dataloader">
 <h1>A single cell dataloader<a class="headerlink" href="#a-single-cell-dataloader" title="Link to this heading">¶</a></h1>
 <p>A basic single cell dataloader can be instantiated by using the <code class="docutils literal notranslate"><span class="pre">DataModule</span></code> class.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">DataModule</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr.dataloader</span> <span class="kn">import</span> <span class="n">DataModule</span>
 
 <span class="n">datamodule</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span>
     <span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;/path/to/cellar/dir&quot;</span><span class="p">,</span>
@@ -643,7 +643,7 @@ Additionally users may also provide the gene space to train their models.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
+</div><script src="_static/documentation_options.js?v=37f418d5"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=4e2eecee"></script>

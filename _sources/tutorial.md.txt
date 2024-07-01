@@ -175,7 +175,7 @@ print(expression_data.to_summarizedexperiment())
 A basic single cell dataloader can be instantiated by using the `DataModule` class.
 
 ```python
-from cellarr import DataModule
+from cellarr.dataloader import DataModule
 
 datamodule = DataModule(
     dataset_path="/path/to/cellar/dir",
