@@ -11,7 +11,6 @@ from cellarr import (
     build_cellarrdataset,
     MatrixOptions,
 )
-import cellarr
 from cellarr.dataloader import DataModule
 
 __author__ = "Jayaram Kancherla"

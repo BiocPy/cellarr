@@ -118,7 +118,7 @@ The package includes a dataloader in the `pytorch-lightning` framework for singl
 This dataloader can be used as a template to create custom dataloaders specific to your needs.
 
 ```python
-from cellarr import DataModule
+from cellarr.dataloader import DataModule
 
 datamodule = DataModule(
     dataset_path="/path/to/cellar/dir",

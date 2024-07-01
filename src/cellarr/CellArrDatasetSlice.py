@@ -37,7 +37,12 @@ class CellArrDatasetSlice:
     gene_annotation: pd.DataFrame
     matrix: Any
 
+    ####
+    ## Interop
+    ####
+
     def to_anndata(self):
+        """Convert the realized slice to :py:class:`~anndata.AnnData`."""
         return anndata.AnnData(
             layers={"matrix": self.matrix.tocsr()},
             obs=self.cell_metadata,
@@ -45,8 +50,47 @@ class CellArrDatasetSlice:
         )
 
     def to_summarizedexperiment(self):
+        """Convert the realized slice to :py:class:`~summarizedexperiment.SummarizedExperiment.SummarizedExperiment`."""
         return se.SummarizedExperiment(
             assays={"matrix": self.matrix.tocsr().transpose()},
             row_data=self.gene_annotation,
             column_data=self.cell_metadata,
         )
+
+    ####
+    ## Misc methods.
+    ####
+
+    @property
+    def shape(self):
+        return self.matrix.shape
+
+    def __len__(self):
+        return self.shape[0]
+
+    ####
+    ## Printing.
+    ####
+
+    def __repr__(self) -> str:
+        """
+        Returns:
+            A string representation.
+        """
+        output = f"{type(self).__name__}(number_of_rows={self.shape[0]}"
+        output += f", number_of_columns={self.shape[1]}"
+
+        output += ")"
+        return output
+
+    def __str__(self) -> str:
+        """
+        Returns:
+            A pretty-printed string containing the contents of this object.
+        """
+        output = f"class: {type(self).__name__}\n"
+
+        output += f"number_of_rows: {self.shape[0]}\n"
+        output += f"number_of_columns: {self.shape[1]}\n"
+
+        return output
