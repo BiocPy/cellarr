@@ -35,6 +35,8 @@ The TileDB matrix file is stored in a **cell X gene** orientation. This orientat
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.
 
+![`CellArrDataset` structure](./assets/cellarr.png "CellArrDataset")
+
 ***Note: Currently only supports either paths to H5AD or `AnnData` objects***
 
 To build a `CellArrDataset` from a collection of `H5AD` or `AnnData` objects:
