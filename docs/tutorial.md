@@ -58,7 +58,7 @@ some genes are unmeasured or ordered differently in the original experiments.
 Check out the [reference](https://biocpy.github.io/cellarr/api/cellarr#module-cellarr.build_cellarrdataset) documentation for modifying the parameters for any of these steps.
 :::
 
-![`CellArrDataset` structure](./assets/cellarr.png "CellArrDataset")
+![`CellArrDataset` structure](../assets/cellarr.png "CellArrDataset")
 
 First lets mock a few `AnnData` objects:
 
