@@ -184,6 +184,7 @@ class DataModule(LightningDataModule):
         num_workers: int = 0,
         lognorm: bool = True,
         target_sum: float = 1e4,
+        nan_string: str = "nan",
     ):
         """Initialize a ``DataModule``.
 
@@ -228,6 +229,10 @@ class DataModule(LightningDataModule):
 
             target_sum:
                 Target sum for log-normalization.
+
+            nan_string:
+                A string representing NaN.
+                Defaults to "nan".
         """
 
         super().__init__()
@@ -260,7 +265,7 @@ class DataModule(LightningDataModule):
         )
 
         # limit to cells with labels
-        query_condition = f"{self.label_column_name} != 'nan'"
+        query_condition = f"{self.label_column_name} != '{nan_string}'"
         self.data_df = subset_frame(
             self.cell_metadata_tdb,
             query_condition,
