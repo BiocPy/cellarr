@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
-        <title>cellarr.dataloader - cellarr 0.2.1 documentation</title>
+        <title>cellarr.dataloader - cellarr 0.2.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -179,7 +179,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.2.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.2.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -466,6 +466,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">lognorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">target_sum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">,</span>
+        <span class="n">nan_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ``DataModule``.</span>
 
@@ -510,6 +511,10 @@
 
 <span class="sd">            target_sum:</span>
 <span class="sd">                Target sum for log-normalization.</span>
+
+<span class="sd">            nan_string:</span>
+<span class="sd">                A string representing NaN.</span>
+<span class="sd">                Defaults to &quot;nan&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -542,7 +547,7 @@
         <span class="p">)</span>
 
         <span class="c1"># limit to cells with labels</span>
-        <span class="n">query_condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="si">}</span><span class="s2"> != &#39;nan&#39;&quot;</span>
+        <span class="n">query_condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="si">}</span><span class="s2"> != &#39;</span><span class="si">{</span><span class="n">nan_string</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">subset_frame</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata_tdb</span><span class="p">,</span>
             <span class="n">query_condition</span><span class="p">,</span>
@@ -809,7 +814,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=37f418d5"></script>
+</div><script src="../../_static/documentation_options.js?v=000c92bf"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>
