@@ -13,7 +13,7 @@ Example:
             dataset_path="/path/to/cellar/dir",
             cell_metadata_uri="cell_metadata",
             gene_annotation_uri="gene_annotation",
-            matrix_uri="counts",
+            counts_uri="counts",
             val_studies=["test3"],
             label_column_name="label",
             study_column_name="study",
@@ -64,8 +64,8 @@ class scDataset(Dataset):
     def __init__(
         self,
         data_df: pandas.DataFrame,
-        matrix_tdb: tiledb.Array,
-        matrix_shape: tuple,
+        counts_tdb: tiledb.Array,
+        counts_shape: tuple,
         gene_indices: List[int],
         label_column_name: str,
         study_column_name: str,
@@ -78,10 +78,10 @@ class scDataset(Dataset):
             data_df:
                 Pandas dataframe of valid cells.
 
-            matrix_tdb:
+            counts_tdb:
                 TileDB object containing the experimental data, e.g. counts.
 
-            matrix_shape:
+            counts_shape:
                 Shape of the counts matrix.
 
             gene_indices:
@@ -101,8 +101,8 @@ class scDataset(Dataset):
         """
 
         self.data_df = data_df
-        self.matrix_tdb = matrix_tdb
-        self.matrix_shape = matrix_shape
+        self.counts_tdb = counts_tdb
+        self.counts_shape = counts_shape
         self.gene_indices = gene_indices
         self.lognorm = lognorm
         self.target_sum = target_sum
@@ -115,10 +115,10 @@ class scDataset(Dataset):
     def __getitem__(self, idx):
         # data, label, study
         cell_idx = self.data_df.index[idx]
-        results = self.matrix_tdb.multi_index[cell_idx, :]
+        results = self.counts_tdb.multi_index[cell_idx, :]
         counts = coo_matrix(
             (results["data"], (results["cell_index"], results["gene_index"])),
-            shape=self.matrix_shape,
+            shape=self.counts_shape,
         ).tocsr()
         counts = counts[cell_idx, :]
         counts = counts[:, self.gene_indices]
@@ -146,7 +146,7 @@ class scDataset(Dataset):
         """
         output = f"{type(self).__name__}("
         output += f"number_of_cells={self.data_df.shape[0]}"
-        output += f"number_of_genes={self.matrix_shape[1]}"
+        output += f"number_of_genes={self.counts_shape[1]}"
         output += ")"
 
         return output
@@ -158,7 +158,7 @@ class scDataset(Dataset):
         """
         output = f"class: {type(self).__name__}\n"
         output += f"number_of_cells: {self.data_df.shape[0]}\n"
-        output += f"number_of_genes: {self.matrix_shape[1]}\n"
+        output += f"number_of_genes: {self.counts_shape[1]}\n"
 
         return output
 
@@ -175,7 +175,7 @@ class DataModule(LightningDataModule):
         dataset_path: str,
         cell_metadata_uri: str = "cell_metadata",
         gene_annotation_uri: str = "gene_annotation",
-        matrix_uri: str = "counts",
+        counts_uri: str = "counts",
         label_column_name: str = "celltype_id",
         study_column_name: str = "study",
         val_studies: Optional[List[str]] = None,
@@ -184,6 +184,7 @@ class DataModule(LightningDataModule):
         num_workers: int = 0,
         lognorm: bool = True,
         target_sum: float = 1e4,
+        nan_string: str = "nan",
     ):
         """Initialize a ``DataModule``.
 
@@ -199,8 +200,8 @@ class DataModule(LightningDataModule):
             gene_annotation_uri:
                 Relative path to gene annotation store.
 
-            matrix_uri:
-                Relative path to matrix store.
+            counts_uri:
+                Relative path to counts store.
 
             label_column_name:
                 Column name in `cell_metadata_uri` containing cell labels.
@@ -228,13 +229,17 @@ class DataModule(LightningDataModule):
 
             target_sum:
                 Target sum for log-normalization.
+
+            nan_string:
+                A string representing NaN.
+                Defaults to "nan".
         """
 
         super().__init__()
         self.dataset_path = dataset_path
         self.cell_metadata_uri = cell_metadata_uri
         self.gene_annotation_uri = gene_annotation_uri
-        self.matrix_uri = matrix_uri
+        self.counts_uri = counts_uri
         self.val_studies = val_studies
         self.label_column_name = label_column_name
         self.study_column_name = study_column_name
@@ -250,17 +255,17 @@ class DataModule(LightningDataModule):
         self.gene_annotation_tdb = tiledb.open(
             os.path.join(self.dataset_path, self.gene_annotation_uri), "r"
         )
-        self.matrix_tdb = tiledb.open(
-            os.path.join(self.dataset_path, self.matrix_uri), "r", config=config
+        self.counts_tdb = tiledb.open(
+            os.path.join(self.dataset_path, self.counts_uri), "r", config=config
         )
 
-        self.matrix_shape = (
+        self.counts_shape = (
             self.cell_metadata_tdb.nonempty_domain()[0][1] + 1,
             self.gene_annotation_tdb.nonempty_domain()[0][1] + 1,
         )
 
         # limit to cells with labels
-        query_condition = f"{self.label_column_name} != 'nan'"
+        query_condition = f"{self.label_column_name} != '{nan_string}'"
         self.data_df = subset_frame(
             self.cell_metadata_tdb,
             query_condition,
@@ -324,8 +329,8 @@ class DataModule(LightningDataModule):
         self.train_study = self.data_df[self.study_column_name].values.tolist()
         self.train_dataset = scDataset(
             data_df=self.data_df,
-            matrix_tdb=self.matrix_tdb,
-            matrix_shape=self.matrix_shape,
+            counts_tdb=self.counts_tdb,
+            counts_shape=self.counts_shape,
             gene_indices=self.gene_indices,
             label_column_name=self.label_column_name,
             study_column_name=self.study_column_name,
@@ -339,8 +344,8 @@ class DataModule(LightningDataModule):
             self.val_study = self.val_df[self.study_column_name].values.tolist()
             self.val_dataset = scDataset(
                 data_df=self.val_df,
-                matrix_tdb=self.matrix_tdb,
-                matrix_shape=self.matrix_shape,
+                counts_tdb=self.counts_tdb,
+                counts_shape=self.counts_shape,
                 gene_indices=self.gene_indices,
                 label_column_name=self.label_column_name,
                 study_column_name=self.study_column_name,
@@ -351,7 +356,7 @@ class DataModule(LightningDataModule):
     def __del__(self):
         self.cell_metadata_tdb.close()
         self.gene_annotation_tdb.close()
-        self.matrix_tdb.close()
+        self.counts_tdb.close()
 
     def get_sampler_weights(
         self, labels: list, studies: Optional[list] = None
