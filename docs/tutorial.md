@@ -237,6 +237,33 @@ batch = next(iter(dataloader))
 expression, labels, studies = batch
 ```
 
+The dataloader can then be used in training models. The package provides a simple autoencoder to serve as a template for the user's own models.
+
+```python
+import pytorch_lightning as pl
+from cellarr.autoencoder import AutoEncoder
+
+autoencoder = AutoEncoder(
+    n_genes=len(datamodule.gene_indices),
+    latent_dim=128,
+    hidden_dim=[1024, 1024, 1024],
+    dropout=0.5,
+    input_dropout=0.4,
+    residual=False,
+)
+
+model_path = "/path/to/model/mymodel/"
+params = {
+    "max_epochs": 500,
+    "logger": True,
+    "log_every_n_steps": 1,
+    "limit_train_batches": 100, # to specify number of batches per epoch
+}
+trainer = pl.Trainer(**params)
+trainer.fit(autoencoder, datamodule=datamodule)
+autoencoder.save_all(model_path=model_path)
+```
+
 ---
 
 Check out the [documentation](https://biocpy.github.io/cellarr/api/modules.html) for more details.
