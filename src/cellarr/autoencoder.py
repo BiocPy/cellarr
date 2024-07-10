@@ -429,14 +429,15 @@ class AutoEncoder(pl.LightningModule):
     ):
         """Load model state.
 
-        Parameters
-        ----------
-        encoder_filename: str
-            Filename containing the encoder model state.
-        decoder_filename: str
-            Filename containing the decoder model state.
-        use_gpu: bool, default: False
-            Boolean indicating whether or not to use GPUs.
+        Args:
+            encoder_filename:
+                Filename containing the encoder model state.
+
+            decoder_filename:
+                Filename containing the decoder model state.
+
+            use_gpu:
+                Boolean indicating whether or not to use GPUs.
         """
 
         self.encoder.load_state(encoder_filename, use_gpu)
