@@ -1,12 +1,9 @@
-import json
 import os
 import torch
 from torch import nn
 import torch.nn.functional as F
 from typing import List
-import pandas as pd
 import pytorch_lightning as pl
-from typing import Optional, List
 
 
 class Encoder(nn.Module):
@@ -26,21 +23,21 @@ class Encoder(nn.Module):
         Args:
             n_genes:
                 The number of genes in the gene space, representing the input dimensions.
-                
+
             latent_dim:
                 The latent space dimensions
-            
+
             hidden_dim:
                 A list of hidden layer dimensions, describing the number of layers and their dimensions.
                 Hidden layers are constructed in the order of the list for the encoder and in reverse
                 for the decoder.
-                
+
             dropout:
                 The dropout rate for hidden layers
-            
+
             input_dropout:
                 The dropout rate for the input layer
-                
+
             residual:
                 Use residual connections.
         """
@@ -107,7 +104,7 @@ class Encoder(nn.Module):
         Args:
             filename:
                 Filename containing the model state.
-                
+
             use_gpu:
                 Boolean indicating whether or not to use GPUs.
         """
@@ -135,18 +132,18 @@ class Decoder(nn.Module):
         Args:
             n_genes:
                 The number of genes in the gene space, representing the input dimensions.
-            
+
             latent_dim:
                 The latent space dimensions
-                
+
             hidden_dim:
                 A list of hidden layer dimensions, describing the number of layers and their dimensions.
                 Hidden layers are constructed in the order of the list for the encoder and in reverse
                 for the decoder.
-            
+
             dropout:
                 The dropout rate for hidden layers
-            
+
             residual:
                 Use residual connections.
         """
@@ -211,7 +208,7 @@ class Decoder(nn.Module):
         Args:
             filename:
                 Filename containing the model state.
-                
+
             use_gpu:
                 Boolean indicating whether or not to use GPUs.
         """
@@ -241,24 +238,24 @@ class AutoEncoder(pl.LightningModule):
         Args:
             n_genes:
                 The number of genes in the gene space, representing the input dimensions.
-                
+
             latent_dim:
                 The latent space dimensions. Defaults to 128.
-                
+
             hidden_dim:
                 A list of hidden layer dimensions, describing the number of layers and their dimensions.
                 Hidden layers are constructed in the order of the list for the encoder and in reverse
                 for the decoder.
-                
+
             dropout:
                 The dropout rate for hidden layers
-                
+
             input_dropout:
                 The dropout rate for the input layer
-                
+
             lr:
                 The initial learning rate
-                
+
             residual:
                 Use residual connections.
         """
@@ -342,7 +339,7 @@ class AutoEncoder(pl.LightningModule):
         return self.mse_loss_fn(cells, reconstruction)
 
     def training_step(self, batch, batch_idx):
-        """Pytorch-lightning training step. """
+        """Pytorch-lightning training step."""
 
         loss = self.get_loss(batch)
         self.log("train loss", loss, prog_bar=True, logger=True)
@@ -355,7 +352,7 @@ class AutoEncoder(pl.LightningModule):
         self.val_step_outputs = []
 
     def validation_step(self, batch, batch_idx):
-        """Pytorch-lightning validation step. """
+        """Pytorch-lightning validation step."""
 
         if self.trainer.datamodule.val_dataset is None:
             return {}
@@ -407,7 +404,7 @@ class AutoEncoder(pl.LightningModule):
 
         loss = torch.Tensor([step[f"{prefix}_loss"] for step in step_outputs]).mean()
         self.log(f"{prefix} loss", loss, logger=True)
-        
+
         losses = {
             f"{prefix}_loss": loss,
         }
