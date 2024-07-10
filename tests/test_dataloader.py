@@ -2,8 +2,10 @@ import tempfile
 
 import anndata
 import numpy as np
+import os
 import pandas as pd
 import pytest
+import pytorch_lightning as pl
 import random
 from scipy.sparse import rand
 import tiledb
@@ -12,6 +14,7 @@ from cellarr import (
     MatrixOptions,
 )
 from cellarr.dataloader import DataModule
+from cellarr.autoencoder import AutoEncoder
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -78,3 +81,54 @@ def test_dataloader():
     assert len(labels) == 100
     assert len(studies) == 100
     assert data.shape == (100, len(datamodule.gene_indices))
+
+
+def test_autoencoder():
+    tempdir = tempfile.mkdtemp()
+
+    adata1 = generate_adata(1000, 100, study="test1")
+    adata2 = generate_adata(100, 1000, study="test2")
+    adata3 = generate_adata(100, 100, study="test3")
+    obs = pd.concat([adata1.obs, adata2.obs, adata3.obs])
+    obs = obs.reset_index(drop=True)
+
+    build_cellarrdataset(
+        output_path=tempdir,
+        files=[adata1, adata2, adata3],
+        cell_metadata=obs,
+        matrix_options=MatrixOptions(dtype=np.float32),
+    )
+
+    datamodule = DataModule(
+        dataset_path=tempdir,
+        cell_metadata_uri="cell_metadata",
+        gene_annotation_uri="gene_annotation",
+        matrix_uri="counts",
+        val_studies=["test3"],
+        label_column_name="label",
+        study_column_name="study",
+        batch_size=100,
+        lognorm=True,
+        target_sum=1e4,
+    )
+
+    autoencoder = AutoEncoder(
+        n_genes=len(datamodule.gene_indices),
+        latent_dim=128,
+        hidden_dim=[1024, 1024],
+        dropout=0.5,
+        input_dropout=0.4,
+        residual=False,
+    )
+
+    params = {
+        "max_epochs": 2,
+        "logger": True,
+        "log_every_n_steps": 1,
+        "limit_train_batches": 4,
+    }
+    trainer = pl.Trainer(**params)
+    trainer.fit(autoencoder, datamodule=datamodule)
+    autoencoder.save_all(model_path=os.path.join(tempdir, "test"))
+    assert os.path.isfile(os.path.join(tempdir, "test", "encoder.ckpt"))
+    assert os.path.isfile(os.path.join(tempdir, "test", "decoder.ckpt"))
