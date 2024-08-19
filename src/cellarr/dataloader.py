@@ -37,7 +37,7 @@ import tiledb
 from torch import Tensor
 from pytorch_lightning import LightningDataModule
 import random
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_matrix, diags
 from torch.utils.data import DataLoader, Dataset
 
 from .queryutils_tiledb_frame import subset_frame
@@ -401,10 +401,16 @@ class DataModule(LightningDataModule):
 
         X = counts.astype(np.float32)
         if self.lognorm:
-            counts_per_cell = counts.sum(axis=1)
-            counts_per_cell = np.ravel(counts_per_cell)
-            counts_per_cell = counts_per_cell / self.target_sum
-            X = X / counts_per_cell[:, None]
+            # normalize to target sum
+            row_sums = np.ravel(X.sum(axis=1))  # row sums as a 1D array
+            # avoid division by zero by setting zero sums to one (they will remain zero after normalization)
+            row_sums[row_sums == 0] = 1
+            # create a sparse diagonal matrix with the inverse of the row sums
+            inv_row_sums = diags(1 / row_sums).tocsr()
+            # normalize the rows to sum to 1
+            normalized_matrix = inv_row_sums.dot(X)
+            # scale the rows sum to target_sum
+            X = normalized_matrix.multiply(datamodule.target_sum)
             X = X.log1p()
 
         X = Tensor(X.toarray())
