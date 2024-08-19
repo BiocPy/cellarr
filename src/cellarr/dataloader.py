@@ -37,8 +37,9 @@ import pandas
 import tiledb
 from torch import squeeze, Tensor
 from pytorch_lightning import LightningDataModule
+import random
 from scipy.sparse import coo_matrix, csr_matrix
-from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
+from torch.utils.data import DataLoader, Dataset
 
 from .queryutils_tiledb_frame import subset_frame
 
@@ -46,31 +47,18 @@ __author__ = "Tony Kuo"
 __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
-# Turn off multithreading to allow multiple pytorch dataloader workers
-config = tiledb.Config()
-config["sm.compute_concurrency_level"] = 1
-config["sm.io_concurrency_level"] = 1
-config["sm.num_async_threads"] = 1
-config["sm.num_reader_threads"] = 1
-config["sm.num_tbb_threads"] = 1
-config["sm.num_writer_threads"] = 1
-config["vfs.num_threads"] = 1
-
 
 class scDataset(Dataset):
-    """A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell labels using
+    """A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell metadata using
     TileDB."""
 
     def __init__(
         self,
         data_df: pandas.DataFrame,
-        matrix_tdb: tiledb.Array,
-        matrix_shape: tuple,
-        gene_indices: List[int],
-        label_column_name: str,
-        study_column_name: str,
-        lognorm: bool = True,
-        target_sum: float = 1e4,
+        int2sample: dict,
+        sample2cells: dict,
+        sample_size: int,
+        sampling_by_class: bool = False,
     ):
         """Initialize a ``scDataset``.
 
@@ -78,66 +66,45 @@ class scDataset(Dataset):
             data_df:
                 Pandas dataframe of valid cells.
 
-            matrix_tdb:
-                TileDB object containing the experimental data, e.g. counts.
+            int2sample:
+                A mapping of sample index to sample id.
 
-            matrix_shape:
-                Shape of the counts matrix.
+            sample2cells:
+                A mapping of sample id to cell indices.
 
-            gene_indices:
-                The index of genes to return.
+            sample_size:
+                Number of cells one sample.
 
-            label_column_name:
-                Column name containing cell labels.
-
-            study_column_name:
-                Column name containing study information.
-
-            lognorm:
-                Whether to return log-normalized expression instead of raw counts.
-
-            target_sum:
-                Target sum for log-normalization.
+            sampling_by_class:
+                Sample based on class counts, where sampling weight is inversely proportional to count.
+                Defaults to False.
         """
 
         self.data_df = data_df
-        self.matrix_tdb = matrix_tdb
-        self.matrix_shape = matrix_shape
-        self.gene_indices = gene_indices
-        self.lognorm = lognorm
-        self.target_sum = target_sum
-        self.label_column_name = label_column_name
-        self.study_column_name = study_column_name
+        self.int2sample = int2sample
+        self.sample2cells = sample2cells
+        self.sample_size = sample_size
+        self.sampling_by_class = sampling_by_class
 
     def __len__(self):
-        return self.data_df.shape[0]
+        return len(self.int2sample)
 
     def __getitem__(self, idx):
-        # data, label, study
-        cell_idx = self.data_df.index[idx]
-        results = self.matrix_tdb.multi_index[cell_idx, :]
-        counts = coo_matrix(
-            (results["data"], (results["cell_index"], results["gene_index"])),
-            shape=self.matrix_shape,
-        ).tocsr()
-        counts = counts[cell_idx, :]
-        counts = counts[:, self.gene_indices]
+        sample = self.int2sample[idx]
+        cell_idx = self.sample2cells[sample]
+        if len(cell_idx) < self.sample_size:
+            cell_idx = random.sample(self.sample2cells[sample], len(cell_idx))
+        else:
+            if self.sampling_by_class:
+                sample_df = self.data_df.loc[self.sample2cells[sample], :].copy()
+                sample_df = sample_df.sample(
+                    n=self.sample_size, weights="sample_weight"
+                )
+                cell_idx = sample_df.index.tolist()
+            else:
+                cell_idx = random.sample(self.sample2cells[sample], self.sample_size)
 
-        X = counts.astype(np.float32)
-        if self.lognorm:
-            counts_per_cell = counts.sum(axis=1)
-            counts_per_cell = np.ravel(counts_per_cell)
-            counts_per_cell = counts_per_cell / self.target_sum
-            X = X / counts_per_cell[:, None]
-            X = csr_matrix(X).log1p()
-
-        X = X.toarray()
-
-        return (
-            X,
-            self.data_df.loc[cell_idx, self.label_column_name],
-            self.data_df.loc[cell_idx, self.study_column_name],
-        )
+        return self.data_df.loc[cell_idx].copy()
 
     def __repr__(self) -> str:
         """
@@ -146,7 +113,6 @@ class scDataset(Dataset):
         """
         output = f"{type(self).__name__}("
         output += f"number_of_cells={self.data_df.shape[0]}"
-        output += f"number_of_genes={self.matrix_shape[1]}"
         output += ")"
 
         return output
@@ -158,7 +124,6 @@ class scDataset(Dataset):
         """
         output = f"class: {type(self).__name__}\n"
         output += f"number_of_cells: {self.data_df.shape[0]}\n"
-        output += f"number_of_genes: {self.matrix_shape[1]}\n"
 
         return output
 
@@ -178,12 +143,17 @@ class DataModule(LightningDataModule):
         matrix_uri: str = "counts",
         label_column_name: str = "celltype_id",
         study_column_name: str = "study",
+        sample_column_name: str = "cellarr_sample",
         val_studies: Optional[List[str]] = None,
         gene_order: Optional[List[str]] = None,
-        batch_size: int = 1000,
-        num_workers: int = 0,
+        batch_size: int = 100,
+        sample_size: int = 100,
+        num_workers: int = 1,
         lognorm: bool = True,
         target_sum: float = 1e4,
+        sparse: bool = False,
+        sampling_by_class: bool = False,
+        remove_singleton_classes: bool = False,
         nan_string: str = "nan",
     ):
         """Initialize a ``DataModule``.
@@ -218,17 +188,34 @@ class DataModule(LightningDataModule):
                 If None, all genes from the `gene_annotation` are used for training.
 
             batch_size:
-                Batch size to use.
-                Defaults to 1000.
+                Batch size to use, corresponding to the number of samples in a mini-batch.
+                Defaults to 100.
+
+            sample_size:
+                Size of each sample use in a mini-batch, corresponding to the number of cells in a sample.
+                Defaults to 100.
 
             num_workers:
                 The number of worker threads for dataloaders.
+                Defaults to 1.
 
             lognorm:
                 Whether to return log-normalized expression instead of raw counts.
 
             target_sum:
                 Target sum for log-normalization.
+
+            sparse:
+                Whether to return a sparse tensor.
+                Defaults to False.
+
+            sampling_by_class:
+                Sample based on class counts, where sampling weight is inversely proportional to count.
+                If False, use random sampling. Defaults to False.
+
+            remove_singleton_classes:
+                Exclude cells with classes that exist in only one sample.
+                Defaults to False.
 
             nan_string:
                 A string representing NaN.
@@ -243,11 +230,16 @@ class DataModule(LightningDataModule):
         self.val_studies = val_studies
         self.label_column_name = label_column_name
         self.study_column_name = study_column_name
+        self.sample_column_name = sample_column_name
         self.gene_order = gene_order
         self.batch_size = batch_size
+        self.sample_size = sample_size
         self.num_workers = num_workers
         self.lognorm = lognorm
         self.target_sum = target_sum
+        self.sparse = sparse
+        self.sampling_by_class = sampling_by_class
+        self.remove_singleton_classes = remove_singleton_classes
 
         self.cell_metadata_tdb = tiledb.open(
             os.path.join(self.dataset_path, self.cell_metadata_uri), "r"
@@ -256,7 +248,7 @@ class DataModule(LightningDataModule):
             os.path.join(self.dataset_path, self.gene_annotation_uri), "r"
         )
         self.matrix_tdb = tiledb.open(
-            os.path.join(self.dataset_path, self.matrix_uri), "r", config=config
+            os.path.join(self.dataset_path, self.matrix_uri), "r"
         )
 
         self.matrix_shape = (
@@ -269,21 +261,45 @@ class DataModule(LightningDataModule):
         self.data_df = subset_frame(
             self.cell_metadata_tdb,
             query_condition,
-            columns=[self.study_column_name, self.label_column_name],
+            columns=[
+                self.study_column_name,
+                self.sample_column_name,
+                self.label_column_name,
+            ],
         )
 
-        # limit to labels that exist in at least 2 studies
-        study_celltype_counts = (
-            self.data_df[[self.study_column_name, self.label_column_name]]
-            .drop_duplicates()
-            .groupby(self.label_column_name)
-            .size()
-            .sort_values(ascending=False)
+        # concat study and sample in the case there are duplicate sample names
+        self.sampleID = "study::::sample"
+        self.data_df[self.sampleID] = (
+            self.data_df[self.study_column_name]
+            + "::::"
+            + self.data_df[self.sample_column_name]
         )
-        well_represented_labels = study_celltype_counts[study_celltype_counts > 1].index
-        self.data_df = self.data_df[
-            self.data_df[self.label_column_name].isin(well_represented_labels)
-        ]
+
+        if self.remove_singleton_classes:
+            # limit to celltypes that exist in at least 2 samples
+            celltype_counts = (
+                self.data_df[[self.sampleID, self.label_column_name]]
+                .drop_duplicates()
+                .groupby(self.label_column_name)
+                .size()
+                .sort_values(ascending=False)
+            )
+            well_represented_labels = celltype_counts[celltype_counts > 1].index
+            self.data_df = self.data_df[
+                self.data_df[self.label_column_name].isin(well_represented_labels)
+            ]
+
+        if self.sampling_by_class:
+            # get sampling weights based on class
+            class_sample_count = self.data_df[self.label_column_name].value_counts()
+            class_sample_count = {
+                x: np.log1p(class_sample_count[x] / 1e4)
+                for x in class_sample_count.index
+            }
+            self.data_df["sample_weight"] = self.data_df[self.label_column_name].apply(
+                lambda x: 1.0 / class_sample_count[x]
+            )
 
         self.val_df = None
         if self.val_studies is not None:
@@ -325,71 +341,40 @@ class DataModule(LightningDataModule):
         else:
             self.gene_indices = [i for i in range(len(genes))]
 
-        self.train_Y = self.data_df[self.label_column_name].values.tolist()
-        self.train_study = self.data_df[self.study_column_name].values.tolist()
+        gp = self.data_df.groupby(self.sampleID)
+        self.train_int2sample = {i: x for i, x in enumerate(gp.groups.keys())}
+        self.train_sample2cells = {x: gp.groups[x].tolist() for x in gp.groups.keys()}
+        self.data_df["label_int"] = self.data_df[self.label_column_name].map(
+            self.label2int
+        )
         self.train_dataset = scDataset(
             data_df=self.data_df,
-            matrix_tdb=self.matrix_tdb,
-            matrix_shape=self.matrix_shape,
-            gene_indices=self.gene_indices,
-            label_column_name=self.label_column_name,
-            study_column_name=self.study_column_name,
-            lognorm=self.lognorm,
-            target_sum=self.target_sum,
+            int2sample=self.train_int2sample,
+            sample2cells=self.train_sample2cells,
+            sample_size=self.sample_size,
+            sampling_by_class=self.sampling_by_class,
         )
 
         self.val_dataset = None
         if self.val_df is not None:
-            self.val_Y = self.val_df[self.label_column_name].values.tolist()
-            self.val_study = self.val_df[self.study_column_name].values.tolist()
+            gp = self.val_df.groupby(self.sampleID)
+            self.val_int2sample = {i: x for i, x in enumerate(gp.groups.keys())}
+            self.val_sample2cells = {x: gp.groups[x].tolist() for x in gp.groups.keys()}
+            self.val_df["label_int"] = self.val_df[self.label_column_name].map(
+                self.label2int
+            )
             self.val_dataset = scDataset(
                 data_df=self.val_df,
-                matrix_tdb=self.matrix_tdb,
-                matrix_shape=self.matrix_shape,
-                gene_indices=self.gene_indices,
-                label_column_name=self.label_column_name,
-                study_column_name=self.study_column_name,
-                lognorm=self.lognorm,
-                target_sum=self.target_sum,
+                int2sample=self.val_int2sample,
+                sample2cells=self.val_sample2cells,
+                sample_size=self.sample_size,
+                sampling_by_class=self.sampling_by_class,
             )
 
     def __del__(self):
         self.cell_metadata_tdb.close()
         self.gene_annotation_tdb.close()
         self.matrix_tdb.close()
-
-    def get_sampler_weights(
-        self, labels: list, studies: Optional[list] = None
-    ) -> WeightedRandomSampler:
-        """Get weighted random sampler.
-
-        Args:
-            dataset:
-                Single cell dataset.
-
-        Returns:
-            A WeightedRandomSampler object.
-        """
-
-        if studies is None:
-            class_sample_count = Counter(labels)
-            sample_weights = Tensor([1.0 / class_sample_count[t] for t in labels])
-        else:
-            class_sample_count = Counter(labels)
-            study_sample_count = Counter(studies)
-            class_sample_count = {
-                x: np.log1p(class_sample_count[x] / 1e4) for x in class_sample_count
-            }
-            study_sample_count = {
-                x: np.log1p(study_sample_count[x] / 1e5) for x in study_sample_count
-            }
-            sample_weights = Tensor(
-                [
-                    1.0 / class_sample_count[labels[i]] / study_sample_count[studies[i]]
-                    for i in range(len(labels))
-                ]
-            )
-        return WeightedRandomSampler(sample_weights, len(sample_weights))
 
     def collate(self, batch):
         """Collate tensors.
@@ -399,17 +384,39 @@ class DataModule(LightningDataModule):
                 Batch to collate.
 
         Returns:
-            A Tuple[torch.Tensor, torch.Tensor, list] containing information
-            on the collated tensors.
+            tuple
+                A Tuple[torch.Tensor, torch.Tensor, np.ndarray, np.ndarray] containing information
+                corresponding to [input, label, study, sample]
         """
 
-        profiles, labels, studies = tuple(
-            map(list, zip(*batch))
-        )  # tuple([list(t) for t in zip(*batch)])
+        df = pandas.concat(batch)
+        cell_idx = df.index.tolist()
+
+        results = self.matrix_tdb.multi_index[cell_idx, :]
+        counts = coo_matrix(
+            (results["data"], (results["cell_index"], results["gene_index"])),
+            shape=self.matrix_shape,
+        ).tocsr()
+        counts = counts[cell_idx, :]
+        counts = counts[:, self.gene_indices]
+
+        X = counts.astype(np.float32)
+        if self.lognorm:
+            counts_per_cell = counts.sum(axis=1)
+            counts_per_cell = np.ravel(counts_per_cell)
+            counts_per_cell = counts_per_cell / self.target_sum
+            X = X / counts_per_cell[:, None]
+            X = X.log1p()
+
+        X = Tensor(X.toarray())
+        if self.sparse:
+            X = X.to_sparse_csr()
+
         return (
-            squeeze(Tensor(np.vstack(profiles))),
-            Tensor([self.label2int[label] for label in labels]),  # text to int labels
-            studies,
+            X,
+            Tensor(df["label_int"].values),
+            df[self.study_column_name].values,
+            df[self.sample_column_name].values,
         )
 
     def train_dataloader(self) -> DataLoader:
@@ -423,10 +430,12 @@ class DataModule(LightningDataModule):
             self.train_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
+            collate_fn=self.collate,
             pin_memory=True,
             drop_last=True,
-            sampler=self.get_sampler_weights(self.train_Y, self.train_study),
-            collate_fn=self.collate,
+            shuffle=True,
+            persistent_workers=True,
+            multiprocessing_context="spawn",
         )
 
     def val_dataloader(self) -> DataLoader:
@@ -443,10 +452,12 @@ class DataModule(LightningDataModule):
             self.val_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
+            collate_fn=self.collate,
             pin_memory=True,
             drop_last=True,
-            sampler=self.get_sampler_weights(self.val_Y, self.val_study),
-            collate_fn=self.collate,
+            shuffle=False,
+            persistent_workers=True,
+            multiprocessing_context="spawn",
         )
 
     def __repr__(self) -> str:
