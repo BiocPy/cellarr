@@ -29,16 +29,15 @@ Example:
 """
 
 import os
-from collections import Counter
 from typing import List, Optional
 
 import numpy as np
 import pandas
 import tiledb
-from torch import squeeze, Tensor
+from torch import Tensor
 from pytorch_lightning import LightningDataModule
 import random
-from scipy.sparse import coo_matrix, csr_matrix
+from scipy.sparse import coo_matrix
 from torch.utils.data import DataLoader, Dataset
 
 from .queryutils_tiledb_frame import subset_frame
