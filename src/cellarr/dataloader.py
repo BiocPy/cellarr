@@ -410,7 +410,7 @@ class DataModule(LightningDataModule):
             # normalize the rows to sum to 1
             normalized_matrix = inv_row_sums.dot(X)
             # scale the rows sum to target_sum
-            X = normalized_matrix.multiply(datamodule.target_sum)
+            X = normalized_matrix.multiply(self.target_sum)
             X = X.log1p()
 
         X = Tensor(X.toarray())
