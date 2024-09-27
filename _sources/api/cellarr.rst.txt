@@ -20,6 +20,14 @@ cellarr.CellArrDatasetSlice module
    :undoc-members:
    :show-inheritance:
 
+cellarr.autoencoder module
+--------------------------
+
+.. automodule:: cellarr.autoencoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cellarr.build\_cellarrdataset module
 ------------------------------------
 
