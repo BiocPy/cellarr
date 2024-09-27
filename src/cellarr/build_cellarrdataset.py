@@ -291,9 +291,11 @@ def build_cellarrdataset(
         sample_metadata = pd.DataFrame({"cellarr_sample": _samples})
     elif isinstance(sample_metadata, str):
         sample_metadata = pd.read_csv(sample_metadata, header=0)
-        sample_metadata["cellarr_sample"] = _samples
+        if "cellarr_sample" not in sample_metadata.columns:
+            sample_metadata["cellarr_sample"] = _samples
     elif isinstance(sample_metadata, pd.DataFrame):
-        sample_metadata["cellarr_sample"] = _samples
+        if "cellarr_sample" not in sample_metadata.columns:
+            sample_metadata["cellarr_sample"] = _samples
     else:
         raise TypeError("'sample_metadata' is not an expected type.")
 
@@ -302,11 +304,13 @@ def build_cellarrdataset(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
-        gene_scan_set = uad.scan_for_features(files_cache, unique=False)
-        gene_set_str = [",".join(x) for x in gene_scan_set]
-        sample_metadata["cellarr_original_gene_set"] = gene_set_str
+        if "cellarr_original_gene_set" not in sample_metadata.columns:
+            gene_scan_set = uad.scan_for_features(files_cache, unique=False)
+            gene_set_str = [",".join(x) for x in gene_scan_set]
+            sample_metadata["cellarr_original_gene_set"] = gene_set_str
 
-        sample_metadata["cellarr_cell_counts"] = cell_counts
+        if "cellarr_cell_counts" not in sample_metadata.columns:
+            sample_metadata["cellarr_cell_counts"] = cell_counts
 
         _col_types = utf.infer_column_types(
             sample_metadata, sample_metadata_options.column_types
@@ -367,8 +371,11 @@ def build_cellarrdataset(
                 "Number of rows in 'cell_metadata' does not match the number of cells across files."
             )
 
-        cell_metadata["cellarr_sample"] = _sample_per_cell
-        cell_metadata["cellarr_cell_index_in_sample"] = _cell_index_in_sample
+        if "cellarr_sample" not in cell_metadata.columns:
+            cell_metadata["cellarr_sample"] = _sample_per_cell
+
+        if "cellarr_cell_index_in_sample" not in cell_metadata.columns:
+            cell_metadata["cellarr_cell_index_in_sample"] = _cell_index_in_sample
 
         cell_metadata.reset_index(drop=True, inplace=True)
 
