@@ -48,7 +48,7 @@ import numpy as np
 import tempfile
 from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
-# Create a temporary directory, this is where the 
+# Create a temporary directory, this is where the
 # output files are created. Pick your location here.
 tempdir = tempfile.mkdtemp()
 

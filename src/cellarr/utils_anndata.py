@@ -260,6 +260,7 @@ def scan_for_cellcounts(cache) -> List[int]:
     _cellcounts = [x[2] for x in cache]
     return _cellcounts
 
+
 def scan_for_cellmetadata(cache) -> List[int]:
     """Extract and merge all cell metadata data frames across files.
 

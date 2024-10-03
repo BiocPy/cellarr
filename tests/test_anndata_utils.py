@@ -79,7 +79,9 @@ def test_extract_info():
     obs_df = pd.DataFrame({"cells": [f"cell1_{j+1}" for j in range(n)]})
     adata = anndata.AnnData(layers={"counts": y}, var=var_df, obs=obs_df)
 
-    cache = cellarr.utils_anndata.extract_anndata_info([adata], obs_subset_columns=["cells", "notexists"])
+    cache = cellarr.utils_anndata.extract_anndata_info(
+        [adata], obs_subset_columns=["cells", "notexists"]
+    )
     assert len(cache) == 1
 
     gene_symbols = cellarr.utils_anndata.scan_for_features(cache, unique=False)

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict
 
 import numpy as np
 
@@ -37,7 +37,7 @@ class CellMetadataOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb. The tiledb will only contain the 
+            the tiledb. The tiledb will only contain the
             columns listed here. If that column is not present in
             a dataset, it is represented as 'NA'.
     """

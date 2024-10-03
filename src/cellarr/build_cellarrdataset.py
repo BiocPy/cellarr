@@ -10,7 +10,7 @@ This method creates four TileDB files in the directory specified by `output_path
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
 - A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
-to store multiple different matrices, e.g. 'normalized', 'scaled', 'counts' for the same 
+to store multiple different matrices, e.g. 'normalized', 'scaled', 'counts' for the same
 cell, gene, sample metadata attributes.
 
 The TileDB matrix file is stored in a ``cell X gene`` orientation. This orientation
