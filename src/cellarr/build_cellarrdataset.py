@@ -204,7 +204,7 @@ def build_cellarrdataset(
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
-    _subsets = cell_metadata_options.cell_metadata
+    _subsets = cell_metadata_options.column_types
     if _subsets is not None and len(_subsets) > 0:
         _subsets = list(_subsets.keys())
 
