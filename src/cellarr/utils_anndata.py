@@ -5,6 +5,7 @@ from typing import Any, List, Tuple, Union
 import anndata
 import mopsy
 import numpy as np
+import pandas as pd
 from scipy.sparse import coo_matrix, csr_array, csr_matrix
 
 __author__ = "Jayaram Kancherla"
@@ -149,7 +150,8 @@ def consolidate_duplicate_symbols(
 def _extract_info(
     h5ad_or_adata: Union[str, anndata.AnnData],
     var_feature_column: str = "index",
-) -> Tuple[List[str], int]:
+    obs_subset_columns: List[str] = None,
+) -> Tuple[List[str], pd.DataFrame, int]:
     if isinstance(h5ad_or_adata, str):
         adata = anndata.read_h5ad(h5ad_or_adata, "r")
     else:
@@ -163,17 +165,29 @@ def _extract_info(
     else:
         symbols = adata.var[var_feature_column].tolist()
 
-    return symbols, adata.shape[0]
+    features = pd.DataFrame({})
+    if obs_subset_columns is not None and len(obs_subset_columns) > 0:
+        _common = list(set(obs_subset_columns).intersection(adata.obs))
+
+        if len(_common) > 0:
+            features = adata.obs[_common]
+
+    for col in obs_subset_columns:
+        if col not in features.columns:
+            features[col] = ["NA"] * adata.shape[0]
+
+    return symbols, features, adata.shape[0]
 
 
 def _wrapper_extract_info(args):
-    file, gcol = args
-    return _extract_info(file, gcol)
+    file, gcol, ccols = args
+    return _extract_info(file, gcol, ccols)
 
 
 def extract_anndata_info(
     h5ad_or_adata: List[Union[str, anndata.AnnData]],
     var_feature_column: str = "index",
+    obs_subset_columns: dict = None,
     num_threads: int = 1,
 ):
     """Extract and generate the list of unique feature identifiers and cell counts across files.
@@ -186,6 +200,10 @@ def extract_anndata_info(
             Column containing the feature ids (e.g. gene symbols).
             Defaults to "index".
 
+        obs_subset_columns:
+            List of obs columns to concatenate across all files.
+            Defaults to None and no metadata columns will be extracted.
+
         num_threads:
             Number of threads to use.
             Defaults to 1.
@@ -195,7 +213,10 @@ def extract_anndata_info(
             Defaults to False.
     """
     with Pool(num_threads) as p:
-        _args = [(file_info, var_feature_column) for file_info in h5ad_or_adata]
+        _args = [
+            (file_info, var_feature_column, obs_subset_columns)
+            for file_info in h5ad_or_adata
+        ]
         return p.map(_wrapper_extract_info, _args)
 
 
@@ -236,6 +257,22 @@ def scan_for_cellcounts(cache) -> List[int]:
         List of cell counts across files.
     """
 
-    _cellcounts = [x[1] for x in cache]
-
+    _cellcounts = [x[2] for x in cache]
     return _cellcounts
+
+def scan_for_cellmetadata(cache) -> List[int]:
+    """Extract and merge all cell metadata data frames across files.
+
+    Needs calling :py:func:`~.extract_anndata_info` first.
+
+    Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
+    Returns:
+        A :py:class:`pandas.Dataframe` containing all cell metadata.
+    """
+
+    _cellmeta = pd.concat([x[1] for x in cache])
+    return _cellmeta

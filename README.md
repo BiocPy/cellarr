@@ -27,7 +27,8 @@ Building a `CellArrDataset` generates 4 TileDB files in the specified output dir
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
 - A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
-to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.
+to store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the same cell,
+gene, sample metadata attributes.
 
 The organization is inspired by the [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) data structure.
 
@@ -47,7 +48,8 @@ import numpy as np
 import tempfile
 from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
-# Create a temporary directory
+# Create a temporary directory, this is where the 
+# output files are created. Pick your location here.
 tempdir = tempfile.mkdtemp()
 
 # Read AnnData objects
