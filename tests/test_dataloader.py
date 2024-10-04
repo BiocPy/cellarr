@@ -21,7 +21,7 @@ __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
-def generate_adata(n, d, study):
+def generate_adata(n, d, study, sample):
     np.random.seed(1)
 
     y = (100 * rand(n, d, density=0.2, format="csr")).astype(int)
@@ -31,6 +31,7 @@ def generate_adata(n, d, study):
 
     obs_df = pd.DataFrame({"cells": [f"cell_{j+1}" for j in range(n)]})
     obs_df["study"] = study
+    obs_df["cellarr_sample"] = sample
     labels = [f"label_{i}" for i in range(10)] + [np.nan]
     obs_df["label"] = random.choices(labels, k=n)
     obs_df["index_in_file"] = range(n)
@@ -43,15 +44,19 @@ def generate_adata(n, d, study):
 def test_dataloader():
     tempdir = tempfile.mkdtemp()
 
-    adata1 = generate_adata(1000, 100, study="test1")
-    adata2 = generate_adata(100, 1000, study="test2")
-    adata3 = generate_adata(100, 100, study="test3")
-    obs = pd.concat([adata1.obs, adata2.obs, adata3.obs])
+    adata1 = generate_adata(1000, 100, study="test1", sample="a")
+    adata2 = generate_adata(100, 1000, study="test2", sample="b")
+    adata3 = generate_adata(100, 100, study="test3", sample="c")
+    adata4 = generate_adata(1000, 100, study="test4", sample="d")
+    obs = pd.concat([adata1.obs, adata2.obs, adata3.obs, adata4.obs])
     obs = obs.reset_index(drop=True)
+
+    sample_metadata = obs[["study", "cellarr_sample"]].drop_duplicates()
 
     build_cellarrdataset(
         output_path=tempdir,
-        files=[adata1, adata2, adata3],
+        files=[adata1, adata2, adata3, adata4],
+        sample_metadata=sample_metadata,
         cell_metadata=obs,
         matrix_options=MatrixOptions(dtype=np.float32),
     )
@@ -64,37 +69,45 @@ def test_dataloader():
         val_studies=["test3"],
         label_column_name="label",
         study_column_name="study",
-        batch_size=100,
+        sample_column_name="cellarr_sample",
+        batch_size=3,
+        sample_size=10,
         lognorm=True,
         target_sum=1e4,
+        sampling_by_class=True,
+        remove_singleton_classes=True,
     )
 
-    assert "test1" in datamodule.data_df["study"].values
-    assert "test2" in datamodule.data_df["study"].values
-    assert "test3" not in datamodule.data_df["study"].values
+    assert "test1" in datamodule.train_df["study"].values
+    assert "test2" in datamodule.train_df["study"].values
+    assert "test3" not in datamodule.train_df["study"].values
     assert "test3" in datamodule.val_df["study"].values
 
     dataloader = datamodule.train_dataloader()
     batch = next(iter(dataloader))
-    data, labels, studies = batch
-    print(data, labels, studies)
-    assert len(labels) == 100
-    assert len(studies) == 100
-    assert data.shape == (100, len(datamodule.gene_indices))
+    data, labels, studies, samples = batch
+    print(data, labels, studies, samples)
+    assert data.shape == (30, len(datamodule.gene_indices))
+    assert len(labels) == 30
+    assert len(set(samples)) == 3
 
 
 def test_autoencoder():
     tempdir = tempfile.mkdtemp()
 
-    adata1 = generate_adata(1000, 100, study="test1")
-    adata2 = generate_adata(100, 1000, study="test2")
-    adata3 = generate_adata(100, 100, study="test3")
-    obs = pd.concat([adata1.obs, adata2.obs, adata3.obs])
+    adata1 = generate_adata(1000, 100, study="test1", sample="a")
+    adata2 = generate_adata(100, 1000, study="test2", sample="b")
+    adata3 = generate_adata(100, 100, study="test3", sample="c")
+    adata4 = generate_adata(1000, 100, study="test4", sample="d")
+    obs = pd.concat([adata1.obs, adata2.obs, adata3.obs, adata4.obs])
     obs = obs.reset_index(drop=True)
+
+    sample_metadata = obs[["study", "cellarr_sample"]].drop_duplicates()
 
     build_cellarrdataset(
         output_path=tempdir,
-        files=[adata1, adata2, adata3],
+        files=[adata1, adata2, adata3, adata4],
+        sample_metadata=sample_metadata,
         cell_metadata=obs,
         matrix_options=MatrixOptions(dtype=np.float32),
     )
@@ -107,10 +120,15 @@ def test_autoencoder():
         val_studies=["test3"],
         label_column_name="label",
         study_column_name="study",
-        batch_size=100,
+        sample_column_name="cellarr_sample",
+        batch_size=3,
+        sample_size=10,
         lognorm=True,
         target_sum=1e4,
+        # sampling_by_class=True,
+        # remove_singleton_classes=True,
     )
+    print(datamodule)
 
     autoencoder = AutoEncoder(
         n_genes=len(datamodule.gene_indices),
@@ -123,7 +141,7 @@ def test_autoencoder():
 
     params = {
         "max_epochs": 2,
-        "logger": True,
+        "logger": False,
         "log_every_n_steps": 1,
         "limit_train_batches": 4,
     }
@@ -132,3 +150,12 @@ def test_autoencoder():
     autoencoder.save_all(model_path=os.path.join(tempdir, "test"))
     assert os.path.isfile(os.path.join(tempdir, "test", "encoder.ckpt"))
     assert os.path.isfile(os.path.join(tempdir, "test", "decoder.ckpt"))
+
+
+def main():
+    test_dataloader()
+    test_autoencoder()
+
+
+if __name__ == "__main__":
+    main()

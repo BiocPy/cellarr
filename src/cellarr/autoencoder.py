@@ -334,7 +334,7 @@ class AutoEncoder(pl.LightningModule):
             The training loss
         """
 
-        cells, labels, studies = batch
+        cells, labels, studies, samples = batch
         embedding, reconstruction = self(cells)
         return self.mse_loss_fn(cells, reconstruction)
 
