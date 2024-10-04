@@ -361,7 +361,12 @@ def build_cellarrdataset(
         ):
             pd_cell_meta = uad.scan_for_cellmetadata(files_cache)
             cell_metadata = pd.concat(
-                [cell_metadata, pd_cell_meta], axis=1, ignore_index=True
+                [
+                    cell_metadata.reset_index(drop=True),
+                    pd_cell_meta.reset_index(drop=True),
+                ],
+                axis=1,
+                sort=False,
             )
     elif isinstance(cell_metadata, str):
         warnings.warn(

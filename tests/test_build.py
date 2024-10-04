@@ -389,4 +389,12 @@ def test_build_cellarrdataset_from_frame_withsubset_columns():
     cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
     cell_df = cellfp.df[:]
     assert len(cell_df) == 1100
-    assert cell_df.columns == ["cells", "notexists"]
+    assert len(cell_df.columns) == 4
+    assert (
+        len(
+            set(cell_df.columns).difference(
+                ["cellarr_sample", "cellarr_cell_index_in_sample", "cells", "notexists"]
+            )
+        )
+        == 0
+    )
