@@ -172,9 +172,9 @@ def _extract_info(
         if len(_common) > 0:
             features = adata.obs[_common]
 
-    for col in obs_subset_columns:
-        if col not in features.columns:
-            features[col] = ["NA"] * adata.shape[0]
+        for col in obs_subset_columns:
+            if col not in features.columns:
+                features[col] = ["NA"] * adata.shape[0]
 
     return symbols, features, adata.shape[0]
 
