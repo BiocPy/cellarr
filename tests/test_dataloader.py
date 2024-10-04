@@ -47,7 +47,7 @@ def test_dataloader():
     adata1 = generate_adata(1000, 100, study="test1", sample="a")
     adata2 = generate_adata(100, 1000, study="test2", sample="b")
     adata3 = generate_adata(100, 100, study="test3", sample="c")
-    adata4 = generate_adata(1000, 100, study="test4", sample="a")
+    adata4 = generate_adata(1000, 100, study="test4", sample="d")
     obs = pd.concat([adata1.obs, adata2.obs, adata3.obs, adata4.obs])
     obs = obs.reset_index(drop=True)
 
@@ -98,8 +98,7 @@ def test_autoencoder():
     adata1 = generate_adata(1000, 100, study="test1", sample="a")
     adata2 = generate_adata(100, 1000, study="test2", sample="b")
     adata3 = generate_adata(100, 100, study="test3", sample="c")
-    adata4 = generate_adata(1000, 100, study="test4", sample="a")
-    adata4 = generate_adata(1000, 100, study="test4", sample="a")
+    adata4 = generate_adata(1000, 100, study="test4", sample="d")
     obs = pd.concat([adata1.obs, adata2.obs, adata3.obs, adata4.obs])
     obs = obs.reset_index(drop=True)
 
