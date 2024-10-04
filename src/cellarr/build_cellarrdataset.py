@@ -360,7 +360,9 @@ def build_cellarrdataset(
             and len(cell_metadata_options.column_types) > 0
         ):
             pd_cell_meta = uad.scan_for_cellmetadata(files_cache)
-            cell_metadata = pd.concat([cell_metadata, pd_cell_meta], axis=1, ignore_index=True)
+            cell_metadata = pd.concat(
+                [cell_metadata, pd_cell_meta], axis=1, ignore_index=True
+            )
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
