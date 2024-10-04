@@ -78,9 +78,9 @@ def test_dataloader():
         remove_singleton_classes=True,
     )
 
-    assert "test1" in datamodule.data_df["study"].values
-    assert "test2" in datamodule.data_df["study"].values
-    assert "test3" not in datamodule.data_df["study"].values
+    assert "test1" in datamodule.train_df["study"].values
+    assert "test2" in datamodule.train_df["study"].values
+    assert "test3" not in datamodule.train_df["study"].values
     assert "test3" in datamodule.val_df["study"].values
 
     dataloader = datamodule.train_dataloader()
