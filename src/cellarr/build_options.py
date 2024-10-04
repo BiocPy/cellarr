@@ -37,8 +37,8 @@ class CellMetadataOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb. The tiledb will only contain the
-            columns listed here. If that column is not present in
+            the TileDB. The TileDB will only contain the
+            columns listed here. If the column is not present in
             a dataset, it is represented as 'NA'.
     """
 
@@ -76,7 +76,7 @@ class GeneAnnotationOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb.
+            the TileDB.
 
             If `None`, all columns are cast as 'ascii'.
     """
@@ -156,7 +156,7 @@ class SampleMetadataOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb.
+            the TileDB.
 
             If `None`, all columns are cast as 'ascii'.
     """
