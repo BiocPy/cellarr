@@ -162,11 +162,10 @@ class BaseBatchSampler(Sampler[int]):
         super().__init__()
 
         self.bsz = bsz
-        self.data_df = data_df.copy()
+        self.data_df = data_df
         self.shuffle = shuffle
-        self.int2sample = int2sample
-        self.sample2int = {v: k for k, v in int2sample.items()}
 
+        self.int2sample = int2sample
         assert len(self.int2sample) == self.data_df["study::::sample"].nunique()
 
     def __len__(self) -> int:
@@ -211,7 +210,7 @@ class DataModule(LightningDataModule):
         nan_string: str = "nan",
         sampler_cls: Sampler = BaseBatchSampler,
         dataset_cls: Dataset = scDataset,
-        persistent_workers: bool = True,
+        persistent_workers: bool = False,
         multiprocessing_context: str = "spawn",
     ):
         """Initialize a ``DataModule``.
@@ -346,16 +345,16 @@ class DataModule(LightningDataModule):
             # split out validation studies
             self.val_df = self.data_df[
                 self.data_df[self.study_column_name].isin(self.val_studies)
-            ]
+            ].copy()
             self.train_df = self.data_df[
                 ~self.data_df[self.study_column_name].isin(self.val_studies)
-            ]
+            ].copy()
             # limit validation celltypes to those in the training data
             self.val_df = self.val_df[
                 self.val_df[self.label_column_name].isin(
                     self.train_df[self.label_column_name].unique()
                 )
-            ]
+            ].copy()
         else:
             self.train_df = self.data_df
 
@@ -470,7 +469,7 @@ class DataModule(LightningDataModule):
             well_represented_labels = celltype_counts[celltype_counts > 1].index
             self.data_df = self.data_df[
                 self.data_df[self.label_column_name].isin(well_represented_labels)
-            ]
+            ].copy()
 
         if self.sampling_by_class:
             # get sampling weights based on class

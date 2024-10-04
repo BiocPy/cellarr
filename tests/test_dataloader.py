@@ -126,9 +126,10 @@ def test_autoencoder():
         sample_size=10,
         lognorm=True,
         target_sum=1e4,
-        sampling_by_class=True,
-        remove_singleton_classes=True,
+        #sampling_by_class=True,
+        #remove_singleton_classes=True,
     )
+    print(datamodule)
 
     autoencoder = AutoEncoder(
         n_genes=len(datamodule.gene_indices),
@@ -141,7 +142,7 @@ def test_autoencoder():
 
     params = {
         "max_epochs": 2,
-        "logger": True,
+        "logger": False,
         "log_every_n_steps": 1,
         "limit_train_batches": 4,
     }
@@ -154,6 +155,7 @@ def test_autoencoder():
 
 def main():
     test_dataloader()
+    test_autoencoder()
 
 
 if __name__ == "__main__":
