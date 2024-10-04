@@ -1,11 +1,11 @@
 # Changelog
 
-## Version 0.2.2
+## Version 0.2.4
 
 - Provide options to consistently extract cell metadata columns across datasets.
 - Update documentation and tests.
 
-## Version 0.2.1
+## Version 0.2.1 - 0.2.3
 
 * Implement dunder methods `__len__`,  `__repr__` and `__str__` for the `CellArrDatasetSlice` class
 * Add property `shape` to the same class
