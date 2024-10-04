@@ -126,8 +126,8 @@ def test_autoencoder():
         sample_size=10,
         lognorm=True,
         target_sum=1e4,
-        #sampling_by_class=True,
-        #remove_singleton_classes=True,
+        # sampling_by_class=True,
+        # remove_singleton_classes=True,
     )
     print(datamodule)
 
