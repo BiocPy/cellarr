@@ -98,7 +98,7 @@ def subset_array(
 
     Args:
         tiledb_obj:
-            A TileDb object
+            A TileDB object
 
         row_subset:
             Subset along the row axis.

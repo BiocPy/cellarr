@@ -23,14 +23,14 @@ def create_tiledb_array(
     matrix_dim_dtype: np.dtype = np.uint32,
     is_sparse: bool = True,
 ):
-    """Create a tiledb file with the provided attributes to persistent storage.
+    """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all
     related schema files.
 
     Args:
         tiledb_uri_path:
-            Path to create the array tiledb file.
+            Path to create the array TileDB file.
 
         x_dim_length:
             Number of entries along the x/fastest-changing dimension.
@@ -109,14 +109,14 @@ def write_csr_matrix_to_tiledb(
     row_offset: int = 0,
     batch_size: int = 25000,
 ):
-    """Append and save a :py:class:`~scipy.sparse.csr_matrix` to tiledb.
+    """Append and save a :py:class:`~scipy.sparse.csr_matrix` to TileDB.
 
     Args:
         tiledb_array_uri:
-            Tiledb array object or path to a tiledb object.
+            TileDB array object or path to a TileDB object.
 
         matrix:
-            Input matrix to write to tiledb, must be a
+            Input matrix to write to TileDB, must be a
             :py:class:`~scipy.sparse.csr_matrix` matrix.
 
         value_dtype:
@@ -170,7 +170,7 @@ def write_csr_matrix_to_tiledb(
 
 
 def optimize_tiledb_array(tiledb_array_uri: str, verbose: bool = True):
-    """Consolidate tiledb fragments."""
+    """Consolidate TileDB fragments."""
     if verbose:
         print(f"Optimizing {tiledb_array_uri}")
 
