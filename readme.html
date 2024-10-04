@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>Cell Arrays - cellarr 0.2.3 documentation</title>
+        <title>Cell Arrays - cellarr 0.2.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.2.3 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -279,7 +279,8 @@ datasets but can be generalized to store any 2-dimensional experimental data.</p
 <li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>.</p></li>
 <li><p>A matrix TileDB file named by the <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter. This allows the package
-to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.</p></li>
+to store multiple different matrices, e.g. ‘counts’, ‘normalized’, ‘scaled’ for the same cell,
+gene, sample metadata attributes.</p></li>
 </ul>
 <p>The organization is inspired by the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html">MultiAssayExperiment</a> data structure.</p>
 <p>The TileDB matrix file is stored in a <strong>cell X gene</strong> orientation. This orientation
@@ -293,7 +294,8 @@ collection is usually the cells rather than genes.</p>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">build_cellarrdataset</span><span class="p">,</span> <span class="n">CellArrDataset</span><span class="p">,</span> <span class="n">MatrixOptions</span>
 
-<span class="c1"># Create a temporary directory</span>
+<span class="c1"># Create a temporary directory, this is where the</span>
+<span class="c1"># output files are created. Pick your location here.</span>
 <span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
 
 <span class="c1"># Read AnnData objects</span>
@@ -326,7 +328,28 @@ some genes are unmeasured or ordered differently in the original experiments.</p
 </ol>
 <p><em><strong>Note: The objects to build the <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> are expected to be fairly consistent, especially along the feature dimension.
 if these are <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> or <code class="docutils literal notranslate"><span class="pre">H5AD</span></code>objects, all objects must contain an index (in the <code class="docutils literal notranslate"><span class="pre">var</span></code> slot) specifying the gene symbols.</strong></em></p>
+<section id="optionally-provide-cell-metadata-columns">
+<h4>Optionally provide cell metadata columns<a class="headerlink" href="#optionally-provide-cell-metadata-columns" title="Link to this heading">¶</a></h4>
+<p>If the cell metadata is inconsistent across datasets, you can provide a list of
+columns to standardize during extraction. Any missing columns will be filled with
+the default value <code class="docutils literal notranslate"><span class="pre">'NA'</span></code>, and their data type should be specified as <code class="docutils literal notranslate"><span class="pre">'ascii'</span></code> in
+<code class="docutils literal notranslate"><span class="pre">CellMetadataOptions</span></code>. For example, this build process will create a TileDB store
+for cell metadata containing the columns <code class="docutils literal notranslate"><span class="pre">'cellids'</span></code> and <code class="docutils literal notranslate"><span class="pre">'tissue'</span></code>. If any dataset
+lacks one of these columns, the missing values will be automatically filled with <code class="docutils literal notranslate"><span class="pre">'NA'</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="n">cell_metadata_options</span><span class="o">=</span><span class="n">CellMetadataOptions</span><span class="p">(</span>
+        <span class="n">column_types</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cellids&quot;</span><span class="p">:</span> <span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;tissue&quot;</span><span class="p">:</span> <span class="s2">&quot;ascii&quot;</span><span class="p">}</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/tutorial.html">documentation</a> for more details.</p>
+</section>
 </section>
 <section id="query-a-cellarrdataset">
 <h3>Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#query-a-cellarrdataset" title="Link to this heading">¶</a></h3>
@@ -449,7 +472,10 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
 <li><a class="reference internal" href="#">Cell Arrays</a><ul>
 <li><a class="reference internal" href="#install">Install</a></li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#build-a-cellarrdataset">Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
+<li><a class="reference internal" href="#build-a-cellarrdataset">Build a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a><ul>
+<li><a class="reference internal" href="#optionally-provide-cell-metadata-columns">Optionally provide cell metadata columns</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li><a class="reference internal" href="#a-built-in-dataloader-for-the-pytorch-lightning-framework">A built-in dataloader for the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework</a></li>
 </ul>
@@ -466,7 +492,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=a47416a6"></script>
+</div><script src="_static/documentation_options.js?v=6ffd866b"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

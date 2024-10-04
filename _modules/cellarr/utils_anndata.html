@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>cellarr.utils_anndata - cellarr 0.2.3 documentation</title>
+        <title>cellarr.utils_anndata - cellarr 0.2.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.2.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -255,6 +255,7 @@
 <span class="kn">import</span> <span class="nn">anndata</span>
 <span class="kn">import</span> <span class="nn">mopsy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">csr_array</span><span class="p">,</span> <span class="n">csr_matrix</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
@@ -405,7 +406,8 @@
 <span class="k">def</span> <span class="nf">_extract_info</span><span class="p">(</span>
     <span class="n">h5ad_or_adata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">],</span>
     <span class="n">var_feature_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">obs_subset_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h5ad_or_adata</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">adata</span> <span class="o">=</span> <span class="n">anndata</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="n">h5ad_or_adata</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -419,12 +421,23 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">symbols</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="n">var_feature_column</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">adata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({})</span>
+    <span class="k">if</span> <span class="n">obs_subset_columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_subset_columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">_common</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">obs_subset_columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_common</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="n">_common</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">obs_subset_columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">features</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">features</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">adata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">adata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_wrapper_extract_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">file</span><span class="p">,</span> <span class="n">gcol</span> <span class="o">=</span> <span class="n">args</span>
-    <span class="k">return</span> <span class="n">_extract_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">gcol</span><span class="p">)</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">gcol</span><span class="p">,</span> <span class="n">ccols</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">_extract_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">gcol</span><span class="p">,</span> <span class="n">ccols</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="extract_anndata_info">
@@ -432,6 +445,7 @@
 <span class="k">def</span> <span class="nf">extract_anndata_info</span><span class="p">(</span>
     <span class="n">h5ad_or_adata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">anndata</span><span class="o">.</span><span class="n">AnnData</span><span class="p">]],</span>
     <span class="n">var_feature_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span>
+    <span class="n">obs_subset_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and generate the list of unique feature identifiers and cell counts across files.</span>
@@ -444,6 +458,10 @@
 <span class="sd">            Column containing the feature ids (e.g. gene symbols).</span>
 <span class="sd">            Defaults to &quot;index&quot;.</span>
 
+<span class="sd">        obs_subset_columns:</span>
+<span class="sd">            List of obs columns to concatenate across all files.</span>
+<span class="sd">            Defaults to None and no metadata columns will be extracted.</span>
+
 <span class="sd">        num_threads:</span>
 <span class="sd">            Number of threads to use.</span>
 <span class="sd">            Defaults to 1.</span>
@@ -453,7 +471,10 @@
 <span class="sd">            Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-        <span class="n">_args</span> <span class="o">=</span> <span class="p">[(</span><span class="n">file_info</span><span class="p">,</span> <span class="n">var_feature_column</span><span class="p">)</span> <span class="k">for</span> <span class="n">file_info</span> <span class="ow">in</span> <span class="n">h5ad_or_adata</span><span class="p">]</span>
+        <span class="n">_args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">file_info</span><span class="p">,</span> <span class="n">var_feature_column</span><span class="p">,</span> <span class="n">obs_subset_columns</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">file_info</span> <span class="ow">in</span> <span class="n">h5ad_or_adata</span>
+        <span class="p">]</span>
         <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_wrapper_extract_info</span><span class="p">,</span> <span class="n">_args</span><span class="p">)</span></div>
 
 
@@ -500,9 +521,29 @@
 <span class="sd">        List of cell counts across files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_cellcounts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">]</span>
-
+    <span class="n">_cellcounts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">_cellcounts</span></div>
+
+
+
+<div class="viewcode-block" id="scan_for_cellmetadata">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.utils_anndata.scan_for_cellmetadata">[docs]</a>
+<span class="k">def</span> <span class="nf">scan_for_cellmetadata</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and merge all cell metadata data frames across files.</span>
+
+<span class="sd">    Needs calling :py:func:`~.extract_anndata_info` first.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cache:</span>
+<span class="sd">            Info extracted by typically running</span>
+<span class="sd">            :py:func:`~.extract_anndata_info`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A :py:class:`pandas.Dataframe` containing all cell metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_cellmeta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">_cellmeta</span></div>
 
 </pre></div>
         </article>
@@ -536,7 +577,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a47416a6"></script>
+</div><script src="../../_static/documentation_options.js?v=6ffd866b"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

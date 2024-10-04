@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>cellarr.buildutils_tiledb_array - cellarr 0.2.3 documentation</title>
+        <title>cellarr.buildutils_tiledb_array - cellarr 0.2.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.2.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.3 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -275,14 +275,14 @@
     <span class="n">matrix_dim_dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span>
     <span class="n">is_sparse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tiledb file with the provided attributes to persistent storage.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a TileDB file with the provided attributes to persistent storage.</span>
 
 <span class="sd">    This will materialize the array directory and all</span>
 <span class="sd">    related schema files.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tiledb_uri_path:</span>
-<span class="sd">            Path to create the array tiledb file.</span>
+<span class="sd">            Path to create the array TileDB file.</span>
 
 <span class="sd">        x_dim_length:</span>
 <span class="sd">            Number of entries along the x/fastest-changing dimension.</span>
@@ -364,14 +364,14 @@
     <span class="n">row_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append and save a :py:class:`~scipy.sparse.csr_matrix` to tiledb.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append and save a :py:class:`~scipy.sparse.csr_matrix` to TileDB.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tiledb_array_uri:</span>
-<span class="sd">            Tiledb array object or path to a tiledb object.</span>
+<span class="sd">            TileDB array object or path to a TileDB object.</span>
 
 <span class="sd">        matrix:</span>
-<span class="sd">            Input matrix to write to tiledb, must be a</span>
+<span class="sd">            Input matrix to write to TileDB, must be a</span>
 <span class="sd">            :py:class:`~scipy.sparse.csr_matrix` matrix.</span>
 
 <span class="sd">        value_dtype:</span>
@@ -428,7 +428,7 @@
 <div class="viewcode-block" id="optimize_tiledb_array">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.buildutils_tiledb_array.optimize_tiledb_array">[docs]</a>
 <span class="k">def</span> <span class="nf">optimize_tiledb_array</span><span class="p">(</span><span class="n">tiledb_array_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Consolidate tiledb fragments.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Consolidate TileDB fragments.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimizing </span><span class="si">{</span><span class="n">tiledb_array_uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -478,7 +478,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a47416a6"></script>
+</div><script src="../../_static/documentation_options.js?v=6ffd866b"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
