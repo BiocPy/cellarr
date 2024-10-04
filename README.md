@@ -27,7 +27,8 @@ Building a `CellArrDataset` generates 4 TileDB files in the specified output dir
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
 - A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
-to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample metadata attributes.
+to store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the same cell,
+gene, sample metadata attributes.
 
 The organization is inspired by the [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) data structure.
 
@@ -47,7 +48,8 @@ import numpy as np
 import tempfile
 from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
 
-# Create a temporary directory
+# Create a temporary directory, this is where the
+# output files are created. Pick your location here.
 tempdir = tempfile.mkdtemp()
 
 # Read AnnData objects
@@ -83,6 +85,28 @@ some genes are unmeasured or ordered differently in the original experiments.
 
 ***Note: The objects to build the `CellArrDataset` are expected to be fairly consistent, especially along the feature dimension.
 if these are `AnnData` or `H5AD`objects, all objects must contain an index (in the `var` slot) specifying the gene symbols.***
+
+#### Optionally provide cell metadata columns
+
+If the cell metadata is inconsistent across datasets, you can provide a list of
+columns to standardize during extraction. Any missing columns will be filled with
+the default value `'NA'`, and their data type should be specified as `'ascii'` in
+`CellMetadataOptions`. For example, this build process will create a TileDB store
+for cell metadata containing the columns `'cellids'` and `'tissue'`. If any dataset
+lacks one of these columns, the missing values will be automatically filled with `'NA'`.
+
+```python
+dataset = build_cellarrdataset(
+    output_path=tempdir,
+    files=[adata1, adata2],
+    matrix_options=MatrixOptions(dtype=np.float32),
+    cell_metadata_options=CellMetadataOptions(
+        column_types={"cellids": "ascii", "tissue": "ascii"}
+    ),
+)
+
+print(dataset)
+```
 
 Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
 

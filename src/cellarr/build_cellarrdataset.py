@@ -10,8 +10,8 @@ This method creates four TileDB files in the directory specified by `output_path
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
 - A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
-to store multiple different matrices, e.g. normalized, scaled for the same cell, gene, sample
-metadata attributes.
+to store multiple different matrices, e.g. 'normalized', 'scaled', 'counts' for the same
+cell, gene, sample metadata attributes.
 
 The TileDB matrix file is stored in a ``cell X gene`` orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
@@ -204,9 +204,14 @@ def build_cellarrdataset(
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
+    _subsets = cell_metadata_options.column_types
+    if _subsets is not None and len(_subsets) > 0:
+        _subsets = list(_subsets.keys())
+
     files_cache = uad.extract_anndata_info(
         files,
         var_feature_column=gene_annotation_options.feature_column,
+        obs_subset_columns=_subsets,
         num_threads=num_threads,
     )
 
@@ -215,7 +220,10 @@ def build_cellarrdataset(
     ####
     if gene_annotation is None:
         warnings.warn(
-            "Scanning all files for feature ids (e.g. gene symbols), this may take long",
+            (
+                "Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, ",
+                "Please also make sure you have enough memory.",
+            ),
             UserWarning,
         )
 
@@ -346,6 +354,20 @@ def build_cellarrdataset(
                 "cellarr_cell_index_in_sample": _cell_index_in_sample,
             }
         )
+
+        if (
+            cell_metadata_options.column_types is not None
+            and len(cell_metadata_options.column_types) > 0
+        ):
+            pd_cell_meta = uad.scan_for_cellmetadata(files_cache)
+            cell_metadata = pd.concat(
+                [
+                    cell_metadata.reset_index(drop=True),
+                    pd_cell_meta.reset_index(drop=True),
+                ],
+                axis=1,
+                sort=False,
+            )
     elif isinstance(cell_metadata, str):
         warnings.warn(
             "Scanning 'cell_metadata' csv file to count number of cells, this may take long",
@@ -362,7 +384,11 @@ def build_cellarrdataset(
             )
 
         warnings.warn(
-            "'cell_metadata' csv file is expected to contain mapping between cells and samples",
+            (
+                "'cell_metadata' csv file is expected to contain mapping between cells and samples",
+                "especially 'cellarr_sample' (which sample the cell comes from) and ",
+                "'cellarr_cell_index_in_sample' (index of the cell within the sample) columns.",
+            ),
             UserWarning,
         )
     elif isinstance(cell_metadata, pd.DataFrame):

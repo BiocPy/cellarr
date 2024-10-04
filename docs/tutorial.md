@@ -139,6 +139,28 @@ is automatically created. Hence the sample information provided must match
 the number of input files.
 :::
 
+## Optionally provide cell metadata columns
+
+If the cell metadata is inconsistent across datasets, you can provide a list of
+columns to standardize during extraction. Any missing columns will be filled with
+the default value `'NA'`, and their data type should be specified as `'ascii'` in
+`CellMetadataOptions`. For example, this build process will create a TileDB store
+for cell metadata containing the columns `'cellids'` and `'tissue'`. If any dataset
+lacks one of these columns, the missing values will be automatically filled with `'NA'`.
+
+```python
+dataset = build_cellarrdataset(
+    output_path=tempdir,
+    files=[adata1, adata2],
+    matrix_options=MatrixOptions(dtype=np.float32),
+    cell_metadata_options=CellMetadataOptions(
+        column_types={"cellids": "ascii", "tissue": "ascii"}
+    ),
+)
+
+print(dataset)
+```
+
 # Query a `CellArrDataset`
 
 Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.

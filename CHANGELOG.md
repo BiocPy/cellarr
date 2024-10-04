@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.2.2
+
+- Provide options to consistently extract cell metadata columns across datasets.
+- Update documentation and tests.
+
 ## Version 0.2.1
 
 * Implement dunder methods `__len__`,  `__repr__` and `__str__` for the `CellArrDatasetSlice` class
@@ -19,6 +24,6 @@ for single cells expression profiles, training labels, and study labels. The dat
 This is the first release of the package to support both creation and access to large
 collection of files based on TileDB.
 
-- Provide a build method to create the tiledb collection from a series of data objects.
+- Provide a build method to create the TileDB collection from a series of data objects.
 - Provides `CellArrDataset` class to query these objects on disk.
 - Implements access and coerce methods to interop with other experimental data packages.

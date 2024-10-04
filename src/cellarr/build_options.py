@@ -29,12 +29,17 @@ class CellMetadataOptions:
             Name of the TileDB file.
             Defaults to "cell_metadata".
 
+        column_names:
+            List of cell metadata columns to extract from each
+            data object. If a column is not available, it is
+            represented as 'NA'.
+
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb.
-
-            If `None`, all columns are cast as 'ascii'.
+            the TileDB. The TileDB will only contain the
+            columns listed here. If the column is not present in
+            a dataset, it is represented as 'NA'.
     """
 
     skip: bool = False
@@ -71,7 +76,7 @@ class GeneAnnotationOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb.
+            the TileDB.
 
             If `None`, all columns are cast as 'ascii'.
     """
@@ -151,7 +156,7 @@ class SampleMetadataOptions:
         column_types:
             A dictionary containing column names as keys
             and the value representing the type to in
-            the tiledb.
+            the TileDB.
 
             If `None`, all columns are cast as 'ascii'.
     """
