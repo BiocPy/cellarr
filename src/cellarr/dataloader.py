@@ -353,7 +353,7 @@ class DataModule(LightningDataModule):
             # limit validation celltypes to those in the training data
             self.val_df = self.val_df[
                 self.val_df[self.label_column_name].isin(
-                    self.data_df[self.label_column_name].unique()
+                    self.train_df[self.label_column_name].unique()
                 )
             ]
         else:
