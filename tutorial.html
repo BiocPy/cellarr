@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Usage Notes" href="notes.html" /><link rel="prev" title="cellarr" href="index.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>Cell Arrays - cellarr 0.2.4 documentation</title>
+        <title>Cell Arrays - cellarr 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.2.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -380,39 +380,36 @@ AnnData object with n_obs × n_vars = 1000 × 100
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">15</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">tempdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="c1"># # Read AnnData objects</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="c1"># adata1 = anndata.read_h5ad(&quot;path/to/object1.h5ad&quot;, &quot;r&quot;)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># # or just provide the path</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="c1"># adata2 = &quot;path/to/object2.h5ad&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> 
-<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="c1"># Build CellArrDataset</span>
-<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span>     <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-
-<span class="nn">File ~/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:222,</span> in <span class="ni">build_cellarrdataset</span><span class="nt">(files, output_path, gene_annotation, sample_metadata, cell_metadata, sample_metadata_options, cell_metadata_options, gene_annotation_options, matrix_options, optimize_tiledb, num_threads)</span>
-<span class="g g-Whitespace">    </span><span class="mi">218</span> <span class="c1">####</span>
-<span class="g g-Whitespace">    </span><span class="mi">219</span> <span class="c1">## Writing gene annotation file</span>
-<span class="g g-Whitespace">    </span><span class="mi">220</span> <span class="c1">####</span>
-<span class="g g-Whitespace">    </span><span class="mi">221</span> <span class="k">if</span> <span class="n">gene_annotation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">222</span>     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span>         <span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span>             <span class="s2">&quot;Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, &quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span>             <span class="s2">&quot;Please also make sure you have enough memory.&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">226</span>         <span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">227</span>         <span class="ne">UserWarning</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">228</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">230</span>     <span class="n">gene_set</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">scan_for_features</span><span class="p">(</span><span class="n">files_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">231</span>     <span class="n">gene_set</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)</span>
-
-<span class="ne">TypeError</span>: expected string or bytes-like object
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:222: UserWarning: Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, Please also make sure you have enough memory.
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:284: UserWarning: Scanning all files to compute cell counts, this may take long
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:291: UserWarning: Sample metadata is not provided, each dataset in &#39;files&#39; is considered a sample
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:308: UserWarning: Scanning all files for feature ids (e.g. gene symbols), this may take long
+  warnings.warn(
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/cellarr/build_cellarrdataset.py:337: UserWarning: Scanning all files to compute cell counts, this may take long
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmp5zj6e8_d/gene_annotation
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+Optimizing /tmp/tmp5zj6e8_d/sample_metadata
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+Optimizing /tmp/tmp5zj6e8_d/cell_metadata
+Fragments before consolidation: 1
+Fragments after consolidation: 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimizing /tmp/tmp5zj6e8_d/counts
+Fragments before consolidation: 2
+Fragments after consolidation: 1
+class: CellArrDataset
+number_of_rows: 1100
+number_of_columns: 1000
+path: &#39;/tmp/tmp5zj6e8_d&#39;
 </pre></div>
 </div>
 </div>
@@ -482,6 +479,26 @@ lacks one of these columns, the missing values will be automatically filled with
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>shape: (1, 3)
+matrix slice:
+  (0, 0)	12.436595916748047
+  (0, 1)	22.075590133666992
+
+
+ gene_annotation slice:
+    cellarr_gene_index
+0               gene_1
+1              gene_10
+447           gene_500
+
+
+ cell_metadata slice:
+   cellarr_sample cellarr_cell_index_in_sample
+10       sample_1                           10
+</pre></div>
+</div>
+</div>
 </div>
 <p>This returns a <code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object that contains the matrix and metadata <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>’s along the cell and gene axes.</p>
 <p>Users can easily convert these to analysis-ready representations</p>
@@ -492,6 +509,32 @@ lacks one of these columns, the missing values will be automatically filled with
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> as summarizedexperiment:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_summarizedexperiment</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>as anndata:
+AnnData object with n_obs × n_vars = 1 × 3
+    obs: &#39;cellarr_sample&#39;, &#39;cellarr_cell_index_in_sample&#39;
+    var: &#39;cellarr_gene_index&#39;
+    layers: &#39;matrix&#39;
+
+
+ as summarizedexperiment:
+class: SummarizedExperiment
+dimensions: (3, 1)
+assays(1): [&#39;matrix&#39;]
+row_data columns(1): [&#39;cellarr_gene_index&#39;]
+row_names(3): [&#39;0&#39;, &#39;1&#39;, &#39;447&#39;]
+column_data columns(2): [&#39;cellarr_sample&#39;, &#39;cellarr_cell_index_in_sample&#39;]
+column_names(1): [&#39;10&#39;]
+metadata(0): 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:68: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
+/home/runner/work/cellarr/cellarr/.tox/docs/lib/python3.9/site-packages/anndata/_core/aligned_df.py:68: ImplicitModificationWarning: Transforming to str index.
+  warnings.warn(&quot;Transforming to str index.&quot;, ImplicitModificationWarning)
 </pre></div>
 </div>
 </div>
@@ -632,7 +675,7 @@ Additionally users may also provide the gene space to train their models.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6ffd866b"></script>
+</div><script src="_static/documentation_options.js?v=cb850272"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

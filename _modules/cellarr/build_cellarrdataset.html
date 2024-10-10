@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>cellarr.build_cellarrdataset - cellarr 0.2.4 documentation</title>
+        <title>cellarr.build_cellarrdataset - cellarr 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.2.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -472,10 +472,7 @@
     <span class="c1">####</span>
     <span class="k">if</span> <span class="n">gene_annotation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="p">(</span>
-                <span class="s2">&quot;Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, &quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Please also make sure you have enough memory.&quot;</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="s2">&quot;Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, Please also make sure you have enough memory.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -636,11 +633,7 @@
             <span class="p">)</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="p">(</span>
-                <span class="s2">&quot;&#39;cell_metadata&#39; csv file is expected to contain mapping between cells and samples&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;especially &#39;cellarr_sample&#39; (which sample the cell comes from) and &quot;</span><span class="p">,</span>
-                <span class="s2">&quot;&#39;cellarr_cell_index_in_sample&#39; (index of the cell within the sample) columns.&quot;</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="s2">&quot;&#39;cell_metadata&#39; csv file is expected to contain mapping between cells and samples especially &#39;cellarr_sample&#39; (which sample the cell comes from) and &#39;cellarr_cell_index_in_sample&#39; (index of the cell within the sample) columns.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_metadata</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -827,7 +820,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+</div><script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

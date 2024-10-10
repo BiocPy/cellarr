@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>cellarr.dataloader - cellarr 0.2.4 documentation</title>
+        <title>cellarr.dataloader - cellarr 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.2.4 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.2.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.4 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.2.5 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -279,52 +279,44 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tiledb</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">squeeze</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningDataModule</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">csr_matrix</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">WeightedRandomSampler</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">diags</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sampler</span>
 
 <span class="kn">from</span> <span class="nn">.queryutils_tiledb_frame</span> <span class="kn">import</span> <span class="n">subset_frame</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Tony Kuo&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
 
-<span class="c1"># Turn off multithreading to allow multiple pytorch dataloader workers</span>
-<span class="n">config</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Config</span><span class="p">()</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.compute_concurrency_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.io_concurrency_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.num_async_threads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.num_reader_threads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.num_tbb_threads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;sm.num_writer_threads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">config</span><span class="p">[</span><span class="s2">&quot;vfs.num_threads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
 
 <div class="viewcode-block" id="scDataset">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.scDataset">[docs]</a>
 <span class="k">class</span> <span class="nc">scDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell labels using</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that extends pytorch :py:class:`~torch.utils.data.Dataset` to enumerate cells and cell metadata using</span>
 <span class="sd">    TileDB.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="scDataset.__init__">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.scDataset.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data_df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="n">matrix_tdb</span><span class="p">:</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span>
-        <span class="n">matrix_shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
-        <span class="n">gene_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-        <span class="n">label_column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">study_column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">lognorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">target_sum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">,</span>
+        <span class="n">data_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">int2sample</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">sample2cells</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">sampling_by_class</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ``scDataset``.</span>
 
@@ -332,72 +324,51 @@
 <span class="sd">            data_df:</span>
 <span class="sd">                Pandas dataframe of valid cells.</span>
 
-<span class="sd">            matrix_tdb:</span>
-<span class="sd">                TileDB object containing the experimental data, e.g. counts.</span>
+<span class="sd">            int2sample:</span>
+<span class="sd">                A mapping of sample index to sample id.</span>
 
-<span class="sd">            matrix_shape:</span>
-<span class="sd">                Shape of the counts matrix.</span>
+<span class="sd">            sample2cells:</span>
+<span class="sd">                A mapping of sample id to cell indices.</span>
 
-<span class="sd">            gene_indices:</span>
-<span class="sd">                The index of genes to return.</span>
+<span class="sd">            sample_size:</span>
+<span class="sd">                Number of cells one sample.</span>
 
-<span class="sd">            label_column_name:</span>
-<span class="sd">                Column name containing cell labels.</span>
-
-<span class="sd">            study_column_name:</span>
-<span class="sd">                Column name containing study information.</span>
-
-<span class="sd">            lognorm:</span>
-<span class="sd">                Whether to return log-normalized expression instead of raw counts.</span>
-
-<span class="sd">            target_sum:</span>
-<span class="sd">                Target sum for log-normalization.</span>
+<span class="sd">            sampling_by_class:</span>
+<span class="sd">                Sample based on class counts, where sampling weight is inversely proportional to count.</span>
+<span class="sd">                Defaults to False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span> <span class="o">=</span> <span class="n">matrix_tdb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span> <span class="o">=</span> <span class="n">matrix_shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span> <span class="o">=</span> <span class="n">gene_indices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span> <span class="o">=</span> <span class="n">lognorm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span> <span class="o">=</span> <span class="n">target_sum</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span> <span class="o">=</span> <span class="n">label_column_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span> <span class="o">=</span> <span class="n">study_column_name</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span> <span class="o">=</span> <span class="n">int2sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample2cells</span> <span class="o">=</span> <span class="n">sample2cells</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span> <span class="o">=</span> <span class="n">sampling_by_class</span></div>
 
 
 <div class="viewcode-block" id="scDataset.__len__">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.scDataset.__len__">[docs]</a>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="scDataset.__getitem__">
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.scDataset.__getitem__">[docs]</a>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
-        <span class="c1"># data, label, study</span>
-        <span class="n">cell_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;cell_index&quot;</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;gene_index&quot;</span><span class="p">])),</span>
-            <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">]</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample2cells</span><span class="p">[</span><span class="n">sample</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">:</span>
+            <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample2cells</span><span class="p">[</span><span class="n">sample</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span><span class="p">:</span>
+                <span class="n">sample_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample2cells</span><span class="p">[</span><span class="n">sample</span><span class="p">],</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">sample_df</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                    <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s2">&quot;sample_weight&quot;</span>
+                <span class="p">)</span>
+                <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">sample_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample2cells</span><span class="p">[</span><span class="n">sample</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">)</span>
 
-        <span class="n">X</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span><span class="p">:</span>
-            <span class="n">counts_per_cell</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">counts_per_cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">counts_per_cell</span><span class="p">)</span>
-            <span class="n">counts_per_cell</span> <span class="o">=</span> <span class="n">counts_per_cell</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">/</span> <span class="n">counts_per_cell</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">log1p</span><span class="p">()</span>
-
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">],</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="scDataset.__repr__">
@@ -409,7 +380,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
         <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_cells=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_genes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">output</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
 
         <span class="k">return</span> <span class="n">output</span></div>
@@ -422,9 +392,68 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_cells: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_genes: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="BaseBatchSampler">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.BaseBatchSampler">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseBatchSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simplest sampler class for composition of samples in minibatch.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseBatchSampler.__init__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.BaseBatchSampler.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">int2sample</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">bsz</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_df:</span>
+<span class="sd">                DataFrame with columns &quot;study::::sample&quot;</span>
+
+<span class="sd">            int2sample:</span>
+<span class="sd">                Dictionary mapping integer to sample id</span>
+
+<span class="sd">            bsz:</span>
+<span class="sd">                Batch size</span>
+
+<span class="sd">            shuffle:</span>
+<span class="sd">                Whether to shuffle the samples across epochs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bsz</span> <span class="o">=</span> <span class="n">bsz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span> <span class="o">=</span> <span class="n">int2sample</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;study::::sample&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BaseBatchSampler.__len__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.BaseBatchSampler.__len__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsz</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsz</span></div>
+
+
+<div class="viewcode-block" id="BaseBatchSampler.__iter__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.BaseBatchSampler.__iter__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">batch_list</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int2sample</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
+            <span class="n">batch_list</span> <span class="o">=</span> <span class="n">batch_list</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">batch_list</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="n">batch</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+</div>
 
 
 
@@ -447,13 +476,23 @@
         <span class="n">matrix_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;counts&quot;</span><span class="p">,</span>
         <span class="n">label_column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;celltype_id&quot;</span><span class="p">,</span>
         <span class="n">study_column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;study&quot;</span><span class="p">,</span>
+        <span class="n">sample_column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cellarr_sample&quot;</span><span class="p">,</span>
         <span class="n">val_studies</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">gene_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">lognorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">target_sum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">,</span>
+        <span class="n">sparse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">sampling_by_class</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">remove_singleton_classes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">min_sample_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">nan_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
+        <span class="n">sampler_cls</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="n">BaseBatchSampler</span><span class="p">,</span>
+        <span class="n">dataset_cls</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="n">scDataset</span><span class="p">,</span>
+        <span class="n">persistent_workers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">multiprocessing_context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;spawn&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a ``DataModule``.</span>
 
@@ -487,11 +526,16 @@
 <span class="sd">                If None, all genes from the `gene_annotation` are used for training.</span>
 
 <span class="sd">            batch_size:</span>
-<span class="sd">                Batch size to use.</span>
-<span class="sd">                Defaults to 1000.</span>
+<span class="sd">                Batch size to use, corresponding to the number of samples in a mini-batch.</span>
+<span class="sd">                Defaults to 100.</span>
+
+<span class="sd">            sample_size:</span>
+<span class="sd">                Size of each sample use in a mini-batch, corresponding to the number of cells in a sample.</span>
+<span class="sd">                Defaults to 100.</span>
 
 <span class="sd">            num_workers:</span>
 <span class="sd">                The number of worker threads for dataloaders.</span>
+<span class="sd">                Defaults to 1.</span>
 
 <span class="sd">            lognorm:</span>
 <span class="sd">                Whether to return log-normalized expression instead of raw counts.</span>
@@ -499,9 +543,40 @@
 <span class="sd">            target_sum:</span>
 <span class="sd">                Target sum for log-normalization.</span>
 
+<span class="sd">            sparse:</span>
+<span class="sd">                Whether to return a sparse tensor.</span>
+<span class="sd">                Defaults to False.</span>
+
+<span class="sd">            sampling_by_class:</span>
+<span class="sd">                Sample based on class counts, where sampling weight is inversely proportional to count.</span>
+<span class="sd">                If False, use random sampling. Defaults to False.</span>
+
+<span class="sd">            remove_singleton_classes:</span>
+<span class="sd">                Exclude cells with classes that exist in only one sample.</span>
+<span class="sd">                Defaults to False.</span>
+
+<span class="sd">            min_sample_size:</span>
+<span class="sd">                Set a minimum number of cells in a sample for it to be valid.</span>
+<span class="sd">                Defaults to None</span>
+
 <span class="sd">            nan_string:</span>
 <span class="sd">                A string representing NaN.</span>
 <span class="sd">                Defaults to &quot;nan&quot;.</span>
+
+<span class="sd">            sampler_cls:</span>
+<span class="sd">                Sampler class to use for batching.</span>
+<span class="sd">                Defauls to BaseBatchSampler.</span>
+
+<span class="sd">            dataset_cls: Dataset, default: scDataset</span>
+<span class="sd">                Base Dataset class to use.</span>
+<span class="sd">                Defaults to scDataset.</span>
+
+<span class="sd">            persistent_workers:</span>
+<span class="sd">                If True, uses persistent workers in the DataLoaders.</span>
+
+<span class="sd">            multiprocessing_context:</span>
+<span class="sd">                Multiprocessing context to use for the DataLoaders.</span>
+<span class="sd">                Defaults to &quot;spawn&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -512,11 +587,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">val_studies</span> <span class="o">=</span> <span class="n">val_studies</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span> <span class="o">=</span> <span class="n">label_column_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span> <span class="o">=</span> <span class="n">study_column_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span> <span class="o">=</span> <span class="n">sample_column_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gene_order</span> <span class="o">=</span> <span class="n">gene_order</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span> <span class="o">=</span> <span class="n">lognorm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span> <span class="o">=</span> <span class="n">target_sum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span> <span class="o">=</span> <span class="n">sparse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span> <span class="o">=</span> <span class="n">sampling_by_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_singleton_classes</span> <span class="o">=</span> <span class="n">remove_singleton_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_sample_size</span> <span class="o">=</span> <span class="n">min_sample_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nan_string</span> <span class="o">=</span> <span class="n">nan_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_cls</span> <span class="o">=</span> <span class="n">sampler_cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_cls</span> <span class="o">=</span> <span class="n">dataset_cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persistent_workers</span> <span class="o">=</span> <span class="n">persistent_workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiprocessing_context</span> <span class="o">=</span> <span class="n">multiprocessing_context</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata_uri</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
@@ -525,7 +611,7 @@
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_annotation_uri</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_uri</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_uri</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span> <span class="o">=</span> <span class="p">(</span>
@@ -533,48 +619,31 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">gene_annotation_tdb</span><span class="o">.</span><span class="n">nonempty_domain</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># limit to cells with labels</span>
-        <span class="n">query_condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="si">}</span><span class="s2"> != &#39;</span><span class="si">{</span><span class="n">nan_string</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">subset_frame</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata_tdb</span><span class="p">,</span>
-            <span class="n">query_condition</span><span class="p">,</span>
-            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">],</span>
-        <span class="p">)</span>
-
-        <span class="c1"># limit to labels that exist in at least 2 studies</span>
-        <span class="n">study_celltype_counts</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]]</span>
-            <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">size</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">well_represented_labels</span> <span class="o">=</span> <span class="n">study_celltype_counts</span><span class="p">[</span><span class="n">study_celltype_counts</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">well_represented_labels</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_db</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_studies</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># split out validation studies</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_studies</span><span class="p">)</span>
-            <span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
                 <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_studies</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="c1"># limit validation celltypes to those in the training data</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
                 <span class="p">)</span>
-            <span class="p">]</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training data size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training data size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation data size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation data size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label2int</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">)}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">int2label</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label2int</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
@@ -589,37 +658,39 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">genes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
                 <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gene not found: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gene not found: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">))]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_study</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">scDataset</span><span class="p">(</span>
-            <span class="n">data_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span>
-            <span class="n">matrix_tdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span><span class="p">,</span>
-            <span class="n">matrix_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">,</span>
-            <span class="n">gene_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">,</span>
-            <span class="n">label_column_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">,</span>
-            <span class="n">study_column_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span>
-            <span class="n">lognorm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span><span class="p">,</span>
-            <span class="n">target_sum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span><span class="p">,</span>
+        <span class="n">gp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampleID</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_int2sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_sample2cells</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;label_int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label2int</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_cls</span><span class="p">(</span>
+            <span class="n">data_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">,</span>
+            <span class="n">int2sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_int2sample</span><span class="p">,</span>
+            <span class="n">sample2cells</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_sample2cells</span><span class="p">,</span>
+            <span class="n">sample_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+            <span class="n">sampling_by_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_study</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">scDataset</span><span class="p">(</span>
+            <span class="n">gp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampleID</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_int2sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_sample2cells</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gp</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span><span class="s2">&quot;label_int&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label2int</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_cls</span><span class="p">(</span>
                 <span class="n">data_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">,</span>
-                <span class="n">matrix_tdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span><span class="p">,</span>
-                <span class="n">matrix_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">,</span>
-                <span class="n">gene_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">,</span>
-                <span class="n">label_column_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">,</span>
-                <span class="n">study_column_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span>
-                <span class="n">lognorm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span><span class="p">,</span>
-                <span class="n">target_sum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span><span class="p">,</span>
+                <span class="n">int2sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_int2sample</span><span class="p">,</span>
+                <span class="n">sample2cells</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_sample2cells</span><span class="p">,</span>
+                <span class="n">sample_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+                <span class="n">sampling_by_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span><span class="p">,</span>
             <span class="p">)</span></div>
 
 
@@ -631,40 +702,72 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="DataModule.get_sampler_weights">
-<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.DataModule.get_sampler_weights">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_sampler_weights</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">studies</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WeightedRandomSampler</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get weighted random sampler.</span>
+<div class="viewcode-block" id="DataModule.filter_db">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.dataloader.DataModule.filter_db">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># limit to cells with labels</span>
+        <span class="n">query_condition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="si">}</span><span class="s2"> != &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nan_string</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">subset_frame</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cell_metadata_tdb</span><span class="p">,</span>
+            <span class="n">query_condition</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            dataset:</span>
-<span class="sd">                Single cell dataset.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A WeightedRandomSampler object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">studies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">class_sample_count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-            <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">([</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">class_sample_count</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">class_sample_count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-            <span class="n">study_sample_count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">studies</span><span class="p">)</span>
-            <span class="n">class_sample_count</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">class_sample_count</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e4</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">class_sample_count</span>
-            <span class="p">}</span>
-            <span class="n">study_sample_count</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">study_sample_count</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e5</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">study_sample_count</span>
-            <span class="p">}</span>
-            <span class="n">sample_weights</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="mf">1.0</span> <span class="o">/</span> <span class="n">class_sample_count</span><span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">/</span> <span class="n">study_sample_count</span><span class="p">[</span><span class="n">studies</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
-                <span class="p">]</span>
+        <span class="c1"># filter out samples without enough cells</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_sample_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_sample_size</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">WeightedRandomSampler</span><span class="p">(</span><span class="n">sample_weights</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_weights</span><span class="p">))</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">study_sample_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># concat study and sample in the case there are duplicate sample names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampleID</span> <span class="o">=</span> <span class="s2">&quot;study::::sample&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s2">&quot;::::&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_singleton_classes</span><span class="p">:</span>
+            <span class="c1"># limit to celltypes that exist in at least 2 samples</span>
+            <span class="n">celltype_counts</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">sampleID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]]</span>
+                <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">size</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">well_represented_labels</span> <span class="o">=</span> <span class="n">celltype_counts</span><span class="p">[</span><span class="n">celltype_counts</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">well_represented_labels</span><span class="p">)</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_by_class</span><span class="p">:</span>
+            <span class="c1"># get sampling weights based on class</span>
+            <span class="n">class_sample_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+            <span class="n">class_sample_count</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">class_sample_count</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e4</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">class_sample_count</span><span class="o">.</span><span class="n">index</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;sample_weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">label_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">class_sample_count</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataModule.collate">
@@ -677,17 +780,45 @@
 <span class="sd">                Batch to collate.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A Tuple[torch.Tensor, torch.Tensor, list] containing information</span>
-<span class="sd">            on the collated tensors.</span>
+<span class="sd">            tuple</span>
+<span class="sd">                A Tuple[torch.Tensor, torch.Tensor, np.ndarray, np.ndarray] containing information</span>
+<span class="sd">                corresponding to [input, label, study, sample]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">profiles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">studies</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">))</span>
-        <span class="p">)</span>  <span class="c1"># tuple([list(t) for t in zip(*batch)])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_tdb</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;cell_index&quot;</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;gene_index&quot;</span><span class="p">])),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_shape</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">]</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lognorm</span><span class="p">:</span>
+            <span class="c1"># normalize to target sum</span>
+            <span class="n">row_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># row sums as a 1D array</span>
+            <span class="c1"># avoid division by zero by setting zero sums to one (they will remain zero after normalization)</span>
+            <span class="n">row_sums</span><span class="p">[</span><span class="n">row_sums</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># create a sparse diagonal matrix with the inverse of the row sums</span>
+            <span class="n">inv_row_sums</span> <span class="o">=</span> <span class="n">diags</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">row_sums</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+            <span class="c1"># normalize the rows to sum to 1</span>
+            <span class="n">normalized_matrix</span> <span class="o">=</span> <span class="n">inv_row_sums</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="c1"># scale the rows sum to target_sum</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">normalized_matrix</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_sum</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">log1p</span><span class="p">()</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sparse</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_sparse_csr</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">squeeze</span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">profiles</span><span class="p">))),</span>
-            <span class="n">Tensor</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">label2int</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]),</span>  <span class="c1"># text to int labels</span>
-            <span class="n">studies</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;label_int&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">study_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -700,14 +831,21 @@
 <span class="sd">            A DataLoader object containing the training dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_cls</span><span class="p">(</span>
+            <span class="n">data_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">,</span>
+            <span class="n">int2sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_int2sample</span><span class="p">,</span>
+            <span class="n">bsz</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">sampler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sampler_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_study</span><span class="p">),</span>
             <span class="n">collate_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">batch_sampler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_sampler</span><span class="p">,</span>
+            <span class="n">persistent_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_workers</span><span class="p">,</span>
+            <span class="n">multiprocessing_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">multiprocessing_context</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -723,14 +861,21 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_cls</span><span class="p">(</span>
+            <span class="n">data_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="p">,</span>
+            <span class="n">int2sample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_int2sample</span><span class="p">,</span>
+            <span class="n">bsz</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
-            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">sampler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sampler_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_study</span><span class="p">),</span>
             <span class="n">collate_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">,</span>
+            <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">batch_sampler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_sampler</span><span class="p">,</span>
+            <span class="n">persistent_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_workers</span><span class="p">,</span>
+            <span class="n">multiprocessing_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">multiprocessing_context</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -742,7 +887,7 @@
 <span class="sd">            A string representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
-        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_training_cells=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_training_cells=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, number_of_validation_cells=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -759,7 +904,7 @@
 <span class="sd">            A pretty-printed string containing the contents of this object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_training_cells: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_training_cells: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;number_of_validation_cells: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -801,7 +946,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+</div><script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
