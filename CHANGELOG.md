@@ -1,8 +1,8 @@
 # Changelog
 
-## Version 0.2.4
+## Version 0.2.4 - 0.2.5
 
-- Provide options to consistently extract cell metadata columns across datasets.
+- Provide options to extract an expected set of cell metadata columns across datasets.
 - Update documentation and tests.
 
 ## Version 0.2.1 - 0.2.3
