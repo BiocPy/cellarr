@@ -220,10 +220,7 @@ def build_cellarrdataset(
     ####
     if gene_annotation is None:
         warnings.warn(
-            (
-                "Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, ",
-                "Please also make sure you have enough memory.",
-            ),
+            "Scanning all files for feature ids (e.g. gene symbols) and cell annotations, this may take long, Please also make sure you have enough memory.",
             UserWarning,
         )
 
@@ -384,11 +381,7 @@ def build_cellarrdataset(
             )
 
         warnings.warn(
-            (
-                "'cell_metadata' csv file is expected to contain mapping between cells and samples",
-                "especially 'cellarr_sample' (which sample the cell comes from) and ",
-                "'cellarr_cell_index_in_sample' (index of the cell within the sample) columns.",
-            ),
+            "'cell_metadata' csv file is expected to contain mapping between cells and samples especially 'cellarr_sample' (which sample the cell comes from) and 'cellarr_cell_index_in_sample' (index of the cell within the sample) columns.",
             UserWarning,
         )
     elif isinstance(cell_metadata, pd.DataFrame):
