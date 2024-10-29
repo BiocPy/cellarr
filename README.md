@@ -14,6 +14,9 @@ To get started, install the package from [PyPI](https://pypi.org/project/cellarr
 
 ```bash
 pip install cellarr
+
+## to include optional dependencies
+pip install cellarr[optional]
 ```
 
 ## Usage
