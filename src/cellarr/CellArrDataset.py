@@ -363,7 +363,7 @@ class CellArrDataset:
                 Integer indices, a boolean filter, or (if the current object is
                 named) names specifying the rows (or cells) to retain.
 
-            cell_subset:
+            gene_subset:
                 Integer indices, a boolean filter, or (if the current object is
                 named) names specifying the columns (or features/genes) to retain.
 
