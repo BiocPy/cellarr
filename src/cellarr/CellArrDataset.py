@@ -41,6 +41,7 @@ class CellArrDataset:
         gene_annotation_uri: str = "gene_annotation",
         cell_metadata_uri: str = "cell_metadata",
         sample_metadata_uri: str = "sample_metadata",
+        config: tiledb.Config = None,
     ):
         """Initialize a ``CellArrDataset``.
 
@@ -61,22 +62,32 @@ class CellArrDataset:
 
             sample_metadata_uri:
                 Relative path to sample metadata store.
+
+            config:
+                Custom TileDB configuration. If None, defaults will be used.
         """
 
         if not os.path.isdir(dataset_path):
             raise ValueError("'dataset_path' is not a directory.")
 
+        if config is None:
+            config = tiledb.Config()
+
+        ctx = tiledb.Ctx(config)
+
         self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
-        self._matrix_tdb_tdb = tiledb.open(f"{dataset_path}/{matrix_tdb_uri}", "r")
+        self._matrix_tdb_tdb = tiledb.open(
+            f"{dataset_path}/{matrix_tdb_uri}", "r", ctx=ctx
+        )
         self._gene_annotation_tdb = tiledb.open(
-            f"{dataset_path}/{gene_annotation_uri}", "r"
+            f"{dataset_path}/{gene_annotation_uri}", "r", ctx=ctx
         )
         self._cell_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{cell_metadata_uri}", "r"
+            f"{dataset_path}/{cell_metadata_uri}", "r", ctx=ctx
         )
         self._sample_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{sample_metadata_uri}", "r"
+            f"{dataset_path}/{sample_metadata_uri}", "r", ctx=ctx
         )
 
     def __del__(self):
