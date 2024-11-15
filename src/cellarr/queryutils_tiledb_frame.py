@@ -68,7 +68,10 @@ def subset_frame(
 
     re_null = re.compile(pattern="\x00")  # replace null strings with nan
     result = data.replace(regex=re_null, value=np.nan)
-    result = result.dropna()
+
+    # Dropna if the subset is a string
+    result = result.dropna() if isinstance(subset, str) else result
+
     return result
 
 
