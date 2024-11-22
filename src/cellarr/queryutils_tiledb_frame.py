@@ -126,7 +126,12 @@ def subset_array(
         (data["data"], (data["cell_index"], data["gene_index"])),
         shape=shape,
     ).tocsr()
-    mat = mat[row_subset, column_subset]
+
+    if row_subset is not None:
+        mat = mat[row_subset, :]
+
+    if column_subset is not None:
+        mat = mat[:, column_subset]
 
     return mat
 

@@ -148,12 +148,3 @@ def test_autoencoder():
     autoencoder.save_all(model_path=os.path.join(tempdir, "test"))
     assert os.path.isfile(os.path.join(tempdir, "test", "encoder.ckpt"))
     assert os.path.isfile(os.path.join(tempdir, "test", "decoder.ckpt"))
-
-
-def main():
-    test_dataloader()
-    test_autoencoder()
-
-
-if __name__ == "__main__":
-    main()
