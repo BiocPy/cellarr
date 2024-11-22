@@ -86,7 +86,6 @@ def test_dataloader():
     dataloader = datamodule.train_dataloader()
     batch = next(iter(dataloader))
     data, labels, studies, samples = batch
-    print(data, labels, studies, samples)
     assert data.shape == (30, len(datamodule.gene_indices))
     assert len(labels) == 30
     assert len(set(samples)) == 3
@@ -128,7 +127,6 @@ def test_autoencoder():
         # sampling_by_class=True,
         # remove_singleton_classes=True,
     )
-    print(datamodule)
 
     autoencoder = AutoEncoder(
         n_genes=len(datamodule.gene_indices),
@@ -150,12 +148,3 @@ def test_autoencoder():
     autoencoder.save_all(model_path=os.path.join(tempdir, "test"))
     assert os.path.isfile(os.path.join(tempdir, "test", "encoder.ckpt"))
     assert os.path.isfile(os.path.join(tempdir, "test", "decoder.ckpt"))
-
-
-def main():
-    test_dataloader()
-    test_autoencoder()
-
-
-if __name__ == "__main__":
-    main()

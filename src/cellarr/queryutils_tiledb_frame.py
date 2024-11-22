@@ -1,12 +1,12 @@
+import re
 from functools import lru_cache
 from typing import List, Union
 from warnings import warn
 
-import pandas as pd
 import numpy as np
-from scipy import sparse as sp
+import pandas as pd
 import tiledb
-import re
+from scipy import sparse as sp
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -94,7 +94,7 @@ def subset_array(
     row_subset: Union[slice, list, tuple],
     column_subset: Union[slice, list, tuple],
     shape: tuple,
-) -> sp.coo_matrix:
+) -> sp.csr_matrix:
     """Subset a tiledb storing array data.
 
     Uses multi_index to slice.
@@ -113,18 +113,25 @@ def subset_array(
             Shape of the entire matrix.
 
     Returns:
-        A sparse array in a coordinate format.
+        A sparse array in a csr format.
     """
     data = tiledb_obj.multi_index[row_subset, column_subset]
 
-    _cell_rows, _ = _remap_index(data["cell_index"])
-    _gene_cols, _ = _remap_index(data["gene_index"])
-
-    print("shape:", shape)
-    mat = sp.coo_matrix(
-        (data["data"], (_cell_rows, _gene_cols)),
-        shape=shape,
+    shape = (
+        tiledb_obj.nonempty_domain()[0][1] + 1,
+        tiledb_obj.nonempty_domain()[1][1] + 1,
     )
+
+    mat = sp.coo_matrix(
+        (data["data"], (data["cell_index"], data["gene_index"])),
+        shape=shape,
+    ).tocsr()
+
+    if row_subset is not None:
+        mat = mat[row_subset, :]
+
+    if column_subset is not None:
+        mat = mat[:, column_subset]
 
     return mat
 
