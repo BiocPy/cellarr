@@ -42,21 +42,33 @@ Example:
         import anndata
         import numpy as np
         import tempfile
-        from cellarr import build_cellarrdataset, CellArrDataset, MatrixOptions
+        from cellarr import (
+            build_cellarrdataset,
+            CellArrDataset,
+            MatrixOptions,
+        )
 
         # Create a temporary directory
         tempdir = tempfile.mkdtemp()
 
         # Read AnnData objects
-        adata1 = anndata.read_h5ad("path/to/object1.h5ad", "r")
+        adata1 = anndata.read_h5ad(
+            "path/to/object1.h5ad",
+            "r",
+        )
         # or just provide the path
         adata2 = "path/to/object2.h5ad"
 
         # Build CellArrDataset
         dataset = build_cellarrdataset(
             output_path=tempdir,
-            files=[adata1, adata2],
-            matrix_options=MatrixOptions(dtype=np.float32),
+            files=[
+                adata1,
+                adata2,
+            ],
+            matrix_options=MatrixOptions(
+                dtype=np.float32
+            ),
         )
 """
 

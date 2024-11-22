@@ -8,11 +8,21 @@ Example:
 
     .. code-block:: python
 
-        from cellarr import CellArrDataset
+        from cellarr import (
+            CellArrDataset,
+        )
 
-        cd = CellArrDataset(dataset_path="/path/to/cellar/dir")
-        gene_list = ["gene_1", "gene_95", "gene_50"]
-        result1 = cd[0, gene_list]
+        cd = CellArrDataset(
+            dataset_path="/path/to/cellar/dir"
+        )
+        gene_list = [
+            "gene_1",
+            "gene_95",
+            "gene_50",
+        ]
+        result1 = cd[
+            0, gene_list
+        ]
 
         print(result1)
 """

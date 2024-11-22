@@ -7,14 +7,18 @@ Example:
 
     .. code-block:: python
 
-        from cellarr.dataloader import DataModule
+        from cellarr.dataloader import (
+            DataModule,
+        )
 
         datamodule = DataModule(
             dataset_path="/path/to/cellar/dir",
             cell_metadata_uri="cell_metadata",
             gene_annotation_uri="gene_annotation",
             matrix_uri="counts",
-            val_studies=["test3"],
+            val_studies=[
+                "test3"
+            ],
             label_column_name="label",
             study_column_name="study",
             batch_size=100,
@@ -23,9 +27,19 @@ Example:
         )
 
         dataloader = datamodule.train_dataloader()
-        batch = next(iter(dataloader))
-        data, labels, studies = batch
-        print(data, labels, studies)
+        batch = next(
+            iter(dataloader)
+        )
+        (
+            data,
+            labels,
+            studies,
+        ) = batch
+        print(
+            data,
+            labels,
+            studies,
+        )
 """
 
 import os
