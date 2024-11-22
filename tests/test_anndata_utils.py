@@ -101,7 +101,6 @@ def test_extract_info():
     assert cell_counts[0] == 100
 
     cell_meta = cellarr.utils_anndata.scan_for_cellmetadata(cache)
-    print(cell_meta)
     assert cell_meta is not None
     assert len(cell_meta) == 100
     assert len(cell_meta.columns) == 2

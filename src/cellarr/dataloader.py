@@ -101,9 +101,7 @@ class scDataset(Dataset):
         else:
             if self.sampling_by_class:
                 sample_df = self.data_df.loc[self.sample2cells[sample], :].copy()
-                sample_df = sample_df.sample(
-                    n=self.sample_size, weights="sample_weight"
-                )
+                sample_df = sample_df.sample(n=self.sample_size, weights="sample_weight")
                 cell_idx = sample_df.index.tolist()
             else:
                 cell_idx = random.sample(self.sample2cells[sample], self.sample_size)
@@ -323,15 +321,9 @@ class DataModule(LightningDataModule):
         self.persistent_workers = persistent_workers
         self.multiprocessing_context = multiprocessing_context
 
-        self.cell_metadata_tdb = tiledb.open(
-            os.path.join(self.dataset_path, self.cell_metadata_uri), "r"
-        )
-        self.gene_annotation_tdb = tiledb.open(
-            os.path.join(self.dataset_path, self.gene_annotation_uri), "r"
-        )
-        self.matrix_tdb = tiledb.open(
-            os.path.join(self.dataset_path, self.matrix_uri), "r"
-        )
+        self.cell_metadata_tdb = tiledb.open(os.path.join(self.dataset_path, self.cell_metadata_uri), "r")
+        self.gene_annotation_tdb = tiledb.open(os.path.join(self.dataset_path, self.gene_annotation_uri), "r")
+        self.matrix_tdb = tiledb.open(os.path.join(self.dataset_path, self.matrix_uri), "r")
 
         self.matrix_shape = (
             self.cell_metadata_tdb.nonempty_domain()[0][1] + 1,
@@ -343,17 +335,11 @@ class DataModule(LightningDataModule):
         self.val_df = None
         if self.val_studies is not None:
             # split out validation studies
-            self.val_df = self.data_df[
-                self.data_df[self.study_column_name].isin(self.val_studies)
-            ].copy()
-            self.train_df = self.data_df[
-                ~self.data_df[self.study_column_name].isin(self.val_studies)
-            ].copy()
+            self.val_df = self.data_df[self.data_df[self.study_column_name].isin(self.val_studies)].copy()
+            self.train_df = self.data_df[~self.data_df[self.study_column_name].isin(self.val_studies)].copy()
             # limit validation celltypes to those in the training data
             self.val_df = self.val_df[
-                self.val_df[self.label_column_name].isin(
-                    self.train_df[self.label_column_name].unique()
-                )
+                self.val_df[self.label_column_name].isin(self.train_df[self.label_column_name].unique())
             ].copy()
         else:
             self.train_df = self.data_df
@@ -366,11 +352,7 @@ class DataModule(LightningDataModule):
         self.label2int = {label: i for i, label in enumerate(self.class_names)}
         self.int2label = {value: key for key, value in self.label2int.items()}
 
-        genes = (
-            self.gene_annotation_tdb.query(attrs=["cellarr_gene_index"])
-            .df[:]["cellarr_gene_index"]
-            .tolist()
-        )
+        genes = self.gene_annotation_tdb.query(attrs=["cellarr_gene_index"]).df[:]["cellarr_gene_index"].tolist()
         if self.gene_order is not None:
             self.gene_indices = []
             for x in self.gene_order:
@@ -385,9 +367,7 @@ class DataModule(LightningDataModule):
         gp = self.train_df.groupby(self.sampleID)
         self.train_int2sample = {i: x for i, x in enumerate(gp.groups.keys())}
         self.train_sample2cells = {x: gp.groups[x].tolist() for x in gp.groups.keys()}
-        self.train_df["label_int"] = self.train_df[self.label_column_name].map(
-            self.label2int
-        )
+        self.train_df["label_int"] = self.train_df[self.label_column_name].map(self.label2int)
         self.train_dataset = self.dataset_cls(
             data_df=self.train_df,
             int2sample=self.train_int2sample,
@@ -401,9 +381,7 @@ class DataModule(LightningDataModule):
             gp = self.val_df.groupby(self.sampleID)
             self.val_int2sample = {i: x for i, x in enumerate(gp.groups.keys())}
             self.val_sample2cells = {x: gp.groups[x].tolist() for x in gp.groups.keys()}
-            self.val_df["label_int"] = self.val_df[self.label_column_name].map(
-                self.label2int
-            )
+            self.val_df["label_int"] = self.val_df[self.label_column_name].map(self.label2int)
             self.val_dataset = self.dataset_cls(
                 data_df=self.val_df,
                 int2sample=self.val_int2sample,
@@ -432,29 +410,19 @@ class DataModule(LightningDataModule):
 
         # filter out samples without enough cells
         if self.min_sample_size is not None:
-            self.study_sample_df = self.data_df.groupby(
-                [self.study_column_name, self.sample_column_name]
-            ).size()
+            self.study_sample_df = self.data_df.groupby([self.study_column_name, self.sample_column_name]).size()
             self.study_sample_df = (
-                self.study_sample_df[self.study_sample_df >= self.min_sample_size]
-                .copy()
-                .reset_index()
+                self.study_sample_df[self.study_sample_df >= self.min_sample_size].copy().reset_index()
             )
             self.data_df = self.data_df[
-                self.data_df[self.study_column_name].isin(
-                    self.study_sample_df[self.study_column_name]
-                )
-                & self.data_df[self.sample_column_name].isin(
-                    self.study_sample_df[self.sample_column_name]
-                )
+                self.data_df[self.study_column_name].isin(self.study_sample_df[self.study_column_name])
+                & self.data_df[self.sample_column_name].isin(self.study_sample_df[self.sample_column_name])
             ].copy()
 
         # concat study and sample in the case there are duplicate sample names
         self.sampleID = "study::::sample"
         self.data_df[self.sampleID] = (
-            self.data_df[self.study_column_name]
-            + "::::"
-            + self.data_df[self.sample_column_name]
+            self.data_df[self.study_column_name] + "::::" + self.data_df[self.sample_column_name]
         )
 
         if self.remove_singleton_classes:
@@ -467,17 +435,12 @@ class DataModule(LightningDataModule):
                 .sort_values(ascending=False)
             )
             well_represented_labels = celltype_counts[celltype_counts > 1].index
-            self.data_df = self.data_df[
-                self.data_df[self.label_column_name].isin(well_represented_labels)
-            ].copy()
+            self.data_df = self.data_df[self.data_df[self.label_column_name].isin(well_represented_labels)].copy()
 
         if self.sampling_by_class:
             # get sampling weights based on class
             class_sample_count = self.data_df[self.label_column_name].value_counts()
-            class_sample_count = {
-                x: np.log1p(class_sample_count[x] / 1e4)
-                for x in class_sample_count.index
-            }
+            class_sample_count = {x: np.log1p(class_sample_count[x] / 1e4) for x in class_sample_count.index}
             self.data_df["sample_weight"] = self.data_df[self.label_column_name].apply(
                 lambda x: 1.0 / class_sample_count[x]
             )

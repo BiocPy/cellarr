@@ -77,18 +77,10 @@ class CellArrDataset:
 
         self._dataset_path = dataset_path
         # TODO: Maybe switch to on-demand loading of these objects
-        self._matrix_tdb_tdb = tiledb.open(
-            f"{dataset_path}/{matrix_tdb_uri}", "r", ctx=ctx
-        )
-        self._gene_annotation_tdb = tiledb.open(
-            f"{dataset_path}/{gene_annotation_uri}", "r", ctx=ctx
-        )
-        self._cell_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{cell_metadata_uri}", "r", ctx=ctx
-        )
-        self._sample_metadata_tdb = tiledb.open(
-            f"{dataset_path}/{sample_metadata_uri}", "r", ctx=ctx
-        )
+        self._matrix_tdb_tdb = tiledb.open(f"{dataset_path}/{matrix_tdb_uri}", "r", ctx=ctx)
+        self._gene_annotation_tdb = tiledb.open(f"{dataset_path}/{gene_annotation_uri}", "r", ctx=ctx)
+        self._cell_metadata_tdb = tiledb.open(f"{dataset_path}/{cell_metadata_uri}", "r", ctx=ctx)
+        self._sample_metadata_tdb = tiledb.open(f"{dataset_path}/{sample_metadata_uri}", "r", ctx=ctx)
 
     def __del__(self):
         self._matrix_tdb_tdb.close()
@@ -121,9 +113,7 @@ class CellArrDataset:
         res = qtd.get_a_column(self._cell_metadata_tdb, column_name=column_name)
         return res[column_name]
 
-    def get_cell_subset(
-        self, subset: Union[slice, tiledb.QueryCondition], columns=None
-    ) -> pd.DataFrame:
+    def get_cell_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None) -> pd.DataFrame:
         """Slice the ``cell_metadata`` store.
 
         Args:
@@ -155,9 +145,7 @@ class CellArrDataset:
                     _not_avail.append(col)
 
             if len(_not_avail) > 0:
-                raise ValueError(
-                    f"Columns '{', '.join(_not_avail)}' are not available."
-                )
+                raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
         return qtd.subset_frame(self._cell_metadata_tdb, subset=subset, columns=columns)
 
@@ -199,9 +187,7 @@ class CellArrDataset:
         _gene_index = self.get_gene_annotation_index()
         return qtd._match_to_list(_gene_index, query=query)
 
-    def get_gene_subset(
-        self, subset: Union[slice, List[str], tiledb.QueryCondition], columns=None
-    ) -> pd.DataFrame:
+    def get_gene_subset(self, subset: Union[slice, List[str], tiledb.QueryCondition], columns=None) -> pd.DataFrame:
         """Slice the ``gene_metadata`` store.
 
         Args:
@@ -236,16 +222,12 @@ class CellArrDataset:
                     _not_avail.append(col)
 
             if len(_not_avail) > 0:
-                raise ValueError(
-                    f"Columns '{', '.join(_not_avail)}' are not available."
-                )
+                raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(
-            self._gene_annotation_tdb, subset=subset, columns=columns
-        )
+        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns)
 
     ####
     ## Subset methods for the `sample_metadata` TileDB file.
@@ -272,9 +254,7 @@ class CellArrDataset:
         res = qtd.get_a_column(self._sample_metadata_tdb, column_name=column_name)
         return res[column_name]
 
-    def get_sample_subset(
-        self, subset: Union[slice, tiledb.QueryCondition], columns=None
-    ) -> pd.DataFrame:
+    def get_sample_subset(self, subset: Union[slice, tiledb.QueryCondition], columns=None) -> pd.DataFrame:
         """Slice the ``sample_metadata`` store.
 
         Args:
@@ -305,13 +285,9 @@ class CellArrDataset:
                     _not_avail.append(col)
 
             if len(_not_avail) > 0:
-                raise ValueError(
-                    f"Columns '{', '.join(_not_avail)}' are not available."
-                )
+                raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
-        return qtd.subset_frame(
-            self._sample_metadata_tdb, subset=subset, columns=columns
-        )
+        return qtd.subset_frame(self._sample_metadata_tdb, subset=subset, columns=columns)
 
     ####
     ## Subset methods for the `matrix` TileDB file.
@@ -355,9 +331,7 @@ class CellArrDataset:
                     shape=(len(subset[0]), len(subset[1])),
                 )
             else:
-                raise ValueError(
-                    f"`{type(self).__name__}` only supports 2-dimensional slicing."
-                )
+                raise ValueError(f"`{type(self).__name__}` only supports 2-dimensional slicing.")
 
     ####
     ## Subset methods by cell and gene dimensions.
@@ -440,13 +414,9 @@ class CellArrDataset:
             elif len(args) == 2:
                 return self.get_slice(args[0], args[1])
             else:
-                raise ValueError(
-                    f"`{type(self).__name__}` only supports 2-dimensional slicing."
-                )
+                raise ValueError(f"`{type(self).__name__}` only supports 2-dimensional slicing.")
 
-        raise TypeError(
-            "args must be a sequence or a scalar integer or string or a tuple of atmost 2 values."
-        )
+        raise TypeError("args must be a sequence or a scalar integer or string or a tuple of atmost 2 values.")
 
     ####
     ## Misc methods.
