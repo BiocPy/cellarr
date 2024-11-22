@@ -142,9 +142,7 @@ def consolidate_duplicate_symbols(
     if len(set(feature_ids)) == len(feature_ids):
         return matrix, feature_ids
 
-    return mopsy.apply(
-        consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1
-    )
+    return mopsy.apply(consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1)
 
 
 def _extract_info(
@@ -213,10 +211,7 @@ def extract_anndata_info(
             Defaults to False.
     """
     with Pool(num_threads) as p:
-        _args = [
-            (file_info, var_feature_column, obs_subset_columns)
-            for file_info in h5ad_or_adata
-        ]
+        _args = [(file_info, var_feature_column, obs_subset_columns) for file_info in h5ad_or_adata]
         return p.map(_wrapper_extract_info, _args)
 
 
