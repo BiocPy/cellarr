@@ -155,9 +155,7 @@ def consolidate_duplicate_symbols(
     if len(set(feature_ids)) == len(feature_ids):
         return matrix, feature_ids
 
-    return mopsy.apply(
-        consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1
-    )
+    return mopsy.apply(consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1)
 
 
 def _sanitize_frame_with_missing_cols(frame, expected_columns, num_cells):
@@ -197,12 +195,8 @@ def _extract_info(
 
     symbols_df = adata.var.copy().set_index(symbols)
 
-    symbols_df = _sanitize_frame_with_missing_cols(
-        symbols_df, var_subset_columns, adata.shape[1]
-    )
-    features_df = _sanitize_frame_with_missing_cols(
-        adata.obs, obs_subset_columns, adata.shape[0]
-    )
+    symbols_df = _sanitize_frame_with_missing_cols(symbols_df, var_subset_columns, adata.shape[1])
+    features_df = _sanitize_frame_with_missing_cols(adata.obs, obs_subset_columns, adata.shape[0])
 
     return symbols_df, features_df, adata.shape[0]
 
@@ -246,10 +240,7 @@ def extract_anndata_info(
             Defaults to False.
     """
     with Pool(num_threads) as p:
-        _args = [
-            (file_info, var_feature_column, var_subset_columns, obs_subset_columns)
-            for file_info in h5ad_or_adata
-        ]
+        _args = [(file_info, var_feature_column, var_subset_columns, obs_subset_columns) for file_info in h5ad_or_adata]
         return p.map(_wrapper_extract_info, _args)
 
 
