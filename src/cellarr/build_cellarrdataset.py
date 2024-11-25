@@ -312,6 +312,8 @@ def build_cellarrdataset(
     else:
         raise TypeError("'sample_metadata' is not an expected type.")
 
+    sample_metadata.reset_index(drop=True, inplace=True)
+
     if "cellarr_cell_counts" not in sample_metadata.columns:
         sample_metadata["cellarr_cell_counts"] = cell_counts
 
