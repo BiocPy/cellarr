@@ -204,7 +204,7 @@ class DataModule(LightningDataModule):
         dataset_path: str,
         cell_metadata_uri: str = "cell_metadata",
         gene_annotation_uri: str = "gene_annotation",
-        matrix_uri: str = "counts",
+        matrix_uri: str = "assays/counts",
         label_column_name: str = "celltype_id",
         study_column_name: str = "study",
         sample_column_name: str = "cellarr_sample",

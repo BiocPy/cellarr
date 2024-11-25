@@ -74,6 +74,7 @@ Example:
 
 import os
 import warnings
+from multiprocessing import Pool
 from typing import Dict, List, Union
 
 import anndata
@@ -132,7 +133,7 @@ def build_cellarrdataset(
         output_path:
             Path to where the output TileDB files should be stored.
 
-        gene_metadata:
+        gene_annotation:
             A :py:class:`~pandas.DataFrame` containing the feature/gene
             annotations across all objects.
 
@@ -216,14 +217,19 @@ def build_cellarrdataset(
     if not os.path.isdir(output_path):
         raise ValueError("'output_path' must be a directory.")
 
-    _subsets = cell_metadata_options.column_types
-    if _subsets is not None and len(_subsets) > 0:
-        _subsets = list(_subsets.keys())
+    _cell_col_subsets = cell_metadata_options.column_types
+    if _cell_col_subsets is not None and len(_cell_col_subsets) > 0:
+        _cell_col_subsets = list(_cell_col_subsets.keys())
+
+    _gene_col_subsets = gene_annotation_options.column_types
+    if _gene_col_subsets is not None and len(_gene_col_subsets) > 0:
+        _gene_col_subsets = list(_gene_col_subsets.keys())
 
     files_cache = uad.extract_anndata_info(
         files,
         var_feature_column=gene_annotation_options.feature_column,
-        obs_subset_columns=_subsets,
+        var_subset_columns=_gene_col_subsets,
+        obs_subset_columns=_cell_col_subsets,
         num_threads=num_threads,
     )
 
@@ -248,13 +254,15 @@ def build_cellarrdataset(
             "Using the index of the DataFrame to collect feature ids or gene symbols...",
             UserWarning,
         )
-        gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
+        if "cellarr_gene_index" not in gene_annotation.columns:
+            gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
     elif isinstance(gene_annotation, pd.DataFrame):
         warnings.warn(
             "Using the index of the DataFrame to collect feature ids or gene symbols...",
             UserWarning,
         )
-        gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
+        if "cellarr_gene_index" not in gene_annotation.columns:
+            gene_annotation["cellarr_gene_index"] = gene_annotation.index.tolist()
     else:
         raise TypeError("'gene_annotation' is not an expected type.")
 
@@ -279,9 +287,7 @@ def build_cellarrdataset(
     ####
     ## Writing the sample metadata file
     ####
-    _samples = []
-    for idx, _ in enumerate(files):
-        _samples.append(f"sample_{idx + 1}")
+    _samples = [f"sample_{idx + 1}" for idx in range(len(files))]
 
     warnings.warn(
         "Scanning all files to compute cell counts, this may take long",
@@ -306,18 +312,27 @@ def build_cellarrdataset(
     else:
         raise TypeError("'sample_metadata' is not an expected type.")
 
+    if "cellarr_cell_counts" not in sample_metadata.columns:
+        sample_metadata["cellarr_cell_counts"] = cell_counts
+
+    ## Add info on the cell indices for each sample
+    counter = sample_metadata["cellarr_cell_counts"].shift(1)
+    counter[0] = 0
+    sample_metadata["cellarr_sample_start_index"] = counter.cumsum().astype(int)
+    ends = sample_metadata["cellarr_sample_start_index"].shift(-1)
+    ends.iloc[-1] = int(sample_metadata["cellarr_cell_counts"].sum())
+    sample_metadata["cellarr_sample_end_index"] = ends.astype(int)
+
     if not sample_metadata_options.skip:
         warnings.warn(
             "Scanning all files for feature ids (e.g. gene symbols), this may take long",
             UserWarning,
         )
+
         if "cellarr_original_gene_set" not in sample_metadata.columns:
             gene_scan_set = uad.scan_for_features(files_cache, unique=False)
             gene_set_str = [",".join(x) for x in gene_scan_set]
             sample_metadata["cellarr_original_gene_set"] = gene_set_str
-
-        if "cellarr_cell_counts" not in sample_metadata.columns:
-            sample_metadata["cellarr_cell_counts"] = cell_counts
 
         _col_types = utf.infer_column_types(sample_metadata, sample_metadata_options.column_types)
 
@@ -408,48 +423,100 @@ def build_cellarrdataset(
     ####
     ## Writing the matrix file
     ####
-    if not matrix_options.skip:
-        gene_idx = gene_annotation["cellarr_gene_index"].tolist()
-        gene_set = {}
-        for i, x in enumerate(gene_idx):
-            gene_set[x] = i
 
-        _counts_uri = f"{output_path}/{matrix_options.tiledb_store_name}"
-        uta.create_tiledb_array(
-            _counts_uri,
-            matrix_attr_name=matrix_options.matrix_attr_name,
-            x_dim_dtype=cell_metadata_options.dtype,
-            y_dim_dtype=gene_annotation_options.dtype,
-            matrix_dim_dtype=matrix_options.dtype,
+    uta.create_group(output_path, "assays")
+    _mat_outpath = f"{output_path}/assays"
+
+    if isinstance(matrix_options, bopt.MatrixOptions):
+        matrix_options = [matrix_options]
+
+    gene_idx = gene_annotation["cellarr_gene_index"].tolist()
+    gene_set = {}
+    for i, x in enumerate(gene_idx):
+        gene_set[x] = i
+
+    mat_layers = {}
+    for mopt in matrix_options:
+        if mopt.matrix_name in mat_layers:
+            raise ValueError(
+                f"matrix '{mopt.matrix_name}' is already being processed into tiledb: {mat_layers['mopt.matrix_name']}."
+            )
+
+        if mopt.tiledb_store_name in mat_layers.values():
+            raise ValueError(
+                f"tiledb: {mat_layers['mopt.matrix_name']} is already being used for a different assay matrix."
+            )
+
+        mat_layers[mopt.matrix_name] = mopt.tiledb_store_name
+
+        if not mopt.skip:
+            _mat_uri = f"{_mat_outpath}/{mopt.tiledb_store_name}"
+            uta.create_tiledb_array(
+                _mat_uri,
+                matrix_attr_name=mopt.matrix_attr_name,
+                x_dim_dtype=cell_metadata_options.dtype,
+                y_dim_dtype=gene_annotation_options.dtype,
+                matrix_dim_dtype=mopt.dtype,
+            )
+
+    all_options = [
+        (
+            _mat_outpath,
+            matrix_options,
+            obj,
+            gene_set,
+            gene_annotation_options.feature_column,
+            sample_metadata["cellarr_sample_start_index"][idx],
         )
+        for idx, obj in enumerate(files)
+    ]
 
-        offset = 0
-        for fd in files:
-            mat = uad.remap_anndata(
-                fd,
-                gene_set,
-                var_feature_column=gene_annotation_options.feature_column,
-                layer_matrix_name=matrix_options.matrix_name,
-                consolidate_duplicate_gene_func=matrix_options.consolidate_duplicate_gene_func,
-            )
-            uta.write_csr_matrix_to_tiledb(
-                _counts_uri,
-                matrix=mat,
-                row_offset=offset,
-                value_dtype=matrix_options.dtype,
-            )
-            offset += int(mat.shape[0])
+    _wrapper_write_matrices(all_options, num_threads=num_threads)
 
-        if optimize_tiledb:
-            uta.optimize_tiledb_array(_counts_uri)
+    for mopt in matrix_options:
+        if not mopt.skip:
+            uri = f"{_mat_outpath}/{mopt.tiledb_store_name}"
+            uta.optimize_tiledb_array(uri)
 
+    massays = [mopt.tiledb_store_name for mopt in matrix_options]
     return CellArrDataset(
         dataset_path=output_path,
         sample_metadata_uri=sample_metadata_options.tiledb_store_name,
         cell_metadata_uri=cell_metadata_options.tiledb_store_name,
         gene_annotation_uri=gene_annotation_options.tiledb_store_name,
-        matrix_tdb_uri=matrix_options.tiledb_store_name,
+        matrix_tdb_uri=massays,
     )
+
+
+def _write_matrix(output_path, matrix_options, obj, gene_set, feature_column, sample_offset):
+    mats = uad.remap_anndata(
+        obj,
+        gene_set,
+        var_feature_column=feature_column,
+        layer_matrix_name=[mopt.matrix_name for mopt in matrix_options if mopt.skip is not True],
+        consolidate_duplicate_gene_func=[
+            mopt.consolidate_duplicate_gene_func for mopt in matrix_options if mopt.skip is not True
+        ],
+    )
+
+    for mopt in matrix_options:
+        uri = f"{output_path}/{mopt.tiledb_store_name}"
+        uta.write_csr_matrix_to_tiledb(
+            uri,
+            matrix=mats[mopt.matrix_name],
+            row_offset=sample_offset,
+            value_dtype=mopt.dtype,
+        )
+
+
+def _wrapper_write_matrix(args):
+    output_path, matrix_options, obj, gene_set, feature_column, sample_offset = args
+    return _write_matrix(output_path, matrix_options, obj, gene_set, feature_column, sample_offset)
+
+
+def _wrapper_write_matrices(options, num_threads):
+    with Pool(num_threads) as p:
+        p.map(_wrapper_write_matrix, options)
 
 
 def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):

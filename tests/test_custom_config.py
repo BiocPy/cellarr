@@ -48,7 +48,7 @@ def test_custom_config_cellarrdataset():
 
     cd = CellArrDataset(dataset_path=tempdir, config=config)
 
-    assert cd._matrix_tdb_tdb.schema.ctx.config()["sm.memory_budget"] == "100000000000"
+    assert cd._matrix_tdb["counts"].schema.ctx.config()["sm.memory_budget"] == "100000000000"
     assert (
         cd._gene_annotation_tdb.schema.ctx.config()["sm.memory_budget"]
         == "100000000000"

@@ -1,6 +1,6 @@
 import itertools
 from multiprocessing import Pool
-from typing import Any, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import anndata
 import mopsy
@@ -18,8 +18,8 @@ def remap_anndata(
     feature_set_order: dict,
     var_feature_column: str = "index",
     layer_matrix_name: Union[str, List[str]] = "counts",
-    consolidate_duplicate_gene_func=sum,
-) -> csr_matrix:
+    consolidate_duplicate_gene_func: Union[callable, List[callable]] = sum,
+) -> Dict[str, csr_matrix]:
     """Extract and remap the count matrix to the provided feature (gene) set order from the :py:class:`~anndata.AnnData`
     object.
 
@@ -50,7 +50,7 @@ def remap_anndata(
             to TileDB.
 
         consolidate_duplicate_gene_func:
-            Function to consolidate when the AnnData object contains
+            Function to consolidate when the `AnnData` object contains
             multiple rows with the same feature id or gene symbol.
 
             Defaults to :py:func:`sum`.
@@ -86,13 +86,19 @@ def remap_anndata(
         osymbols = adata.var[var_feature_column].tolist()
 
     omat = {}
+    counter = 0
     for lmn in layer_matrix_name:
+        _consol_func = consolidate_duplicate_gene_func
+        if isinstance(_consol_func, list):
+            _consol_func = consolidate_duplicate_gene_func[counter]
+
         mat, symbols = consolidate_duplicate_symbols(
             adata.layers[lmn],
             feature_ids=osymbols,
-            consolidate_duplicate_gene_func=consolidate_duplicate_gene_func,
+            consolidate_duplicate_gene_func=_consol_func,
         )
 
+        counter += 1
         # figure out which indices to keep from the matrix
         indices_to_keep = [i for i, x in enumerate(symbols) if x in feature_set_order]
         symbols_to_keep = [symbols[i] for i in indices_to_keep]
@@ -155,9 +161,7 @@ def consolidate_duplicate_symbols(
     if len(set(feature_ids)) == len(feature_ids):
         return matrix, feature_ids
 
-    return mopsy.apply(
-        consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1
-    )
+    return mopsy.apply(consolidate_duplicate_gene_func, mat=matrix, group=feature_ids, axis=1)
 
 
 def _sanitize_frame_with_missing_cols(frame, expected_columns, num_cells):
@@ -195,21 +199,18 @@ def _extract_info(
     else:
         symbols = adata.var[var_feature_column].tolist()
 
-    symbols_df = adata.var.copy().set_index(symbols)
+    symbols_df = adata.var.copy()
+    symbols_df.index = symbols
 
-    symbols_df = _sanitize_frame_with_missing_cols(
-        symbols_df, var_subset_columns, adata.shape[1]
-    )
-    features_df = _sanitize_frame_with_missing_cols(
-        adata.obs, obs_subset_columns, adata.shape[0]
-    )
+    symbols_df = _sanitize_frame_with_missing_cols(symbols_df, var_subset_columns, adata.shape[1])
+    features_df = _sanitize_frame_with_missing_cols(adata.obs, obs_subset_columns, adata.shape[0])
 
     return symbols_df, features_df, adata.shape[0]
 
 
 def _wrapper_extract_info(args):
-    file, gcol, ccols = args
-    return _extract_info(file, gcol, ccols)
+    file, gcol, gcols, ccols = args
+    return _extract_info(file, gcol, gcols, ccols)
 
 
 def extract_anndata_info(
@@ -240,16 +241,9 @@ def extract_anndata_info(
         num_threads:
             Number of threads to use.
             Defaults to 1.
-
-        force:
-            Whether to rescan all the files even though the cache exists.
-            Defaults to False.
     """
     with Pool(num_threads) as p:
-        _args = [
-            (file_info, var_feature_column, var_subset_columns, obs_subset_columns)
-            for file_info in h5ad_or_adata
-        ]
+        _args = [(file_info, var_feature_column, var_subset_columns, obs_subset_columns) for file_info in h5ad_or_adata]
         return p.map(_wrapper_extract_info, _args)
 
 
@@ -269,11 +263,32 @@ def scan_for_features(cache, unique: bool = True) -> List[str]:
     Returns:
         List of all unique feature ids across all files.
     """
-    _features = [x[0] for x in cache]
+    _features = [x[0].index.tolist() for x in cache]
     if unique:
         return list(set(itertools.chain.from_iterable(_features)))
 
     return _features
+
+
+def scan_for_features_annotations(cache, unique: bool = True) -> List[str]:
+    """Extract and generate feature annotation metadata across all files in cache.
+
+    Needs calling :py:func:`~.extract_anndata_info` first.
+
+    Args:
+        cache:
+            Info extracted by typically running
+            :py:func:`~.extract_anndata_info`.
+
+        unique:
+            Compute gene list to a unique list.
+
+    Returns:
+        List of all unique feature ids across all files.
+    """
+
+    _featmeta = pd.concat([x[1] for x in cache])
+    return _featmeta
 
 
 def scan_for_cellcounts(cache) -> List[int]:

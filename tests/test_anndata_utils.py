@@ -42,15 +42,19 @@ def test_remap_anndata():
         adata, feature_set_order={"gene_1": 0, "gene_2": 1}, var_feature_column="index"
     )
 
-    assert cmat.shape == (100, 2)
-    assert len(cmat.data) != 0
+    assert isinstance(cmat, dict)
+    mat = cmat["counts"]
+    assert mat.shape == (100, 2)
+    assert len(mat.data) != 0
 
     cmat = cellarr.utils_anndata.remap_anndata(
         adata, feature_set_order={"gene_1": 0, "gene_2": 1}, var_feature_column="names"
     )
 
-    assert cmat.shape == (100, 2)
-    assert len(cmat.data) != 0
+    assert isinstance(cmat, dict)
+    mat = cmat["counts"]
+    assert mat.shape == (100, 2)
+    assert len(mat.data) != 0
 
     # test with no matching gene symbols should give me a
     # 0 size data array
@@ -58,14 +62,18 @@ def test_remap_anndata():
         adata, {"gene_10000": 0, "gene_20000": 1}
     )
 
-    assert cmat.shape == (100, 2)
-    assert len(cmat.data) == 0
+    assert isinstance(cmat, dict)
+    mat = cmat["counts"]
+    assert mat.shape == (100, 2)
+    assert len(mat.data) == 0
 
     # test with empty array
     cmat = cellarr.utils_anndata.remap_anndata(adata, {})
 
-    assert cmat.shape == (100, 0)
-    assert len(cmat.data) == 0
+    assert isinstance(cmat, dict)
+    mat = cmat["counts"]
+    assert mat.shape == (100, 0)
+    assert len(mat.data) == 0
 
 
 def test_extract_info():

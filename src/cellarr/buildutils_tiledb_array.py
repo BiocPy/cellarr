@@ -187,3 +187,6 @@ def optimize_tiledb_array(tiledb_array_uri: str, verbose: bool = True):
     frags = tiledb.array_fragments(tiledb_array_uri)
     if verbose:
         print("Fragments after consolidation: {}".format(len(frags)))
+
+def create_group(output_path, group_name):
+    tiledb.group_create(f"{output_path}/{group_name}")

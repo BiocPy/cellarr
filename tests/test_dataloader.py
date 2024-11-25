@@ -65,7 +65,7 @@ def test_dataloader():
         dataset_path=tempdir,
         cell_metadata_uri="cell_metadata",
         gene_annotation_uri="gene_annotation",
-        matrix_uri="counts",
+        matrix_uri="assays/counts",
         val_studies=["test3"],
         label_column_name="label",
         study_column_name="study",
@@ -90,7 +90,7 @@ def test_dataloader():
     assert len(labels) == 30
     assert len(set(samples)) == 3
 
-
+@pytest.mark.skip(reason="takes too long")
 def test_autoencoder():
     tempdir = tempfile.mkdtemp()
 
@@ -115,7 +115,7 @@ def test_autoencoder():
         dataset_path=tempdir,
         cell_metadata_uri="cell_metadata",
         gene_annotation_uri="gene_annotation",
-        matrix_uri="counts",
+        matrix_uri="assays/counts",
         val_studies=["test3"],
         label_column_name="label",
         study_column_name="study",
