@@ -74,7 +74,7 @@ Example:
 
 import os
 import warnings
-from multiprocessing import Pool
+from multiprocessing import Pool, get_context
 from typing import Dict, List, Union
 
 import anndata
@@ -519,7 +519,7 @@ def _wrapper_write_matrix(args):
 
 
 def _wrapper_write_matrices(options, num_threads):
-    with Pool(num_threads) as p:
+    with get_context("spawn").Pool(num_threads) as p:
         return p.map(_wrapper_write_matrix, options)
 
 
