@@ -510,6 +510,8 @@ def _write_matrix(output_path, matrix_options, obj, gene_set, feature_column, sa
             value_dtype=mopt.dtype,
         )
 
+    return True
+
 
 def _wrapper_write_matrix(args):
     output_path, matrix_options, obj, gene_set, feature_column, sample_offset = args
@@ -518,7 +520,7 @@ def _wrapper_write_matrix(args):
 
 def _wrapper_write_matrices(options, num_threads):
     with Pool(num_threads) as p:
-        p.map(_wrapper_write_matrix, options)
+        return p.map(_wrapper_write_matrix, options)
 
 
 def generate_metadata_tiledb_frame(output_uri: str, input: pd.DataFrame, column_types: dict = None):
