@@ -420,7 +420,7 @@ class DataModule(LightningDataModule):
                 self.sample_column_name,
                 self.label_column_name,
             ],
-            primary_key_column_name="cellarr_sample"
+            primary_key_column_name="cellarr_sample",
         )
 
         # filter out samples without enough cells
