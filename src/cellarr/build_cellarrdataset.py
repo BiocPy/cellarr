@@ -74,7 +74,7 @@ Example:
 
 import os
 import warnings
-from multiprocessing import Pool, get_context
+from multiprocessing import get_context
 from typing import Dict, List, Union
 
 import anndata
