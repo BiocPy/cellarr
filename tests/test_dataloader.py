@@ -90,7 +90,9 @@ def test_dataloader():
     assert len(labels) == 30
     assert len(set(samples)) == 3
 
-@pytest.mark.skip(reason="takes too long")
+IN_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
+
+@pytest.mark.skipif(not IN_GITHUB_ACTIONS, reason="takes too long locally")
 def test_autoencoder():
     tempdir = tempfile.mkdtemp()
 
