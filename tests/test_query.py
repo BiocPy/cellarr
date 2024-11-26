@@ -107,4 +107,3 @@ def test_query_cellarrdataset():
 
     assert cd.get_cells_for_sample(0).to_anndata().shape == (adata1.shape[0], 1000)
     assert cd.get_cells_for_sample(1).to_anndata().shape == (adata2.shape[0], 1000)
-
