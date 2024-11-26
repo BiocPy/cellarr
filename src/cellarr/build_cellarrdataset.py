@@ -330,6 +330,7 @@ def build_cellarrdataset(
     sample_metadata["cellarr_sample_start_index"] = counter.cumsum().astype(int)
     ends = sample_metadata["cellarr_sample_start_index"].shift(-1)
     ends.iloc[-1] = int(sample_metadata["cellarr_cell_counts"].sum())
+    ends = ends - 1
     sample_metadata["cellarr_sample_end_index"] = ends.astype(int)
 
     if not sample_metadata_options.skip:

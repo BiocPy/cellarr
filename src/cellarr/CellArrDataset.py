@@ -519,3 +519,37 @@ class CellArrDataset:
         output += f"path: '{self._dataset_path}'\n"
 
         return output
+
+    ####
+    ## Get all cells for a sample.
+    ####
+
+    def get_cells_for_sample(self, sample: Union[int, str]) -> CellArrDatasetSlice:
+        """Slice and access all cells for a sample.
+
+        Args:
+            sample:
+                A string specifying the sample index
+                to access. This must be a value in the
+                ``cellarr_sample`` column.
+
+                Alternatively, an integer index may be
+                provided to access the sample at the given position.
+
+        Returns:
+            A :py:class:`~cellarr.CellArrDatasetSlice.CellArrDatasetSlice` object
+            containing the `cell_metadata`, `gene_annotation` and the matrix.
+        """
+        if isinstance(sample, str):
+            subset = self.get_sample_subset(subset=f"cellarr_sample == '{sample}'")
+
+            if len(subset) == 0:
+                raise RuntimeError("No matching samples found for 'sample'.")
+
+        elif isinstance(sample, int):
+            subset = self.get_sample_subset(subset=sample)
+
+        subset_start = int(subset["cellarr_sample_start_index"].tolist()[0])
+        subset_end = int(subset["cellarr_sample_end_index"].tolist()[0])
+
+        return self.get_slice(cell_subset=slice(subset_start, subset_end), gene_subset=slice(None))
