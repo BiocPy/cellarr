@@ -9,8 +9,8 @@ This method creates four TileDB files in the directory specified by `output_path
 - `sample_metadata`: A TileDB file containing sample metadata.
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
-- An `assay` TileDB group containing various matrices. This allows the package to 
-store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the 
+- An `assay` TileDB group containing various matrices. This allows the package to
+store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the
 same sample/cell and gene attributes.
 
 The TileDB matrix file is stored in a ``cell X gene`` orientation. This orientation
@@ -199,7 +199,7 @@ def build_cellarrdataset(
             cells to their associated datasets. Each dataset is named as
             ``sample_{i}`` where `i` refers to the index position of
             the object in ``files``.
-            
+
             Additional options may be specified by ``cell_metadata_options``.
 
         sample_metadata_options:

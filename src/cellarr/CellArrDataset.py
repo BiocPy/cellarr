@@ -179,7 +179,9 @@ class CellArrDataset:
             if len(_not_avail) > 0:
                 raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
-        return qtd.subset_frame(self._cell_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample")
+        return qtd.subset_frame(
+            self._cell_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
+        )
 
     ####
     ## Subset methods for the `gene_annotation` TileDB file.
@@ -259,7 +261,9 @@ class CellArrDataset:
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_gene_index")
+        return qtd.subset_frame(
+            self._gene_annotation_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_gene_index"
+        )
 
     ####
     ## Subset methods for the `sample_metadata` TileDB file.
@@ -319,7 +323,9 @@ class CellArrDataset:
             if len(_not_avail) > 0:
                 raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
-        return qtd.subset_frame(self._sample_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample")
+        return qtd.subset_frame(
+            self._sample_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
+        )
 
     ####
     ## Subset methods for the `matrix` TileDB file.
