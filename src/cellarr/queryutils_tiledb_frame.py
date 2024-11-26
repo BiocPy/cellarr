@@ -33,8 +33,9 @@ def get_schema_names_frame(tiledb_obj: tiledb.Array) -> List[str]:
 
 def subset_frame(
     tiledb_obj: tiledb.Array,
-    subset: Union[slice, tiledb.QueryCondition],
+    subset: Union[slice, str],
     columns: list,
+    primary_key_column_name: str = None,
 ) -> pd.DataFrame:
     """Subset a TileDB object.
 
@@ -45,32 +46,46 @@ def subset_frame(
         subset:
             A :py:class:`slice` to subset.
 
-            Alternatively, may provide a :py:class:`~tiledb.QueryCondition`
-            to subset the object.
+            Alternatively, may also provide a tiledb query expression.
 
         columns:
             List specifying the atrributes from the schema to extract.
 
+        primary_key_column_name:
+            The primary key to filter for matches when a
+            :py:class:`~tiledb.QueryCondition` is used.
+
     Returns:
-        A slices `DataFrame` or a `matrix` with the subset.
+        A sliced `DataFrame` with the subset.
     """
 
     if isinstance(subset, str):
         warn(
-            "provided subset is string, its expected to be a 'query_condition'",
+            "provided subset is string, its expected to be a valid tiledb expression",
             UserWarning,
         )
 
-        query = tiledb_obj.query(cond=subset, attrs=columns)
-        data = query.df[:]
+        if primary_key_column_name is None:
+            raise ValueError("'primary_key_column_name' cannot be 'None'.")
+
+        if columns is None:
+            all_columns = []
+        else:
+            all_columns = columns.copy()
+
+        all_columns.append(primary_key_column_name)
+        query = tiledb_obj.query(cond=subset, attrs=list(set(all_columns)))
+        mask = tiledb_obj.attr(primary_key_column_name).fill
+        if isinstance(mask, bytes):
+            mask = mask.decode("ascii")
+        data = query.df[:][primary_key_column_name]
+        filtered = np.where(data != mask)[0]
+        data = tiledb_obj.df[filtered]
     else:
         data = tiledb_obj.df[subset][columns]
 
     re_null = re.compile(pattern="\x00")  # replace null strings with nan
     result = data.replace(regex=re_null, value=np.nan)
-
-    # Dropna if the subset is a string
-    result = result.dropna() if isinstance(subset, str) else result
 
     return result
 
