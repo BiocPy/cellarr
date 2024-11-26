@@ -332,7 +332,7 @@ class CellArrDataset:
                 URI to the TileDB array.
 
             subset:
-                Any `slice`supported by TileDB's array slicing.
+                Any `slice` supported by TileDB's array slicing.
                 For more info refer to
                 <TileDB docs https://docs.tiledb.com/main/how-to/arrays/reading-arrays/basic-reading>_.
 
@@ -373,7 +373,7 @@ class CellArrDataset:
 
         Args:
             subset:
-                Any `slice`supported by TileDB's array slicing.
+                Any `slice` supported by TileDB's array slicing.
                 For more info refer to
                 <TileDB docs https://docs.tiledb.com/main/how-to/arrays/reading-arrays/basic-reading>_.
 
