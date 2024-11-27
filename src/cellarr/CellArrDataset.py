@@ -47,7 +47,8 @@ class CellArrDataset:
     def __init__(
         self,
         dataset_path: str,
-        matrix_tdb_uri: Union[str, List[str]] = "counts",
+        assay_tiledb_group: str = "assays",
+        assay_uri: Union[str, List[str]] = "counts",
         gene_annotation_uri: str = "gene_annotation",
         cell_metadata_uri: str = "cell_metadata",
         sample_metadata_uri: str = "sample_metadata",
@@ -61,9 +62,17 @@ class CellArrDataset:
                 Usually the ``output_path`` from the
                 :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
-            counts_tdb_uri:
+            assay_group:
+                TileDB group containing the assay matrices.
+
+                If the provided build process was used, the matrices are stored
+                in the "assay" TileDB group.
+
+                May be an empty string to specify no group.
+
+            assay_uri:
                 Relative path to matrix store.
-                Must be in "assay" tiledb group of the ``dataset_path``.
+                Must be in tiledb group specified by ``assay_group``.
 
             gene_annotation_uri:
                 Relative path to gene annotation store.
@@ -88,12 +97,15 @@ class CellArrDataset:
 
         self._dataset_path = dataset_path
 
-        if isinstance(matrix_tdb_uri, str):
-            matrix_tdb_uri = [matrix_tdb_uri]
+        if isinstance(assay_uri, str):
+            assay_uri = [assay_uri]
         # TODO: Maybe switch to on-demand loading of these objects
         self._matrix_tdb = {}
-        for mtdb in matrix_tdb_uri:
-            self._matrix_tdb[mtdb] = tiledb.open(f"{dataset_path}/assays/{mtdb}", "r", ctx=ctx)
+        _asy_path = dataset_path
+        if assay_tiledb_group is not None or len(assay_tiledb_group) > 0:
+            _asy_path = f"{dataset_path}/{assay_tiledb_group}"
+        for mtdb in assay_uri:
+            self._matrix_tdb[mtdb] = tiledb.open(f"{_asy_path}/{mtdb}", "r", ctx=ctx)
         self._gene_annotation_tdb = tiledb.open(f"{dataset_path}/{gene_annotation_uri}", "r", ctx=ctx)
         self._cell_metadata_tdb = tiledb.open(f"{dataset_path}/{cell_metadata_uri}", "r", ctx=ctx)
         self._sample_metadata_tdb = tiledb.open(f"{dataset_path}/{sample_metadata_uri}", "r", ctx=ctx)

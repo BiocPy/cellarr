@@ -494,7 +494,8 @@ def build_cellarrdataset(
         sample_metadata_uri=sample_metadata_options.tiledb_store_name,
         cell_metadata_uri=cell_metadata_options.tiledb_store_name,
         gene_annotation_uri=gene_annotation_options.tiledb_store_name,
-        matrix_tdb_uri=massays,
+        assay_tiledb_group="assays",
+        assay_uri=massays,
     )
 
 
