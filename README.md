@@ -150,13 +150,15 @@ print(expression_data.gene_annotation)
      446	gene_50
      945	gene_95
 
-#### Interop with scverse/biocpy
+This returns a `CellArrDatasetSlice` object that contains the matrix and metadata `DataFrame`'s along the cell and gene axes.
 
-Querying a `CellArrDataset` returns a `CellArrDatasetSlice` object that provides methods to easily convert the slices to other representations
-
+Users can easily convert these to analysis-ready representations
 
 ```python
+print("as anndata:")
 print(expression_data.to_anndata())
+
+print("\n\n as summarizedexperiment:")
 print(expression_data.to_summarizedexperiment())
 ```
 
@@ -208,6 +210,9 @@ trainer = pl.Trainer(**params)
 trainer.fit(autoencoder, datamodule=datamodule)
 autoencoder.save_all(model_path=model_path)
 ```
+
+Check out the [documentation](https://biocpy.github.io/cellarr/api/modules.html) for more details.
+
 <!-- pyscaffold-notes -->
 
 ## Note
