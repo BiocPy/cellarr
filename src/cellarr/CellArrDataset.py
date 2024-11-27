@@ -28,6 +28,7 @@ Example:
 """
 
 import os
+from functools import lru_cache
 from typing import List, Sequence, Union
 
 import pandas as pd
@@ -116,14 +117,10 @@ class CellArrDataset:
         num_cells = self._cell_metadata_tdb.nonempty_domain()[0][1]
         num_rows = self._gene_annotation_tdb.nonempty_domain()[0][1]
 
-        failed = []
         for mname, muri in self._matrix_tdb.items():
             dom = muri.nonempty_domain()
-            if dom[0][1] != num_cells and dom[1][1] != num_rows:
-                failed.append(mname)
-
-        if len(failed) > 0:
-            raise RuntimeError(f"cellarr assay files have incorrect dimensions: {failed}")
+            if dom[0][1] != num_cells or dom[1][1] != num_rows:
+                raise RuntimeError(f"Matrix {mname} has incorrect dimensions")
 
     def __del__(self):
         self._gene_annotation_tdb.close()
@@ -220,6 +217,7 @@ class CellArrDataset:
         res = qtd.get_a_column(self._gene_annotation_tdb, column_name=column_name)
         return res[column_name]
 
+    @lru_cache(maxsize=128)
     def get_gene_annotation_index(self) -> List[str]:
         """Get index of the ``gene_annotation`` store.
 
@@ -565,3 +563,13 @@ class CellArrDataset:
         subset_end = int(subset["cellarr_sample_end_index"].tolist()[0])
 
         return self.get_slice(cell_subset=slice(subset_start, subset_end), gene_subset=slice(None))
+
+    ####
+    ## Support for context manager, with clause
+    ####
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()
