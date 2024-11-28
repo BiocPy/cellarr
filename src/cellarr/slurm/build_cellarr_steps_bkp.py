@@ -3,9 +3,8 @@ import json
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
-import numpy as np
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"

@@ -3,10 +3,9 @@ import os
 import sys
 from pathlib import Path
 
-import numpy as np
 
 from cellarr import utils_anndata as uad
-from cellarr.buildutils_tiledb_array import create_tiledb_array, optimize_tiledb_array, write_csr_matrix_to_tiledb
+from cellarr.buildutils_tiledb_array import write_csr_matrix_to_tiledb
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
