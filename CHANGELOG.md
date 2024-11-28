@@ -52,7 +52,7 @@ Fixed a few issues with fill values represented as bytes (seems to be common whe
 **Index remapping**:
 Improved remapping of indices from sliced TileDB arrays for both dense and sparse matrices. This is not a user facing function but an internal slicing operation.
 
-**Get a sample**:  
+**Get a sample**:
 Added a method to access all cells for a particular sample. you can either provide an index or a sample id.
 
 ```python
