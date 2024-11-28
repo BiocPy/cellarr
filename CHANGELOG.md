@@ -2,10 +2,10 @@
 
 ## Version 0.3.0
 
-This version introduces major improvements to matrix handling, storage, and performance, including support for multiple matrices in H5AD/AnnData workflows and optimizations for ingestion and querying.  
+This version introduces major improvements to matrix handling, storage, and performance, including support for multiple matrices in H5AD/AnnData workflows and optimizations for ingestion and querying.
 
 **Support for multiple matrices**:
-  - Both `build_cellarrdataset` and `CellArrDataset` now support multiple matrices. During ingestion, a TileDB group called `"assays"` is created to store all matrices, along with group-level metadata.  
+  - Both `build_cellarrdataset` and `CellArrDataset` now support multiple matrices. During ingestion, a TileDB group called `"assays"` is created to store all matrices, along with group-level metadata.
 
 This may introduce breaking changes with the default parameters based on how these classes are used. Previously to build the TileDB files:
 
@@ -32,7 +32,7 @@ dataset = build_cellarrdataset(
 )
 ```
 
-Querying follows a similar structure:  
+Querying follows a similar structure:
 ```python
 cd = CellArrDataset(
     dataset_path=tempdir,
@@ -42,14 +42,14 @@ cd = CellArrDataset(
 ```
 `assay_uri` is relative to `assay_tiledb_group`. For backwards compatibility, `assay_tiledb_group` can be an empty string.
 
-**Parallelized ingestion**:  
-The build process now uses `num_threads` to ingest matrices concurrently. Two new columns in the sample metadata, `cellarr_sample_start_index` and `cellarr_sample_end_index`, track sample offsets, improving matrix processing.  
+**Parallelized ingestion**:
+The build process now uses `num_threads` to ingest matrices concurrently. Two new columns in the sample metadata, `cellarr_sample_start_index` and `cellarr_sample_end_index`, track sample offsets, improving matrix processing.
   - Note: The process pool uses the `spawn` method on UNIX systems, which may affect usage on windows machines.
 
-**TileDB query condition fixes**:  
-Fixed a few issues with fill values represented as bytes (seems to be common when ascii is used as the column type) and in general filtering operations on TileDB Dataframes. 
+**TileDB query condition fixes**:
+Fixed a few issues with fill values represented as bytes (seems to be common when ascii is used as the column type) and in general filtering operations on TileDB Dataframes.
 
-**Index remapping**:  
+**Index remapping**:
 Improved remapping of indices from sliced TileDB arrays for both dense and sparse matrices. This is not a user facing function but an internal slicing operation.
 
 Other updates to documentation, tutorials, the README, and additional tests.
