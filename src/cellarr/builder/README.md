@@ -18,7 +18,7 @@ builder = CellArrDatasetBuilder(config)
 
 # Add data with metadata
 builder.add_data(
-    adata1, 
+    adata1,
     "sample1",
     sample_metadata={
         "condition": "treatment",
