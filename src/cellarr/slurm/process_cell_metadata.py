@@ -1,14 +1,10 @@
 import json
 import sys
-from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from cellarr import utils_anndata as uad
 from cellarr.buildutils_tiledb_frame import (
-    append_to_tiledb_frame,
-    create_tiledb_frame_from_chunk,
     create_tiledb_frame_from_dataframe,
 )
 

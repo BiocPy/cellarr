@@ -1,7 +1,5 @@
 import json
-import sys
 
-import numpy as np
 import pandas as pd
 
 from cellarr import utils_anndata as uad
