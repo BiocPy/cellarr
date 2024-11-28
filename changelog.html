@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Contributing" href="contributing.html" /><link rel="prev" title="Contributors" href="authors.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>Changelog - cellarr 0.2.8 documentation</title>
+        <title>Changelog - cellarr 0.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.2.8 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.3.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.8 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.3.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -256,6 +256,59 @@
         <article role="main" id="furo-main-content">
           <section class="tex2jax_ignore mathjax_ignore" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">¶</a></h1>
+<section id="version-0-3-0">
+<h2>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Link to this heading">¶</a></h2>
+<p>This version introduces major improvements to matrix handling, storage, and performance, including support for multiple matrices in H5AD/AnnData workflows and optimizations for ingestion and querying.</p>
+<p><strong>Support for multiple matrices</strong>:</p>
+<ul class="simple">
+<li><p>Both <code class="docutils literal notranslate"><span class="pre">build_cellarrdataset</span></code> and <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> now support multiple matrices. During ingestion, a TileDB group called <code class="docutils literal notranslate"><span class="pre">&quot;assays&quot;</span></code> is created to store all matrices, along with group-level metadata.</p></li>
+</ul>
+<p>This may introduce breaking changes with the default parameters based on how these classes are used. Previously to build the TileDB files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+    <span class="n">num_threads</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you may provide a list of matrix options for each layers in the files.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+        <span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;log-norm&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">num_threads</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Querying follows a similar structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span>
+    <span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">assay_tiledb_group</span><span class="o">=</span><span class="s2">&quot;assays&quot;</span><span class="p">,</span>
+    <span class="n">assay_uri</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="s2">&quot;log-norm&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">assay_uri</span></code> is relative to <code class="docutils literal notranslate"><span class="pre">assay_tiledb_group</span></code>. For backwards compatibility, <code class="docutils literal notranslate"><span class="pre">assay_tiledb_group</span></code> can be an empty string.</p>
+<p><strong>Parallelized ingestion</strong>:
+The build process now uses <code class="docutils literal notranslate"><span class="pre">num_threads</span></code> to ingest matrices concurrently. Two new columns in the sample metadata, <code class="docutils literal notranslate"><span class="pre">cellarr_sample_start_index</span></code> and <code class="docutils literal notranslate"><span class="pre">cellarr_sample_end_index</span></code>, track sample offsets, improving matrix processing.</p>
+<ul class="simple">
+<li><p>Note: The process pool uses the <code class="docutils literal notranslate"><span class="pre">spawn</span></code> method on UNIX systems, which may affect usage on windows machines.</p></li>
+</ul>
+<p><strong>TileDB query condition fixes</strong>:
+Fixed a few issues with fill values represented as bytes (seems to be common when ascii is used as the column type) and in general filtering operations on TileDB Dataframes.</p>
+<p><strong>Index remapping</strong>:
+Improved remapping of indices from sliced TileDB arrays for both dense and sparse matrices. This is not a user facing function but an internal slicing operation.</p>
+<p><strong>Get a sample</strong>:
+Added a method to access all cells for a particular sample. you can either provide an index or a sample id.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sample_1_slice</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_cells_for_sample</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Other updates to documentation, tutorials, the README, and additional tests.</p>
+</section>
 <section id="version-0-2-4-0-2-5">
 <h2>Version 0.2.4 - 0.2.5<a class="headerlink" href="#version-0-2-4-0-2-5" title="Link to this heading">¶</a></h2>
 <ul class="simple">
@@ -347,6 +400,7 @@ collection of files based on TileDB.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
 <li><a class="reference internal" href="#version-0-2-4-0-2-5">Version 0.2.4 - 0.2.5</a></li>
 <li><a class="reference internal" href="#version-0-2-1-0-2-3">Version 0.2.1 - 0.2.3</a></li>
 <li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
@@ -362,7 +416,7 @@ collection of files based on TileDB.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=b01fafc3"></script>
+</div><script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

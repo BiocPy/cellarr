@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>Cell Arrays - cellarr 0.2.8 documentation</title>
+        <title>Cell Arrays - cellarr 0.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.2.8 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.3.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.2.8 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.3.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -281,11 +281,9 @@ pip<span class="w"> </span>install<span class="w"> </span>cellarr<span class="o"
 <li><p><code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>: A TileDB file containing sample metadata.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cell_metadata</span></code>: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in <code class="docutils literal notranslate"><span class="pre">sample_metadata</span></code>.</p></li>
-<li><p>A matrix TileDB file named by the <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter. This allows the package
-to store multiple different matrices, e.g. ‘counts’, ‘normalized’, ‘scaled’ for the same cell,
-gene, sample metadata attributes.</p></li>
+<li><p>An <code class="docutils literal notranslate"><span class="pre">assay</span></code> TileDB group containing various matrices. This allows the package to store multiple different matrices, e.g. ‘counts’, ‘normalized’, ‘scaled’ for the same sample/cell and gene attributes.</p></li>
 </ul>
-<p>The organization is inspired by the <a class="reference external" href="https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html">MultiAssayExperiment</a> data structure.</p>
+<p>The organization is inspired by Bioconductor’s <code class="docutils literal notranslate"><span class="pre">SummarizedExperiment</span></code> data structure.</p>
 <p>The TileDB matrix file is stored in a <strong>cell X gene</strong> orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
 collection is usually the cells rather than genes.</p>
@@ -310,7 +308,19 @@ collection is usually the cells rather than genes.</p>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
     <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
     <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
-    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+    <span class="n">num_threads</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Or if the objects contain multiple assays</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">build_cellarrdataset</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">adata1</span><span class="p">,</span> <span class="n">adata2</span><span class="p">],</span>
+    <span class="n">matrix_options</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+        <span class="n">MatrixOptions</span><span class="p">(</span><span class="n">matrix_name</span><span class="o">=</span><span class="s2">&quot;log-norm&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">num_threads</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -333,7 +343,7 @@ some genes are unmeasured or ordered differently in the original experiments.</p
 if these are <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> or <code class="docutils literal notranslate"><span class="pre">H5AD</span></code>objects, all objects must contain an index (in the <code class="docutils literal notranslate"><span class="pre">var</span></code> slot) specifying the gene symbols.</strong></em></p>
 <section id="optionally-provide-cell-metadata-columns">
 <h4>Optionally provide cell metadata columns<a class="headerlink" href="#optionally-provide-cell-metadata-columns" title="Link to this heading">¶</a></h4>
-<p>If the cell metadata is inconsistent across datasets, you can provide a list of
+<p>If the cell metadata is inconsistent across datasets, you may provide a list of
 columns to standardize during extraction. Any missing columns will be filled with
 the default value <code class="docutils literal notranslate"><span class="pre">'NA'</span></code>, and their data type should be specified as <code class="docutils literal notranslate"><span class="pre">'ascii'</span></code> in
 <code class="docutils literal notranslate"><span class="pre">CellMetadataOptions</span></code>. For example, this build process will create a TileDB store
@@ -356,7 +366,7 @@ lacks one of these columns, the missing values will be automatically filled with
 </section>
 <section id="query-a-cellarrdataset">
 <h3>Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#query-a-cellarrdataset" title="Link to this heading">¶</a></h3>
-<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object retuned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializing it to the path where the files were created.</p>
+<p>Users have the option to reuse the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> object returned when building the dataset or by creating a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code> object by initializing it to the path where the files were created.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a CellArrDataset object from the existing dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">CellArrDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="o">=</span><span class="n">tempdir</span><span class="p">)</span>
 
@@ -380,18 +390,27 @@ lacks one of these columns, the missing values will be automatically filled with
  945	gene_95
 </pre></div>
 </div>
+<p>This returns a <code class="docutils literal notranslate"><span class="pre">CellArrDatasetSlice</span></code> object that contains the matrix and metadata <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>’s along the cell and gene axes.</p>
+<p>Users can easily convert these to analysis-ready representations</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;as anndata:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_anndata</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2"> as summarizedexperiment:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expression_data</span><span class="o">.</span><span class="n">to_summarizedexperiment</span><span class="p">())</span>
+</pre></div>
+</div>
 </section>
 <section id="a-built-in-dataloader-for-the-pytorch-lightning-framework">
 <h3>A built-in dataloader for the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework<a class="headerlink" href="#a-built-in-dataloader-for-the-pytorch-lightning-framework" title="Link to this heading">¶</a></h3>
 <p>The package includes a dataloader in the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.</p>
-<p>This dataloader can be used as a template to create custom dataloaders specific to your needs.</p>
+<p>This dataloader can be used as a <strong>template</strong> to create custom dataloaders specific to your needs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cellarr.dataloader</span> <span class="kn">import</span> <span class="n">DataModule</span>
 
 <span class="n">datamodule</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span>
     <span class="n">dataset_path</span><span class="o">=</span><span class="s2">&quot;/path/to/cellar/dir&quot;</span><span class="p">,</span>
     <span class="n">cell_metadata_uri</span><span class="o">=</span><span class="s2">&quot;cell_metadata&quot;</span><span class="p">,</span>
     <span class="n">gene_annotation_uri</span><span class="o">=</span><span class="s2">&quot;gene_annotation&quot;</span><span class="p">,</span>
-    <span class="n">matrix_uri</span><span class="o">=</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span>
+    <span class="n">matrix_uri</span><span class="o">=</span><span class="s2">&quot;assays/counts&quot;</span><span class="p">,</span>
     <span class="n">label_column_name</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
     <span class="n">study_column_name</span><span class="o">=</span><span class="s2">&quot;study&quot;</span><span class="p">,</span>
     <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
@@ -425,6 +444,7 @@ lacks one of these columns, the missing values will be automatically filled with
 <span class="n">autoencoder</span><span class="o">.</span><span class="n">save_all</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/api/modules.html">documentation</a> for more details.</p>
 <!-- pyscaffold-notes -->
 </section>
 </section>
@@ -495,7 +515,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=b01fafc3"></script>
+</div><script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
