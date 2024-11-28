@@ -8,16 +8,27 @@ Example:
 
     .. code-block:: python
 
-        from cellarr import CellArrDataset
+        from cellarr import (
+            CellArrDataset,
+        )
 
-        cd = CellArrDataset(dataset_path="/path/to/cellar/dir")
-        gene_list = ["gene_1", "gene_95", "gene_50"]
-        result1 = cd[0, gene_list]
+        cd = CellArrDataset(
+            dataset_path="/path/to/cellar/dir"
+        )
+        gene_list = [
+            "gene_1",
+            "gene_95",
+            "gene_50",
+        ]
+        result1 = cd[
+            0, gene_list
+        ]
 
         print(result1)
 """
 
 import os
+from functools import lru_cache
 from typing import List, Sequence, Union
 
 import pandas as pd
@@ -37,7 +48,8 @@ class CellArrDataset:
     def __init__(
         self,
         dataset_path: str,
-        matrix_tdb_uri: str = "counts",
+        assay_tiledb_group: str = "assays",
+        assay_uri: Union[str, List[str]] = "counts",
         gene_annotation_uri: str = "gene_annotation",
         cell_metadata_uri: str = "cell_metadata",
         sample_metadata_uri: str = "sample_metadata",
@@ -51,8 +63,17 @@ class CellArrDataset:
                 Usually the ``output_path`` from the
                 :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
-            counts_tdb_uri:
+            assay_group:
+                TileDB group containing the assay matrices.
+
+                If the provided build process was used, the matrices are stored
+                in the "assay" TileDB group.
+
+                May be an empty string to specify no group.
+
+            assay_uri:
                 Relative path to matrix store.
+                Must be in tiledb group specified by ``assay_group``.
 
             gene_annotation_uri:
                 Relative path to gene annotation store.
@@ -76,17 +97,37 @@ class CellArrDataset:
         ctx = tiledb.Ctx(config)
 
         self._dataset_path = dataset_path
+
+        if isinstance(assay_uri, str):
+            assay_uri = [assay_uri]
         # TODO: Maybe switch to on-demand loading of these objects
-        self._matrix_tdb_tdb = tiledb.open(f"{dataset_path}/{matrix_tdb_uri}", "r", ctx=ctx)
+        self._matrix_tdb = {}
+        _asy_path = dataset_path
+        if assay_tiledb_group is not None or len(assay_tiledb_group) > 0:
+            _asy_path = f"{dataset_path}/{assay_tiledb_group}"
+        for mtdb in assay_uri:
+            self._matrix_tdb[mtdb] = tiledb.open(f"{_asy_path}/{mtdb}", "r", ctx=ctx)
         self._gene_annotation_tdb = tiledb.open(f"{dataset_path}/{gene_annotation_uri}", "r", ctx=ctx)
         self._cell_metadata_tdb = tiledb.open(f"{dataset_path}/{cell_metadata_uri}", "r", ctx=ctx)
         self._sample_metadata_tdb = tiledb.open(f"{dataset_path}/{sample_metadata_uri}", "r", ctx=ctx)
 
+        self._validate()
+
+    def _validate(self):
+        num_cells = self._cell_metadata_tdb.nonempty_domain()[0][1]
+        num_rows = self._gene_annotation_tdb.nonempty_domain()[0][1]
+
+        for mname, muri in self._matrix_tdb.items():
+            dom = muri.nonempty_domain()
+            if dom[0][1] != num_cells or dom[1][1] != num_rows:
+                raise RuntimeError(f"Matrix {mname} has incorrect dimensions")
+
     def __del__(self):
-        self._matrix_tdb_tdb.close()
         self._gene_annotation_tdb.close()
         self._cell_metadata_tdb.close()
         self._sample_metadata_tdb.close()
+        for tobj in self._matrix_tdb.values():
+            tobj.close()
 
     ####
     ## Subset methods for the `cell_metadata` TileDB file.
@@ -147,7 +188,9 @@ class CellArrDataset:
             if len(_not_avail) > 0:
                 raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
-        return qtd.subset_frame(self._cell_metadata_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._cell_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
+        )
 
     ####
     ## Subset methods for the `gene_annotation` TileDB file.
@@ -174,6 +217,7 @@ class CellArrDataset:
         res = qtd.get_a_column(self._gene_annotation_tdb, column_name=column_name)
         return res[column_name]
 
+    @lru_cache(maxsize=128)
     def get_gene_annotation_index(self) -> List[str]:
         """Get index of the ``gene_annotation`` store.
 
@@ -227,7 +271,9 @@ class CellArrDataset:
         if qtd._is_list_strings(subset):
             subset = self._get_indices_for_gene_list(subset)
 
-        return qtd.subset_frame(self._gene_annotation_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._gene_annotation_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_gene_index"
+        )
 
     ####
     ## Subset methods for the `sample_metadata` TileDB file.
@@ -287,17 +333,22 @@ class CellArrDataset:
             if len(_not_avail) > 0:
                 raise ValueError(f"Columns '{', '.join(_not_avail)}' are not available.")
 
-        return qtd.subset_frame(self._sample_metadata_tdb, subset=subset, columns=columns)
+        return qtd.subset_frame(
+            self._sample_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
+        )
 
     ####
     ## Subset methods for the `matrix` TileDB file.
     ####
-    def get_matrix_subset(self, subset: Union[int, Sequence, tuple]) -> pd.DataFrame:
+    def _get_matrix_subset_uri(self, tiledb_uri, subset: Union[int, Sequence, tuple]) -> pd.DataFrame:
         """Slice the ``sample_metadata`` store.
 
         Args:
+            tiledb_uri:
+                URI to the TileDB array.
+
             subset:
-                Any `slice`supported by TileDB's array slicing.
+                Any `slice` supported by TileDB's array slicing.
                 For more info refer to
                 <TileDB docs https://docs.tiledb.com/main/how-to/arrays/reading-arrays/basic-reading>_.
 
@@ -306,7 +357,7 @@ class CellArrDataset:
         """
         if isinstance(subset, (str, int)):
             return qtd.subset_array(
-                self._matrix_tdb_tdb,
+                tiledb_uri,
                 subset,
                 slice(None),
                 shape=(len(subset), self.shape[1]),
@@ -318,20 +369,39 @@ class CellArrDataset:
 
             if len(subset) == 1:
                 return qtd.subset_array(
-                    self._matrix_tdb_tdb,
+                    tiledb_uri,
                     subset[0],
                     slice(None),
                     shape=(len(subset[0]), self.shape[1]),
                 )
             elif len(subset) == 2:
                 return qtd.subset_array(
-                    self._matrix_tdb_tdb,
+                    tiledb_uri,
                     subset[0],
                     subset[1],
                     shape=(len(subset[0]), len(subset[1])),
                 )
             else:
                 raise ValueError(f"`{type(self).__name__}` only supports 2-dimensional slicing.")
+
+    def get_matrix_subset(self, subset: Union[int, Sequence, tuple]) -> pd.DataFrame:
+        """Slice the ``sample_metadata`` store.
+
+        Args:
+            subset:
+                Any `slice` supported by TileDB's array slicing.
+                For more info refer to
+                <TileDB docs https://docs.tiledb.com/main/how-to/arrays/reading-arrays/basic-reading>_.
+
+        Returns:
+            A dictionary containing the slice for each matrix in the path.
+        """
+        result = {}
+
+        for aname, amat in self._matrix_tdb.items():
+            result[aname] = self._get_matrix_subset_uri(amat, subset=subset)
+
+        return result
 
     ####
     ## Subset methods by cell and gene dimensions.
@@ -459,3 +529,47 @@ class CellArrDataset:
         output += f"path: '{self._dataset_path}'\n"
 
         return output
+
+    ####
+    ## Get all cells for a sample.
+    ####
+
+    def get_cells_for_sample(self, sample: Union[int, str]) -> CellArrDatasetSlice:
+        """Slice and access all cells for a sample.
+
+        Args:
+            sample:
+                A string specifying the sample index
+                to access. This must be a value in the
+                ``cellarr_sample`` column.
+
+                Alternatively, an integer index may be
+                provided to access the sample at the given position.
+
+        Returns:
+            A :py:class:`~cellarr.CellArrDatasetSlice.CellArrDatasetSlice` object
+            containing the `cell_metadata`, `gene_annotation` and the matrix.
+        """
+        if isinstance(sample, str):
+            subset = self.get_sample_subset(subset=f"cellarr_sample == '{sample}'")
+
+            if len(subset) == 0:
+                raise RuntimeError("No matching samples found for 'sample'.")
+
+        elif isinstance(sample, int):
+            subset = self.get_sample_subset(subset=sample)
+
+        subset_start = int(subset["cellarr_sample_start_index"].tolist()[0])
+        subset_end = int(subset["cellarr_sample_end_index"].tolist()[0])
+
+        return self.get_slice(cell_subset=slice(subset_start, subset_end), gene_subset=slice(None))
+
+    ####
+    ## Support for context manager, with clause
+    ####
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()

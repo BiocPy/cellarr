@@ -122,7 +122,7 @@ class MatrixOptions:
 
         tiledb_store_name:
             Name of the TileDB file.
-            Defaults to `matrix`.
+            Defaults to `counts`.
     """
 
     skip: bool = False

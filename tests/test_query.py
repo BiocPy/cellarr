@@ -62,18 +62,18 @@ def test_query_cellarrdataset():
     result1 = cd[0, gene_list]
 
     assert result1 is not None
-    assert result1.matrix.shape == (1, len(adata1_gene_indices))
+    assert result1.matrix["counts"].shape == (1, len(adata1_gene_indices))
 
     assert np.allclose(
-        result1.matrix.data,
+        result1.matrix["counts"].data,
         adata1.layers["counts"][0, adata1_gene_indices],
     )
 
     result2 = cd[1000, gene_list]
-    assert result2.matrix.shape == (1, len(adata2_gene_indices))
+    assert result2.matrix["counts"].shape == (1, len(adata2_gene_indices))
 
     assert np.allclose(
-        result2.matrix.data,
+        result2.matrix["counts"].data,
         adata2.layers["counts"][0, adata2_gene_indices],
     )
 
@@ -88,7 +88,7 @@ def test_query_cellarrdataset():
     assert len(cd.get_cell_subset("cellarr_sample == 'sample_1'")) == 1000
 
     assert sorted(cd.get_sample_metadata_columns()) == sorted(
-        ["cellarr_sample", "cellarr_original_gene_set", "cellarr_cell_counts"]
+        ["cellarr_sample", "cellarr_original_gene_set", "cellarr_cell_counts", "cellarr_sample_end_index", "cellarr_sample_start_index"]
     )
     assert len(cd.get_sample_metadata_column("cellarr_sample")) == 2
     assert len(cd.get_sample_subset("cellarr_sample == 'sample_1'")) == 1
@@ -100,7 +100,10 @@ def test_query_cellarrdataset():
     result1 = cd.get_slice(slice(0, 100), gene_list)
 
     assert result1 is not None
-    assert result1.matrix.shape == (101, len(gene_list))
+    assert result1.matrix["counts"].shape == (101, len(gene_list))
 
     assert result1.to_anndata() is not None
     assert result1.to_summarizedexperiment() is not None
+
+    assert cd.get_cells_for_sample(0).to_anndata().shape == (adata1.shape[0], 1000)
+    assert cd.get_cells_for_sample(1).to_anndata().shape == (adata2.shape[0], 1000)

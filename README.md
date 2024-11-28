@@ -29,11 +29,9 @@ Building a `CellArrDataset` generates 4 TileDB files in the specified output dir
 - `sample_metadata`: A TileDB file containing sample metadata.
 - `cell_metadata`: A TileDB file containing cell metadata including mapping to the samples
 they are tagged with in ``sample_metadata``.
-- A matrix TileDB file named by the `layer_matrix_name` parameter. This allows the package
-to store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the same cell,
-gene, sample metadata attributes.
+- An `assay` TileDB group containing various matrices. This allows the package to store multiple different matrices, e.g. 'counts', 'normalized', 'scaled' for the same sample/cell and gene attributes.
 
-The organization is inspired by the [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) data structure.
+The organization is inspired by Bioconductor's `SummarizedExperiment` data structure.
 
 The TileDB matrix file is stored in a **cell X gene** orientation. This orientation
 is chosen because the fastest-changing dimension as new files are added to the
@@ -64,7 +62,19 @@ adata2 = "path/to/object2.h5ad"
 dataset = build_cellarrdataset(
     output_path=tempdir,
     files=[adata1, adata2],
-    matrix_options=MatrixOptions(dtype=np.float32),
+    matrix_options=MatrixOptions(matrix_name="counts", dtype=np.int16),
+    num_threads=2,
+)
+
+# Or if the objects contain multiple assays
+dataset = build_cellarrdataset(
+    output_path=tempdir,
+    files=[adata1, adata2],
+    matrix_options=[
+        MatrixOptions(matrix_name="counts", dtype=np.int16),
+        MatrixOptions(matrix_name="log-norm", dtype=np.float32)
+    ],
+    num_threads=2,
 )
 ```
 
@@ -91,7 +101,7 @@ if these are `AnnData` or `H5AD`objects, all objects must contain an index (in t
 
 #### Optionally provide cell metadata columns
 
-If the cell metadata is inconsistent across datasets, you can provide a list of
+If the cell metadata is inconsistent across datasets, you may provide a list of
 columns to standardize during extraction. Any missing columns will be filled with
 the default value `'NA'`, and their data type should be specified as `'ascii'` in
 `CellMetadataOptions`. For example, this build process will create a TileDB store
@@ -115,7 +125,7 @@ Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) fo
 
 ### Query a `CellArrDataset`
 
-Users have the option to reuse the `dataset` object retuned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.
+Users have the option to reuse the `dataset` object returned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.
 
 ```python
 # Create a CellArrDataset object from the existing dataset
@@ -140,11 +150,23 @@ print(expression_data.gene_annotation)
      446	gene_50
      945	gene_95
 
+This returns a `CellArrDatasetSlice` object that contains the matrix and metadata `DataFrame`'s along the cell and gene axes.
+
+Users can easily convert these to analysis-ready representations
+
+```python
+print("as anndata:")
+print(expression_data.to_anndata())
+
+print("\n\n as summarizedexperiment:")
+print(expression_data.to_summarizedexperiment())
+```
+
 ### A built-in dataloader for the `pytorch-lightning` framework
 
 The package includes a dataloader in the `pytorch-lightning` framework for single cells expression profiles, training labels, and study labels. The dataloader uniformly samples across training labels and study labels to create a diverse batch of cells.
 
-This dataloader can be used as a template to create custom dataloaders specific to your needs.
+This dataloader can be used as a **template** to create custom dataloaders specific to your needs.
 
 ```python
 from cellarr.dataloader import DataModule
@@ -153,7 +175,7 @@ datamodule = DataModule(
     dataset_path="/path/to/cellar/dir",
     cell_metadata_uri="cell_metadata",
     gene_annotation_uri="gene_annotation",
-    matrix_uri="counts",
+    matrix_uri="assays/counts",
     label_column_name="label",
     study_column_name="study",
     batch_size=1000,
@@ -188,6 +210,9 @@ trainer = pl.Trainer(**params)
 trainer.fit(autoencoder, datamodule=datamodule)
 autoencoder.save_all(model_path=model_path)
 ```
+
+Check out the [documentation](https://biocpy.github.io/cellarr/api/modules.html) for more details.
+
 <!-- pyscaffold-notes -->
 
 ## Note

@@ -8,11 +8,21 @@ Example:
 
     .. code-block:: python
 
-        from cellarr import CellArrDataset
+        from cellarr import (
+            CellArrDataset,
+        )
 
-        cd = CellArrDataset(dataset_path="/path/to/cellar/dir")
-        gene_list = ["gene_1", "gene_95", "gene_50"]
-        result1 = cd[0, gene_list]
+        cd = CellArrDataset(
+            dataset_path="/path/to/cellar/dir"
+        )
+        gene_list = [
+            "gene_1",
+            "gene_95",
+            "gene_50",
+        ]
+        result1 = cd[
+            0, gene_list
+        ]
 
         print(result1)
 """
@@ -41,10 +51,20 @@ class CellArrDatasetSlice:
     ## Interop
     ####
 
+    def get_assays(self, transpose: bool = False):
+        assays = {}
+        for mname, mmat in self.matrix.items():
+            cmat = mmat.tocsr()
+            if transpose is True:
+                cmat = cmat.transpose()
+            assays[mname] = cmat
+
+        return assays
+
     def to_anndata(self):
         """Convert the realized slice to :py:class:`~anndata.AnnData`."""
         return anndata.AnnData(
-            layers={"matrix": self.matrix.tocsr()},
+            layers=self.get_assays(),
             obs=self.cell_metadata,
             var=self.gene_annotation,
         )
@@ -52,7 +72,7 @@ class CellArrDatasetSlice:
     def to_summarizedexperiment(self):
         """Convert the realized slice to :py:class:`~summarizedexperiment.SummarizedExperiment.SummarizedExperiment`."""
         return se.SummarizedExperiment(
-            assays={"matrix": self.matrix.tocsr().transpose()},
+            assays=self.get_assays(transpose=True),
             row_data=self.gene_annotation,
             column_data=self.cell_metadata,
         )

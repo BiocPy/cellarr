@@ -47,7 +47,7 @@ def test_build_cellarrdataset():
         matrix_options=MatrixOptions(dtype=np.float32),
     )
 
-    cfp = tiledb.open(f"{tempdir}/counts", "r")
+    cfp = tiledb.open(f"{tempdir}/assays/counts", "r")
     gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
@@ -78,11 +78,71 @@ def test_build_cellarrdataset():
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
     samples = sfp.df[:]
     assert len(samples) == 2
+    assert "cellarr_sample_start_index" in samples.columns
+    assert "cellarr_sample_end_index" in samples.columns
+    assert "cellarr_cell_counts" in samples.columns
+    assert "cellarr_original_gene_set" in samples.columns
 
     cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
     cell_df = cellfp.df[:]
     assert len(cell_df) == 1100
+    assert "cellarr_sample" in cell_df.columns
+    assert "cellarr_cell_index_in_sample" in cell_df.columns
 
+def test_build_cellarrdataset_with_threads():
+    tempdir = tempfile.mkdtemp()
+
+    adata1 = generate_adata(1000, 100, 10)
+    adata2 = generate_adata(100, 1000, 100)
+
+    build_cellarrdataset(
+        output_path=tempdir,
+        files=[adata1, adata2],
+        matrix_options=MatrixOptions(dtype=np.float32),
+        num_threads=2
+    )
+
+    cfp = tiledb.open(f"{tempdir}/assays/counts", "r")
+    gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
+
+    genes = gfp.df[:]
+
+    assert len(genes) == 1000
+
+    gene_list = ["gene_1", "gene_95", "gene_50"]
+    _genes_from_tile = genes["cellarr_gene_index"].tolist()
+    gene_indices_tdb = sorted([_genes_from_tile.index(x) for x in gene_list])
+
+    adata1_gene_indices = sorted(
+        [adata1.var.index.tolist().index(x) for x in gene_list]
+    )
+
+    adata2_gene_indices = sorted(
+        [adata2.var.index.tolist().index(x) for x in gene_list]
+    )
+
+    assert np.allclose(
+        cfp.multi_index[0, gene_indices_tdb]["data"],
+        adata1.layers["counts"][0, adata1_gene_indices],
+    )
+    assert np.allclose(
+        cfp.multi_index[1000, gene_indices_tdb]["data"],
+        adata2.layers["counts"][0, adata2_gene_indices],
+    )
+
+    sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
+    samples = sfp.df[:]
+    assert len(samples) == 2
+    assert "cellarr_sample_start_index" in samples.columns
+    assert "cellarr_sample_end_index" in samples.columns
+    assert "cellarr_cell_counts" in samples.columns
+    assert "cellarr_original_gene_set" in samples.columns
+
+    cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
+    cell_df = cellfp.df[:]
+    assert len(cell_df) == 1100
+    assert "cellarr_sample" in cell_df.columns
+    assert "cellarr_cell_index_in_sample" in cell_df.columns
 
 def test_build_cellarrdataset_from_file():
     tempdir = tempfile.mkdtemp()
@@ -107,7 +167,7 @@ def test_build_cellarrdataset_from_file():
         matrix_options=MatrixOptions(dtype=np.float32),
     )
 
-    cfp = tiledb.open(f"{tempdir}/counts", "r")
+    cfp = tiledb.open(f"{tempdir}/assays/counts", "r")
     gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
@@ -165,7 +225,7 @@ def test_build_cellarrdataset_from_frame():
         matrix_options=MatrixOptions(dtype=np.float32),
     )
 
-    cfp = tiledb.open(f"{tempdir}/counts", "r")
+    cfp = tiledb.open(f"{tempdir}/assays/counts", "r")
     gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
@@ -247,7 +307,7 @@ def test_build_cellarrdataset_from_frame_with_types():
         ),
     )
 
-    cfp = tiledb.open(f"{tempdir}/counts", "r")
+    cfp = tiledb.open(f"{tempdir}/assays/counts", "r")
     gfp = tiledb.open(f"{tempdir}/gene_annotation", "r")
 
     genes = gfp.df[:]
@@ -281,7 +341,7 @@ def test_build_cellarrdataset_from_frame_with_types():
     assert samples["sample_age"].dtype == float
     assert samples["sample_age"].tolist() == [36.3, 35.05]
     assert samples["sample_index"].dtype == int
-    assert len(samples.columns) == 7
+    assert len(samples.columns) == 9
 
     cellfp = tiledb.open(f"{tempdir}/cell_metadata", "r")
     cell_df = cellfp.df[:]
@@ -321,6 +381,7 @@ def test_build_cellarrdataset_from_frame_containing_nan():
     assert samples["some_meta"].tolist() == ["10.0", "nan"]
 
     # with types
+    tempdir = tempfile.mkdtemp()
     build_cellarrdataset(
         output_path=tempdir,
         files=[adata1, adata2],
@@ -372,6 +433,7 @@ def test_build_cellarrdataset_from_frame_withsubset_columns():
     assert samples["some_meta"].tolist() == ["10.0", "nan"]
 
     # with types
+    tempdir = tempfile.mkdtemp()
     build_cellarrdataset(
         output_path=tempdir,
         files=[adata1, adata2],
