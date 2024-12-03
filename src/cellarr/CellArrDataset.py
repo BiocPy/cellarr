@@ -70,7 +70,7 @@ class CellArrDataset:
                 in the "assay" TileDB group.
 
                 May be an empty string or `None` to specify no group. This is
-                mostly for backwards compatibility of cellarr builds in versions
+                mostly for backwards compatibility of cellarr builds for versions
                 before 0.3.
 
             assay_uri:
