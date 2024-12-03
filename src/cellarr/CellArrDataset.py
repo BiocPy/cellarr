@@ -63,17 +63,19 @@ class CellArrDataset:
                 Usually the ``output_path`` from the
                 :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
-            assay_group:
+            assay_tiledb_group:
                 TileDB group containing the assay matrices.
 
                 If the provided build process was used, the matrices are stored
                 in the "assay" TileDB group.
 
-                May be an empty string to specify no group.
+                May be an empty string or `None` to specify no group. This is
+                mostly for backwards compatibility of cellarr builds in versions 
+                before 0.3.
 
             assay_uri:
                 Relative path to matrix store.
-                Must be in tiledb group specified by ``assay_group``.
+                Must be in tiledb group specified by ``assay_tiledb_group``.
 
             gene_annotation_uri:
                 Relative path to gene annotation store.
