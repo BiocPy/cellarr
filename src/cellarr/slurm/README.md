@@ -43,3 +43,16 @@
     }
 }
 ```
+
+
+Run
+
+```sh
+
+python build_cellarr_steps.py \
+    --input-manifest manifest.json \
+    --output-dir /path/to/output \
+    --memory-per-job 64 \
+    --cpus-per-task 4
+
+```

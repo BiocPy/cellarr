@@ -1,6 +1,7 @@
-import sys
 import json
+import sys
 from pathlib import Path
+
 from cellarr.buildutils_tiledb_array import optimize_tiledb_array
 
 __author__ = "Jayaram Kancherla"

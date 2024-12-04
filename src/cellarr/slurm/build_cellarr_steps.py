@@ -29,12 +29,23 @@ class SlurmBuilder:
         """Initialize the SLURM builder.
 
         Args:
-            output_dir: Path to final output directory
-            log_dir: Path to store SLURM logs
-            temp_dir: Path for temporary files
-            memory_gb: Memory per job in GB
-            time_hours: Time limit per job in hours
-            cpus_per_task: CPUs per task
+            output_dir:
+                Path to final output directory.
+
+            log_dir:
+                Path to store SLURM logs.
+
+            temp_dir:
+                Path for temporary files.
+
+            memory_gb:
+                Memory per job in GB.
+
+            time_hours:
+                Time limit per job in hours.
+
+            cpus_per_task:
+                CPUs per task.
         """
         self.output_dir = Path(output_dir)
         self.log_dir = Path(log_dir)
@@ -60,7 +71,7 @@ class SlurmBuilder:
 
         script += f"""
 source ~/.bashrc
-conda activate cellarr_env  # Modify as needed
+conda activate cellarr_env  # MODIFY AS NEEDED
 
 python {python_script} '{json.dumps(args)}'
 """
@@ -87,7 +98,7 @@ python {python_script} '{json.dumps(args)}'
 
         script += f"""
 source ~/.bashrc
-conda activate cellarr_env
+conda activate cellarr_env # MODIFY AS NEEDED
 
 python {python_script} '{json.dumps(args)}'
 """
