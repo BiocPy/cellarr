@@ -63,6 +63,9 @@ class CellArrDataset:
                 Usually the ``output_path`` from the
                 :py:func:`~cellarr.build_cellarrdataset.build_cellarrdataset`.
 
+                You may provide any tiledb compatible base path (e.g. local
+                directory, S3, minio etc.).
+
             assay_tiledb_group:
                 TileDB group containing the assay matrices.
 
@@ -89,10 +92,6 @@ class CellArrDataset:
             config:
                 Custom TileDB configuration. If None, defaults will be used.
         """
-
-        if not os.path.isdir(dataset_path):
-            raise ValueError("'dataset_path' is not a directory.")
-
         if config is None:
             config = tiledb.Config()
 
