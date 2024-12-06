@@ -41,6 +41,58 @@ __copyright__ = "Jayaram Kancherla"
 __license__ = "MIT"
 
 
+class CellArrSampleIterator:
+    """Sample iterator to a :py:class:`~cellarr.CellArrDataset` object."""
+
+    def __init__(self, obj: "CellArrDataset") -> None:
+        """Initialize the iterator.
+
+        Args:
+            obj:
+                Source object to iterate.
+        """
+        self._obj = obj
+        self._current_index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._current_index < self._obj.get_number_of_samples():
+            iter_row_index = self._obj.get_sample_metadata_index()[self._current_index]
+
+            iter_slice = self._obj.get_cells_for_sample(self._current_index)
+            self._current_index += 1
+            return (iter_row_index, iter_slice)
+
+        raise StopIteration
+
+
+class CellArrCellIterator:
+    """Cell iterator to a :py:class:`~cellarr.CellArrDataset` object."""
+
+    def __init__(self, obj: "CellArrDataset") -> None:
+        """Initialize the iterator.
+
+        Args:
+            obj:
+                Source object to iterate.
+        """
+        self._obj = obj
+        self._current_index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._current_index < self._obj.get_number_of_cells():
+            iter_slice = self._obj[self._current_index, :]
+            self._current_index += 1
+            return (self._current_index, iter_slice)
+
+        raise StopIteration
+
+
 class CellArrDataset:
     """A class that represent a collection of cells and their associated metadata in a TileDB backed store."""
 
@@ -192,6 +244,10 @@ class CellArrDataset:
             self._cell_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
         )
 
+    def get_number_of_cells(self) -> int:
+        """Get number of cells."""
+        return self._cell_metadata_tdb.nonempty_domain()[0][1] + 1
+
     ####
     ## Subset methods for the `gene_annotation` TileDB file.
     ####
@@ -275,6 +331,10 @@ class CellArrDataset:
             self._gene_annotation_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_gene_index"
         )
 
+    def get_number_of_features(self) -> int:
+        """Get number of features."""
+        return self._gene_annotation_tdb.nonempty_domain()[0][1] + 1
+
     ####
     ## Subset methods for the `sample_metadata` TileDB file.
     ####
@@ -336,6 +396,20 @@ class CellArrDataset:
         return qtd.subset_frame(
             self._sample_metadata_tdb, subset=subset, columns=columns, primary_key_column_name="cellarr_sample"
         )
+
+    def get_number_of_samples(self) -> int:
+        """Get number of samples."""
+        return self._sample_metadata_tdb.nonempty_domain()[0][1] + 1
+
+    @lru_cache(maxsize=128)
+    def get_sample_metadata_index(self) -> List[str]:
+        """Get index of the ``sample_metadata`` store.
+
+        Returns:
+            List of unique sample names.
+        """
+        res = qtd.get_a_column(self._sample_metadata_tdb, "cellarr_sample")
+        return res["cellarr_sample"].tolist()
 
     ####
     ## Subset methods for the `matrix` TileDB file.
@@ -464,6 +538,9 @@ class CellArrDataset:
                 the rows (or cells) to retain, while the second entry specifies the
                 columns (or features/genes) to retain, based on their names or indices.
 
+        Note:
+            Slices are inclusive of the upper bounds. This is the default TileDB behavior.
+
         Raises:
             ValueError:
                 If too many or too few slices provided.
@@ -573,3 +650,15 @@ class CellArrDataset:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__del__()
+
+    ####
+    ## Iterators
+    ####
+
+    def itersamples(self) -> CellArrSampleIterator:
+        """Iterator over samples."""
+        return CellArrSampleIterator(self)
+
+    def itercells(self) -> CellArrCellIterator:
+        """Iterator over samples."""
+        return CellArrCellIterator(self)
