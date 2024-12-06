@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
-        <title>cellarr.CellArrDataset - cellarr 0.3.1 documentation</title>
+        <title>cellarr.CellArrDataset - cellarr 0.3.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">cellarr 0.3.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">cellarr 0.3.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.3.1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.3.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -289,6 +289,82 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Jayaram Kancherla&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;MIT&quot;</span>
+
+
+<div class="viewcode-block" id="CellArrSampleIterator">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrSampleIterator">[docs]</a>
+<span class="k">class</span> <span class="nc">CellArrSampleIterator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample iterator to a :py:class:`~cellarr.CellArrDataset` object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CellArrSampleIterator.__init__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrSampleIterator.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="s2">&quot;CellArrDataset&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the iterator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj:</span>
+<span class="sd">                Source object to iterate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="CellArrSampleIterator.__iter__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrSampleIterator.__iter__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="CellArrSampleIterator.__next__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrSampleIterator.__next__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get_number_of_samples</span><span class="p">():</span>
+            <span class="n">iter_row_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get_sample_metadata_index</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">]</span>
+
+            <span class="n">iter_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get_cells_for_sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">iter_row_index</span><span class="p">,</span> <span class="n">iter_slice</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">StopIteration</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CellArrCellIterator">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrCellIterator">[docs]</a>
+<span class="k">class</span> <span class="nc">CellArrCellIterator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cell iterator to a :py:class:`~cellarr.CellArrDataset` object.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CellArrCellIterator.__init__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrCellIterator.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="s2">&quot;CellArrDataset&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the iterator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj:</span>
+<span class="sd">                Source object to iterate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="CellArrCellIterator.__iter__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrCellIterator.__iter__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="CellArrCellIterator.__next__">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrCellIterator.__next__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get_number_of_cells</span><span class="p">():</span>
+            <span class="n">iter_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">,</span> <span class="n">iter_slice</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">StopIteration</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="CellArrDataset">
@@ -459,6 +535,13 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="CellArrDataset.get_number_of_cells">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_number_of_cells">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_number_of_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of cells.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell_metadata_tdb</span><span class="o">.</span><span class="n">nonempty_domain</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+
     <span class="c1">####</span>
     <span class="c1">## Subset methods for the `gene_annotation` TileDB file.</span>
     <span class="c1">####</span>
@@ -554,6 +637,13 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="CellArrDataset.get_number_of_features">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_number_of_features">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_number_of_features</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of features.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gene_annotation_tdb</span><span class="o">.</span><span class="n">nonempty_domain</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+
     <span class="c1">####</span>
     <span class="c1">## Subset methods for the `sample_metadata` TileDB file.</span>
     <span class="c1">####</span>
@@ -623,6 +713,26 @@
         <span class="k">return</span> <span class="n">qtd</span><span class="o">.</span><span class="n">subset_frame</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">primary_key_column_name</span><span class="o">=</span><span class="s2">&quot;cellarr_sample&quot;</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_number_of_samples">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_number_of_samples">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_number_of_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="o">.</span><span class="n">nonempty_domain</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.get_sample_metadata_index">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.get_sample_metadata_index">[docs]</a>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_sample_metadata_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get index of the ``sample_metadata`` store.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of unique sample names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">qtd</span><span class="o">.</span><span class="n">get_a_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_metadata_tdb</span><span class="p">,</span> <span class="s2">&quot;cellarr_sample&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;cellarr_sample&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
 
     <span class="c1">####</span>
@@ -760,6 +870,9 @@
 <span class="sd">                the rows (or cells) to retain, while the second entry specifies the</span>
 <span class="sd">                columns (or features/genes) to retain, based on their names or indices.</span>
 
+<span class="sd">        Note:</span>
+<span class="sd">            Slices are inclusive of the upper bounds. This is the default TileDB behavior.</span>
+
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError:</span>
 <span class="sd">                If too many or too few slices provided.</span>
@@ -884,6 +997,24 @@
 <a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.__exit__">[docs]</a>
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="fm">__del__</span><span class="p">()</span></div>
+
+
+    <span class="c1">####</span>
+    <span class="c1">## Iterators</span>
+    <span class="c1">####</span>
+
+<div class="viewcode-block" id="CellArrDataset.itersamples">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.itersamples">[docs]</a>
+    <span class="k">def</span> <span class="nf">itersamples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CellArrSampleIterator</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterator over samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CellArrSampleIterator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CellArrDataset.itercells">
+<a class="viewcode-back" href="../../api/cellarr.html#cellarr.CellArrDataset.CellArrDataset.itercells">[docs]</a>
+    <span class="k">def</span> <span class="nf">itercells</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CellArrCellIterator</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterator over samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CellArrCellIterator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
@@ -918,7 +1049,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=4621528c"></script>
+</div><script src="../../_static/documentation_options.js?v=71d9d8e6"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
