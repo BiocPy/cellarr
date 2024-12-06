@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.3.0
+## Version 0.3.2
+
+- Functionality to iterate over samples and cells.
+- Explicitly mention that slicing defaults to TileB's behavior, inclusive of upper bounds.
+
+## Version 0.3.0 - 0.3.1
 
 This version introduces major improvements to matrix handling, storage, and performance, including support for multiple matrices in H5AD/AnnData workflows and optimizations for ingestion and querying.
 
