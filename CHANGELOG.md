@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.4.0
+
+- chore: Remove Python 3.8 (EOL).
+- precommit: Replace docformatter with ruff's formatter.
+
 ## Version 0.3.2
 
 - Functionality to iterate over samples and cells.
