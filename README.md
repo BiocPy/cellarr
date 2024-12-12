@@ -123,6 +123,10 @@ print(dataset)
 
 Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
 
+### Building on HPC environments with `slurm``
+
+.. TODO ..
+
 ### Query a `CellArrDataset`
 
 Users have the option to reuse the `dataset` object returned when building the dataset or by creating a `CellArrDataset` object by initializing it to the path where the files were created.

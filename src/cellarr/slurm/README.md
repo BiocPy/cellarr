@@ -37,9 +37,6 @@
             "cell_type": "ascii",
             "quality_score": "float32"
         },
-        "metadata": {
-            "processing_date": ["2024-01-01", "2024-01-02", ...]
-        }
     }
 }
 ```
