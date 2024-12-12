@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Contributors" href="../authors.html" /><link rel="prev" title="cellarr" href="modules.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="cellarr.slurm package" href="cellarr.slurm.html" /><link rel="prev" title="cellarr" href="modules.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>cellarr package - cellarr 0.4.0 documentation</title>
+        <title>cellarr package - cellarr 0.4.1.dev1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">cellarr 0.4.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">cellarr 0.4.1.dev1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.4.0 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.4.1.dev1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -207,7 +207,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html#a-single-cell-dataloader">A single cell dataloader</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes.html">Usage Notes</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">Module Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Module Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">cellarr package</a></li>
+<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">cellarr package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of cellarr package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html">cellarr.slurm package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
@@ -256,6 +259,68 @@
         <article role="main" id="furo-main-content">
           <section id="cellarr-package">
 <h1>cellarr package<a class="headerlink" href="#cellarr-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cellarr.slurm.html">cellarr.slurm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.build_cellarr_steps">cellarr.slurm.build_cellarr_steps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.__init__"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.create_array_script"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.create_array_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.create_slurm_script"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.create_slurm_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_cell_metadata_job"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_cell_metadata_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_final_assembly"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_final_assembly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_gene_annotation_job"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_gene_annotation_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_job"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_matrix_processing"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_matrix_processing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.SlurmBuilder.submit_sample_metadata_job"><code class="docutils literal notranslate"><span class="pre">SlurmBuilder.submit_sample_metadata_job()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.build_cellarr_steps_bkp">cellarr.slurm.build_cellarr_steps_bkp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps_bkp.create_slurm_script"><code class="docutils literal notranslate"><span class="pre">create_slurm_script()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps_bkp.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.build_cellarr_steps_bkp.submit_slurm_job"><code class="docutils literal notranslate"><span class="pre">submit_slurm_job()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.final_assembly">cellarr.slurm.final_assembly module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.final_assembly.final_assembly"><code class="docutils literal notranslate"><span class="pre">final_assembly()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.finalize_matrix">cellarr.slurm.finalize_matrix module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.finalize_matrix.finalize_matrix"><code class="docutils literal notranslate"><span class="pre">finalize_matrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.process_cell_metadata">cellarr.slurm.process_cell_metadata module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.process_cell_metadata.process_cell_metadata"><code class="docutils literal notranslate"><span class="pre">process_cell_metadata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.process_gene_annotation">cellarr.slurm.process_gene_annotation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.process_gene_annotation.process_gene_annotation"><code class="docutils literal notranslate"><span class="pre">process_gene_annotation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.process_matrix">cellarr.slurm.process_matrix module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.process_matrix.process_matrix_file"><code class="docutils literal notranslate"><span class="pre">process_matrix_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.process_matrix_all">cellarr.slurm.process_matrix_all module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.process_matrix_all.process_matrix"><code class="docutils literal notranslate"><span class="pre">process_matrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm.process_sample_metadata">cellarr.slurm.process_sample_metadata module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cellarr.slurm.html#cellarr.slurm.process_sample_metadata.process_sample_metadata"><code class="docutils literal notranslate"><span class="pre">process_sample_metadata()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cellarr.slurm.html#module-cellarr.slurm">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
@@ -891,7 +956,7 @@ methods from
 <dl class="py method">
 <dt class="sig sig-object py" id="cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_anndata">
 <span class="sig-name descname"><span class="pre">to_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/CellArrDatasetSlice.html#CellArrDatasetSlice.to_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.CellArrDatasetSlice.CellArrDatasetSlice.to_anndata" title="Link to this definition">¶</a></dt>
-<dd><p>Convert the realized slice to <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>.</p>
+<dd><p>Convert the realized slice to <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1240,7 +1305,7 @@ some genes are unmeasured or ordered differently in the original experiments.</p
 to make them consistent is outside the scope of this function
 and package.</p>
 <p>There’s a few assumptions this process makes:
-- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+- If object in <code class="docutils literal notranslate"><span class="pre">files</span></code> is an <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 or H5AD object, these must contain an assay matrix in the
 layers slot of the object named as <code class="docutils literal notranslate"><span class="pre">layer_matrix_name</span></code> parameter.
 - Feature information must contain a column defined by the parameter
@@ -1255,7 +1320,7 @@ the number of input files and is expected to be in the same order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
+<li><p><strong>files</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of file paths to <cite>H5AD</cite> or <code class="docutils literal notranslate"><span class="pre">AnnData</span></code> objects.</p></li>
 <li><p><strong>output_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to where the output TileDB files should be stored.</p></li>
 <li><p><strong>gene_annotation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a>]</span>) – <p>A <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></a> containing the feature/gene
 annotations across all objects.</p>
@@ -2397,7 +2462,7 @@ multiple rows with the same feature id or gene symbol.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>AnnData object with duplicate gene symbols consolidated.</p>
@@ -2412,7 +2477,7 @@ multiple rows with the same feature id or gene symbol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
+<li><p><strong>h5ad_or_adata</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>]]</span>) – List of anndata objects or path to h5ad files.</p></li>
 <li><p><strong>var_feature_column</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Column containing the feature ids (e.g. gene symbols).
 Defaults to “index”.</p></li>
 <li><p><strong>var_subset_columns</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – List of var columns to concatenate across all files.
@@ -2429,7 +2494,7 @@ Defaults to 1.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="cellarr.utils_anndata.remap_anndata">
 <span class="sig-prename descclassname"><span class="pre">cellarr.utils_anndata.</span></span><span class="sig-name descname"><span class="pre">remap_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5ad_or_adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_set_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_feature_column='index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_matrix_name='counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consolidate_duplicate_gene_func=&lt;built-in</span> <span class="pre">function</span> <span class="pre">sum&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cellarr/utils_anndata.html#remap_anndata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cellarr.utils_anndata.remap_anndata" title="Link to this definition">¶</a></dt>
-<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev22+g018a041)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
+<dd><p>Extract and remap the count matrix to the provided feature (gene) set order from the <a class="reference external" href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html#anndata.AnnData" title="(in anndata v0.11.1.dev26+gdf213f6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code></a>
 object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2559,12 +2624,12 @@ and the output a <code class="docutils literal notranslate"><span class="pre">cs
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../authors.html">
+          <a class="next-page" href="cellarr.slurm.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Contributors</div>
+                <div class="title">cellarr.slurm package</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -2610,6 +2675,7 @@ and the output a <code class="docutils literal notranslate"><span class="pre">cs
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">cellarr package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-cellarr.CellArrDataset">cellarr.CellArrDataset module</a><ul>
 <li><a class="reference internal" href="#cellarr.CellArrDataset.CellArrCellIterator"><code class="docutils literal notranslate"><span class="pre">CellArrCellIterator</span></code></a><ul>
@@ -2879,7 +2945,7 @@ and the output a <code class="docutils literal notranslate"><span class="pre">cs
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6c02275b"></script>
+</div><script src="../_static/documentation_options.js?v=f9eaba41"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
