@@ -107,3 +107,16 @@ def test_query_cellarrdataset():
 
     assert cd.get_cells_for_sample(0).to_anndata().shape == (adata1.shape[0], 1000)
     assert cd.get_cells_for_sample(1).to_anndata().shape == (adata2.shape[0], 1000)
+
+    sample_count = 0
+    obs = [adata1, adata2]
+    for sample, sample_chunk in cd.itersamples():
+        assert len(sample_chunk.cell_metadata) == obs[sample_count].shape[0]
+        sample_count += 1
+
+    assert sample_count == 2
+
+    cell_count = 0
+    for cell, cell_chunk in cd.itercells():
+        cell_count += 1
+    assert cell_count == 1100
