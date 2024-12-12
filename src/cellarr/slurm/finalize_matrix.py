@@ -15,7 +15,7 @@ def finalize_matrix(args_json: str):
 
     # Verify all tasks completed
     completed_dir = Path(args["temp_dir"]) / "completed"
-    expected_tasks = len(args["file_infos"])
+    expected_tasks = len(args["files"])
     completed_tasks = len(list(completed_dir.glob("task_*.json")))
 
     if completed_tasks != expected_tasks:
@@ -30,7 +30,7 @@ def finalize_matrix(args_json: str):
         json.dump(
             {
                 "matrix_name": args["matrix_options"]["matrix_name"],
-                "files_processed": len(args["file_infos"]),
+                "files_processed": len(args["files"]),
                 "uri": matrix_uri,
             },
             f,

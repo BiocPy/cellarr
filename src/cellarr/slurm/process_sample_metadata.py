@@ -1,5 +1,6 @@
 import json
 import sys
+from pathlib import Path
 
 import pandas as pd
 
@@ -64,6 +65,7 @@ def process_sample_metadata(args_json: str):
     # Save metadata for subsequent steps
     metadata = {"num_samples": len(sample_names), "total_cells": int(sample_metadata["cellarr_cell_counts"].sum())}
 
+    Path(args["temp_dir"]).mkdir(parents=True, exist_ok=True)
     with open(f"{args['temp_dir']}/sample_metadata.json", "w") as f:
         json.dump(metadata, f)
 

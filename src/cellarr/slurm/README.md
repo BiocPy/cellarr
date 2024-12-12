@@ -37,7 +37,17 @@
             "cell_type": "ascii",
             "quality_score": "float32"
         },
-    }
+    },
+    "python_env": """
+. /system/gredit/clientos/etc/profile
+
+ml Miniforge3
+conda activate biocpy_miniforge
+
+~/.conda/envs/biocpy_miniforge/bin/python --version
+which python
+python --version
+    """,
 }
 ```
 

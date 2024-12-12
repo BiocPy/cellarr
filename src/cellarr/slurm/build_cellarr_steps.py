@@ -4,7 +4,6 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-import anndata
 import numpy as np
 
 from cellarr.buildutils_tiledb_array import create_tiledb_array
@@ -55,7 +54,12 @@ class SlurmBuilder:
         self.cpus_per_task = cpus_per_task
 
     def create_slurm_script(
-        self, job_name: str, python_script: str, args: Dict, dependencies: Optional[str] = None
+        self,
+        job_name: str,
+        python_script: str,
+        args: Dict,
+        dependencies: Optional[str] = None,
+        python_env: str = "",
     ) -> str:
         """Create a SLURM job submission script."""
         script = f"""#!/bin/bash
@@ -70,8 +74,7 @@ class SlurmBuilder:
             script += f"#SBATCH --dependency={dependencies}\n"
 
         script += f"""
-source ~/.bashrc
-conda activate cellarr_env  # MODIFY AS NEEDED
+{python_env}
 
 python {python_script} '{json.dumps(args)}'
 """
@@ -81,7 +84,13 @@ python {python_script} '{json.dumps(args)}'
         return script_path
 
     def create_array_script(
-        self, job_name: str, python_script: str, args: Dict, n_tasks: int, dependencies: Optional[str] = None
+        self,
+        job_name: str,
+        python_script: str,
+        args: Dict,
+        n_tasks: int,
+        dependencies: Optional[str] = None,
+        python_env: str = "",
     ) -> str:
         """Create a SLURM array job submission script."""
         script = f"""#!/bin/bash
@@ -97,8 +106,7 @@ python {python_script} '{json.dumps(args)}'
             script += f"#SBATCH --dependency={dependencies}\n"
 
         script += f"""
-source ~/.bashrc
-conda activate cellarr_env # MODIFY AS NEEDED
+{python_env}
 
 python {python_script} '{json.dumps(args)}'
 """
@@ -112,7 +120,7 @@ python {python_script} '{json.dumps(args)}'
         result = subprocess.run(["sbatch", script_path], capture_output=True, text=True)
         return result.stdout.strip().split()[-1]
 
-    def submit_gene_annotation_job(self, files: List[str], gene_options: Dict) -> str:
+    def submit_gene_annotation_job(self, files: List[str], gene_options: Dict, python_env: str) -> str:
         """Submit gene annotation processing job."""
         args = {
             "files": files,
@@ -121,12 +129,19 @@ python {python_script} '{json.dumps(args)}'
             "temp_dir": str(self.temp_dir / "gene_annotation"),
         }
 
+        parent_dir = str(Path(__file__).parent)
+
         script_path = self.create_slurm_script(
-            job_name="cellarr_gene_annot", python_script="process_gene_annotation.py", args=args
+            job_name="cellarr_gene_annot",
+            python_script=f"{parent_dir}/process_gene_annotation.py",
+            args=args,
+            python_env=python_env,
         )
         return self.submit_job(script_path)
 
-    def submit_sample_metadata_job(self, files: List[str], sample_options: Dict, dependency: str) -> str:
+    def submit_sample_metadata_job(
+        self, files: List[str], sample_options: Dict, dependency: str, python_env: str
+    ) -> str:
         """Submit sample metadata processing job."""
         args = {
             "files": files,
@@ -135,15 +150,18 @@ python {python_script} '{json.dumps(args)}'
             "temp_dir": str(self.temp_dir / "sample_metadata"),
         }
 
+        parent_dir = str(Path(__file__).parent)
+
         script_path = self.create_slurm_script(
             job_name="cellarr_sample_meta",
-            python_script="process_sample_metadata.py",
+            python_script=f"{parent_dir}/process_sample_metadata.py",
             args=args,
+            python_env=python_env,
             # dependencies=f"afterok:{dependency}",
         )
         return self.submit_job(script_path)
 
-    def submit_cell_metadata_job(self, files: List[str], cell_options: Dict, dependency: str) -> str:
+    def submit_cell_metadata_job(self, files: List[str], cell_options: Dict, dependency: str, python_env: str) -> str:
         """Submit cell metadata processing job."""
         args = {
             "files": files,
@@ -152,23 +170,21 @@ python {python_script} '{json.dumps(args)}'
             "temp_dir": str(self.temp_dir / "cell_metadata"),
         }
 
+        parent_dir = str(Path(__file__).parent)
+
         script_path = self.create_slurm_script(
             job_name="cellarr_cell_meta",
-            python_script="process_cell_metadata.py",
+            python_script=f"{parent_dir}/process_cell_metadata.py",
             args=args,
+            python_env=python_env,
             # dependencies=f"afterok:{dependency}",
         )
         return self.submit_job(script_path)
 
-    def submit_matrix_processing(self, files: List[str], matrix_options: Dict, dependency: str) -> Tuple[str, str]:
+    def submit_matrix_processing(
+        self, files: List[str], matrix_options: Dict, dependency: str, python_env: str
+    ) -> Tuple[str, str]:
         """Submit matrix processing as SLURM array job."""
-        # Calculate cell offsets for each file
-        offset = 0
-        file_infos = []
-        for file in files:
-            file_infos.append({"file": file, "offset": offset})
-            adata = anndata.read_h5ad(file, backed="r")
-            offset += adata.n_obs
 
         # Create matrix TileDB array
         matrix_uri = str(self.output_dir / "assays" / matrix_options["matrix_name"])
@@ -184,16 +200,19 @@ python {python_script} '{json.dumps(args)}'
             "temp_dir": str(self.temp_dir / f"matrix_{matrix_options['matrix_name']}"),
             "matrix_options": matrix_options,
             "gene_annotation_file": str(self.temp_dir / "gene_annotation/gene_set.json"),
-            "file_infos": file_infos,
+            "files": files,
         }
+
+        parent_dir = str(Path(__file__).parent)
 
         # Submit array job
         array_script = self.create_array_script(
             job_name=f"matrix_{matrix_options['matrix_name']}",
-            python_script="process_matrix.py",
+            python_script=f"{parent_dir}/process_matrix.py",
             args=array_args,
             n_tasks=len(files),
             dependencies=f"afterok:{dependency}",
+            python_env=python_env,
         )
         array_job_id = self.submit_job(array_script)
 
@@ -202,28 +221,32 @@ python {python_script} '{json.dumps(args)}'
             "output_dir": str(self.output_dir),
             "temp_dir": str(self.temp_dir / f"matrix_{matrix_options['matrix_name']}"),
             "matrix_options": matrix_options,
-            "file_infos": file_infos,
+            "files": files,
         }
 
         final_script = self.create_slurm_script(
             job_name=f"finalize_matrix_{matrix_options['matrix_name']}",
-            python_script="finalize_matrix.py",
+            python_script=f"{parent_dir}/finalize_matrix.py",
             args=final_args,
             dependencies=f"afterok:{array_job_id}",
+            python_env=python_env,
         )
         final_job_id = self.submit_job(final_script)
 
         return array_job_id, final_job_id
 
-    def submit_final_assembly(self, matrix_names: List[str], dependencies: List[str]) -> str:
+    def submit_final_assembly(self, matrix_names: List[str], dependencies: List[str], python_env: str) -> str:
         """Submit final assembly job."""
         args = {"input_dir": str(self.output_dir), "output_dir": str(self.output_dir), "matrix_names": matrix_names}
 
+        parent_dir = str(Path(__file__).parent)
+
         script_path = self.create_slurm_script(
             job_name="cellarr_final_assembly",
-            python_script="final_assembly.py",
+            python_script=f"{parent_dir}/final_assembly.py",
             args=args,
             dependencies=f"afterok:{','.join(dependencies)}",
+            python_env=python_env,
         )
         return self.submit_job(script_path)
 
@@ -242,8 +265,9 @@ def main():
     log_dir = base_dir / "logs"
     temp_dir = base_dir / "temp"
     final_dir = base_dir / "final"
+    assays_dir = base_dir / "final/assays"
 
-    for d in [log_dir, temp_dir, final_dir]:
+    for d in [log_dir, temp_dir, final_dir, assays_dir]:
         d.mkdir(parents=True, exist_ok=True)
 
     # Read manifest
@@ -261,13 +285,17 @@ def main():
     )
 
     # Submit jobs
-    gene_job_id = builder.submit_gene_annotation_job(manifest["files"], manifest.get("gene_options", {}))
-
-    sample_job_id = builder.submit_sample_metadata_job(
-        manifest["files"], manifest.get("sample_options", {}), gene_job_id
+    gene_job_id = builder.submit_gene_annotation_job(
+        manifest["files"], manifest.get("gene_options", {}), manifest["python_env"]
     )
 
-    cell_job_id = builder.submit_cell_metadata_job(manifest["files"], manifest.get("cell_options", {}), sample_job_id)
+    sample_job_id = builder.submit_sample_metadata_job(
+        manifest["files"], manifest.get("sample_options", {}), gene_job_id, manifest["python_env"]
+    )
+
+    cell_job_id = builder.submit_cell_metadata_job(
+        manifest["files"], manifest.get("cell_options", {}), sample_job_id, manifest["python_env"]
+    )
 
     # Process matrices
     matrix_options = manifest.get("matrix_options", [{"matrix_name": "counts"}])
@@ -276,11 +304,15 @@ def main():
 
     matrix_job_ids = []
     for matrix_opt in matrix_options:
-        _, final_id = builder.submit_matrix_processing(manifest["files"], matrix_opt, f"{cell_job_id},{gene_job_id}")
+        _, final_id = builder.submit_matrix_processing(
+            manifest["files"], matrix_opt, f"{cell_job_id},{gene_job_id}", manifest["python_env"]
+        )
         matrix_job_ids.append(final_id)
 
     # Submit final assembly
-    builder.submit_final_assembly([opt["matrix_name"] for opt in matrix_options], matrix_job_ids)
+    builder.submit_final_assembly(
+        [opt["matrix_name"] for opt in matrix_options], matrix_job_ids, manifest["python_env"]
+    )
 
 
 if __name__ == "__main__":

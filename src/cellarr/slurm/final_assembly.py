@@ -1,4 +1,5 @@
 import json
+import sys
 
 from cellarr import CellArrDataset
 
@@ -18,3 +19,11 @@ def final_assembly(args_json: str):
 
     with open(f"{args['output_dir']}/metadata.json", "w") as f:
         json.dump(metadata, f)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python final_assembly.py '<json_args>'")
+        sys.exit(1)
+
+    final_assembly(sys.argv[1])

@@ -3,6 +3,8 @@ import os
 import sys
 from pathlib import Path
 
+import tiledb
+
 from cellarr import utils_anndata as uad
 from cellarr.buildutils_tiledb_array import write_csr_matrix_to_tiledb
 
@@ -24,9 +26,13 @@ def process_matrix_file(args_json: str):
     gene_map = {gene: idx for idx, gene in enumerate(gene_set)}
 
     # Get file and offset for this task
-    file_info = args["file_infos"][task_id]
-    input_file = file_info["file"]
-    row_offset = file_info["offset"]
+    file_info = args["files"][task_id]
+    input_file = file_info
+
+    # get sample offset
+    sample_uri = tiledb.open(f"{args['output_dir']}/sample_metadata", "r")
+    sample_row = sample_uri.df[task_id]
+    row_offset = sample_row["cellarr_sample_start_index"]
 
     # Process the file
     matrix = uad.remap_anndata(input_file, gene_map, layer_matrix_name=args["matrix_options"]["matrix_name"])
@@ -36,6 +42,8 @@ def process_matrix_file(args_json: str):
     write_csr_matrix_to_tiledb(matrix_uri, matrix[args["matrix_options"]["matrix_name"]], row_offset=row_offset)
 
     # Save task completion marker
+    Path(args["temp_dir"]).mkdir(parents=True, exist_ok=True)
+    Path(args["temp_dir"] + "/completed").mkdir(parents=True, exist_ok=True)
     task_marker = Path(args["temp_dir"]) / "completed" / f"task_{task_id}.json"
     task_marker.parent.mkdir(exist_ok=True)
     with open(task_marker, "w") as f:
