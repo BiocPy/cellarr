@@ -12,14 +12,6 @@ cellarr.slurm.build\_cellarr\_steps module
    :undoc-members:
    :show-inheritance:
 
-cellarr.slurm.build\_cellarr\_steps\_bkp module
------------------------------------------------
-
-.. automodule:: cellarr.slurm.build_cellarr_steps_bkp
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 cellarr.slurm.final\_assembly module
 ------------------------------------
 

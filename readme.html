@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Cell Arrays - cellarr 0.4.1.dev1 documentation</title>
+        <title>Cell Arrays - cellarr 0.4.1.dev2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">cellarr 0.4.1.dev1 documentation</div></a>
+      <a href="index.html"><div class="brand">cellarr 0.4.1.dev2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.4.1.dev1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.4.1.dev2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -267,7 +267,7 @@ datasets but can be generalized to store any 2-dimensional experimental data.</p
 <section id="install">
 <h2>Install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h2>
 <p>To get started, install the package from <a class="reference external" href="https://pypi.org/project/cellarr/">PyPI</a></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cellarr
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cellarr
 
 <span class="c1">## to include optional dependencies</span>
 pip<span class="w"> </span>install<span class="w"> </span>cellarr<span class="o">[</span>optional<span class="o">]</span>
@@ -366,6 +366,47 @@ lacks one of these columns, the missing values will be automatically filled with
 </div>
 <p>Check out the <a class="reference external" href="https://biocpy.github.io/cellarr/tutorial.html">documentation</a> for more details.</p>
 </section>
+</section>
+<section id="building-on-hpc-environments-with-slurm">
+<h3>Building on HPC environments with <code class="docutils literal notranslate"><span class="pre">slurm</span></code><a class="headerlink" href="#building-on-hpc-environments-with-slurm" title="Link to this heading">¶</a></h3>
+<p>To simplify building TileDB files on HPC environments that use <code class="docutils literal notranslate"><span class="pre">slurm</span></code>, there are a few steps you need to follow.</p>
+<ul class="simple">
+<li><p>Step 1: Construct a manifest file
+A minimal manifest file (json) must contain the following fields</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;files&quot;</span></code>: A list of file path to the input <code class="docutils literal notranslate"><span class="pre">h5ad</span></code> objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;python_env&quot;</span></code>: A set of commands to activate the Python environment containing this package and its dependencies.</p></li>
+</ul>
+<p>Here’s an example of the manifest file:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="err">ma</span><span class="kc">n</span><span class="err">i</span><span class="kc">fest</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;files&quot;</span><span class="p">:</span><span class="w"> </span><span class="err">your/lis</span><span class="kc">t</span><span class="err">/o</span><span class="kc">f</span><span class="err">/</span><span class="kc">f</span><span class="err">iles</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;python_env&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">ml Miniforge3</span>
+<span class="s2">conda activate cellarr</span>
+
+<span class="s2">python --version</span>
+<span class="s2">which python</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;matrix_options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;matrix_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;non_zero_cells&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uint32&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;matrix_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pseudo_bulk_log_normed&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;dtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;float32&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For more options, check out the <a class="reference internal" href="#./src/cellarr/slurm/README.md"><span class="xref myst">README</span></a>.</p>
+<ul class="simple">
+<li><p>Step 2: Submit the job
+Once your manifest file is ready, you can submit the necessary jobs using the <code class="docutils literal notranslate"><span class="pre">cellarr_build</span></code> CLI. Run the following command:</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cellarr_build<span class="w"> </span>--input-manifest<span class="w"> </span>your/path/to/test_manifest.json<span class="w"> </span>--output-dir<span class="w"> </span>your/path/to/output<span class="w"> </span>--memory-per-job<span class="w"> </span><span class="m">8</span><span class="w"> </span>--cpus-per-task<span class="w"> </span><span class="m">2</span>
+</pre></div>
+</div>
 </section>
 <section id="query-a-cellarrdataset">
 <h3>Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code><a class="headerlink" href="#query-a-cellarrdataset" title="Link to this heading">¶</a></h3>
@@ -502,6 +543,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
 <li><a class="reference internal" href="#optionally-provide-cell-metadata-columns">Optionally provide cell metadata columns</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#building-on-hpc-environments-with-slurm">Building on HPC environments with <code class="docutils literal notranslate"><span class="pre">slurm</span></code></a></li>
 <li><a class="reference internal" href="#query-a-cellarrdataset">Query a <code class="docutils literal notranslate"><span class="pre">CellArrDataset</span></code></a></li>
 <li><a class="reference internal" href="#a-built-in-dataloader-for-the-pytorch-lightning-framework">A built-in dataloader for the <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code> framework</a></li>
 </ul>
@@ -518,7 +560,7 @@ information on PyScaffold see <a class="reference external" href="https://pyscaf
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=f9eaba41"></script>
+</div><script src="_static/documentation_options.js?v=ce12302b"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

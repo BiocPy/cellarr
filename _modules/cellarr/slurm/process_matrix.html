@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>cellarr.slurm.process_matrix - cellarr 0.4.1.dev1 documentation</title>
+        <title>cellarr.slurm.process_matrix - cellarr 0.4.1.dev2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -166,7 +166,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">cellarr 0.4.1.dev1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">cellarr 0.4.1.dev2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">cellarr 0.4.1.dev1 documentation</span>
+  <span class="sidebar-brand-text">cellarr 0.4.1.dev2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -256,6 +256,8 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span> <span class="nn">tiledb</span>
+
 <span class="kn">from</span> <span class="nn">cellarr</span> <span class="kn">import</span> <span class="n">utils_anndata</span> <span class="k">as</span> <span class="n">uad</span>
 <span class="kn">from</span> <span class="nn">cellarr.buildutils_tiledb_array</span> <span class="kn">import</span> <span class="n">write_csr_matrix_to_tiledb</span>
 
@@ -279,9 +281,13 @@
     <span class="n">gene_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">gene</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">gene</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gene_set</span><span class="p">)}</span>
 
     <span class="c1"># Get file and offset for this task</span>
-    <span class="n">file_info</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;file_infos&quot;</span><span class="p">][</span><span class="n">task_id</span><span class="p">]</span>
-    <span class="n">input_file</span> <span class="o">=</span> <span class="n">file_info</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span>
-    <span class="n">row_offset</span> <span class="o">=</span> <span class="n">file_info</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">]</span>
+    <span class="n">file_info</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="n">task_id</span><span class="p">]</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">file_info</span>
+
+    <span class="c1"># get sample offset</span>
+    <span class="n">sample_uri</span> <span class="o">=</span> <span class="n">tiledb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/sample_metadata&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">sample_row</span> <span class="o">=</span> <span class="n">sample_uri</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
+    <span class="n">row_offset</span> <span class="o">=</span> <span class="n">sample_row</span><span class="p">[</span><span class="s2">&quot;cellarr_sample_start_index&quot;</span><span class="p">]</span>
 
     <span class="c1"># Process the file</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">uad</span><span class="o">.</span><span class="n">remap_anndata</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">gene_map</span><span class="p">,</span> <span class="n">layer_matrix_name</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;matrix_options&quot;</span><span class="p">][</span><span class="s2">&quot;matrix_name&quot;</span><span class="p">])</span>
@@ -291,6 +297,8 @@
     <span class="n">write_csr_matrix_to_tiledb</span><span class="p">(</span><span class="n">matrix_uri</span><span class="p">,</span> <span class="n">matrix</span><span class="p">[</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;matrix_options&quot;</span><span class="p">][</span><span class="s2">&quot;matrix_name&quot;</span><span class="p">]],</span> <span class="n">row_offset</span><span class="o">=</span><span class="n">row_offset</span><span class="p">)</span>
 
     <span class="c1"># Save task completion marker</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;temp_dir&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;temp_dir&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/completed&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">task_marker</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;temp_dir&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="s2">&quot;completed&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;task_</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
     <span class="n">task_marker</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">task_marker</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -336,7 +344,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=f9eaba41"></script>
+</div><script src="../../../_static/documentation_options.js?v=ce12302b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
