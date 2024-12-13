@@ -76,7 +76,7 @@ def create_tiledb_frame_from_column_names(
     )
 
 
-def create_tiledb_frame_from_dataframe(tiledb_uri_path: str, frame: List[str], column_types=dict):
+def create_tiledb_frame_from_dataframe(tiledb_uri_path: str, frame: List[str], column_types: dict = None):
     """Create a TileDB file with the provided attributes to persistent storage.
 
     This will materialize the array directory and all

@@ -12,7 +12,7 @@ datasets but can be generalized to store any 2-dimensional experimental data.
 
 To get started, install the package from [PyPI](https://pypi.org/project/cellarr/)
 
-```bash
+```sh
 pip install cellarr
 
 ## to include optional dependencies
@@ -122,6 +122,52 @@ print(dataset)
 ```
 
 Check out the [documentation](https://biocpy.github.io/cellarr/tutorial.html) for more details.
+
+### Building on HPC environments with `slurm`
+
+To simplify building TileDB files on HPC environments that use `slurm`, there are a few steps you need to follow.
+
+- Step 1: Construct a manifest file
+A minimal manifest file (json) must contain the following fields
+- `"files"`: A list of file path to the input `h5ad` objects.
+- `"python_env"`: A set of commands to activate the Python environment containing this package and its dependencies.
+
+Here’s an example of the manifest file:
+
+```py
+manifest = {
+    "files": your/list/of/files,
+    "python_env": """
+ml Miniforge3
+conda activate cellarr
+
+python --version
+which python
+    """,
+    "matrix_options": [
+        {
+            "matrix_name": "non_zero_cells",
+            "dtype": "uint32"
+        },
+        {
+            "matrix_name": "pseudo_bulk_log_normed",
+            "dtype": "float32"
+        }
+    ],
+}
+
+import json
+json.dump(manifest, open("your/path/to/manifest.json", "w"))
+```
+
+For more options, check out the [README](./src/cellarr/slurm/README.md).
+
+- Step 2: Submit the job
+Once your manifest file is ready, you can submit the necessary jobs using the `cellarr_build` CLI. Run the following command:
+
+```sh
+cellarr_build --input-manifest your/path/to/manifest.json --output-dir your/path/to/output --memory-per-job 8 --cpus-per-task 2
+```
 
 ### Query a `CellArrDataset`
 
