@@ -133,7 +133,8 @@ A minimal manifest file (json) must contain the following fields
 - `"python_env"`: A set of commands to activate the Python environment containing this package and its dependencies.
 
 Here’s an example of the manifest file:
-```json
+
+```py
 manifest = {
     "files": your/list/of/files,
     "python_env": """
@@ -154,14 +155,18 @@ which python
         }
     ],
 }
+
+import json
+json.dump(manifest, open("your/path/to/manifest.json", "w"))
 ```
+
 For more options, check out the [README](./src/cellarr/slurm/README.md).
 
 - Step 2: Submit the job
 Once your manifest file is ready, you can submit the necessary jobs using the `cellarr_build` CLI. Run the following command:
 
 ```sh
-cellarr_build --input-manifest your/path/to/test_manifest.json --output-dir your/path/to/output --memory-per-job 8 --cpus-per-task 2
+cellarr_build --input-manifest your/path/to/manifest.json --output-dir your/path/to/output --memory-per-job 8 --cpus-per-task 2
 ```
 
 ### Query a `CellArrDataset`
