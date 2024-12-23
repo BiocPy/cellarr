@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.5.1
+
+- Support csc matrices in layers, although not common ran into a situation where the
+anndata object was stored from R.
+
 ## Version 0.5.0
 
 - Construct cellarr TileDB files on HPC environments based on slurm

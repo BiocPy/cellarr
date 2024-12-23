@@ -6,7 +6,7 @@ import anndata
 import mopsy
 import numpy as np
 import pandas as pd
-from scipy.sparse import coo_matrix, csr_array, csr_matrix
+from scipy.sparse import coo_matrix, csc_array, csc_matrix, csr_array, csr_matrix
 
 __author__ = "Jayaram Kancherla"
 __copyright__ = "Jayaram Kancherla"
@@ -119,7 +119,7 @@ def remap_anndata(
 
         if isinstance(mat, np.ndarray):
             mat_coo = coo_matrix(mat)
-        elif isinstance(mat, (csr_array, csr_matrix)):
+        elif isinstance(mat, (csr_array, csr_matrix, csc_matrix, csc_array)):
             mat_coo = mat.tocoo()
         else:
             raise TypeError(f"Unknown matrix type: {type(mat)}.")
