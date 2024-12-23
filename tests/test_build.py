@@ -498,11 +498,11 @@ def test_with_sparse():
 
     assert np.allclose(
         cfp.multi_index[0, gene_indices_tdb]["data"],
-        adata1.layers["counts"][0, adata1_gene_indices],
+        adata1.layers["counts"][0, adata1_gene_indices].todense(),
     )
     assert np.allclose(
         cfp.multi_index[1000, gene_indices_tdb]["data"],
-        adata2.layers["counts"][0, adata2_gene_indices],
+        adata2.layers["counts"][0, adata2_gene_indices].todense(),
     )
 
     sfp = tiledb.open(f"{tempdir}/sample_metadata", "r")
