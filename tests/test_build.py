@@ -466,7 +466,7 @@ def test_with_sparse():
     tempdir = tempfile.mkdtemp()
 
     adata1 = generate_adata(1000, 100, 10)
-    adata2.layers["counts"] = sp.csr_matrix(adata2.layers["counts"])
+    adata1.layers["counts"] = sp.csr_matrix(adata1.layers["counts"])
 
     adata2 = generate_adata(100, 1000, 100)
     adata2.layers["counts"] = sp.csc_matrix(adata2.layers["counts"])
