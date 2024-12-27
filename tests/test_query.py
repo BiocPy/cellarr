@@ -123,6 +123,8 @@ def test_query_cellarrdataset():
 
     full_row_slice = cd[1,]
     assert full_row_slice is not None
+    assert full_row_slice.shape == (1, 1000)
 
     full_col_slice = cd[:, 1]
     assert full_col_slice is not None
+    assert full_col_slice.shape == (1100, 1)
