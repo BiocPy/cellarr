@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.5.1
+## Version 0.5.1 - 0.5.2
 
 - Support csc matrices in layers, although not common ran into a situation where the
 anndata object was stored from R.
