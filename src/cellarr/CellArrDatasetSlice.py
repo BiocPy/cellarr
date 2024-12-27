@@ -83,7 +83,7 @@ class CellArrDatasetSlice:
 
     @property
     def shape(self):
-        return self.matrix.shape
+        return (len(self.cell_metadata), len(self.gene_annotation))
 
     def __len__(self):
         return self.shape[0]
