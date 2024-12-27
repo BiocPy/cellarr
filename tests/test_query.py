@@ -120,3 +120,9 @@ def test_query_cellarrdataset():
     for cell, cell_chunk in cd.itercells():
         cell_count += 1
     assert cell_count == 1100
+
+    full_row_slice = cd[1,]
+    assert full_row_slice is not None
+
+    full_col_slice = cd[:, 1]
+    assert full_col_slice is not None
